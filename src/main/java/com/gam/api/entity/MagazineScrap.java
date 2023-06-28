@@ -11,14 +11,17 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "\"MagazineScrap\"")
 @Entity
 public class MagazineScrap {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "scrap_id")
+    @Column(name = "magazine_scrap_id")
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "magazine_id")
+    private Magazine magazine;
 
     @Column(name = "thumb_nail")
     private String thumbNail;
@@ -34,9 +37,4 @@ public class MagazineScrap {
 
     @Column(name = "owner_id")
     private Long owner_id;
-
-    @OneToOne
-    @JoinColumn(name = "magazine_id")
-    private Magazine magazine;
-
 }

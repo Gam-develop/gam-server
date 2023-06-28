@@ -11,7 +11,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "\"Picture\"")
 @Entity
 public class Picture {
 
@@ -20,11 +19,10 @@ public class Picture {
     @Column(name = "picture_id")
     private Long id;
 
-    @Column(name = "url")
-    private String url;
-
     @ManyToOne
     @JoinColumn(name = "work_id")
     private Work work;
 
+    @Column(name = "url")
+    private String url;
 }

@@ -6,12 +6,14 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "\"Magazine\"")
 @Entity
 public class Magazine {
 
@@ -23,4 +25,9 @@ public class Magazine {
     @Column(name = "contents")
     private String content;
 
+    @Column(name = "view_count")
+    private int viewCount;
+
+    @OneToMany(mappedBy = "magazine")
+    private List<MagazineScrap> magazineScraps = new ArrayList<>();
 }

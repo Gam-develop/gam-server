@@ -11,13 +11,12 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "\"AuthenticationProvider\"")
 @Entity
-public class AuthenticationProvider {
+public class AuthProvider {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "id")
+    @Column(name = "auth_provider_id")
     private Long id;
 
     @ManyToOne

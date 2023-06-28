@@ -9,13 +9,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "\"User\"")
 @Entity
+@Table(name = "\"User\"")
 public class User {
 
     @Id
@@ -24,7 +27,8 @@ public class User {
     private Long id;
 
     @Column(name = "role")
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Column(name = "info")
     private String info;
@@ -49,6 +53,18 @@ public class User {
 
     @Column(name = "additional_link")
     private String additionalLink;
+
+    @Column(name = "scarp_count")
+    private int scrapCount;
+
+    @Column(name = "view_count")
+    private int viewCount;
+
+    @OneToMany(mappedBy = "userScrap")
+    List<UserScrap> userScraps = new ArrayList<>();
+
+    @OneToMany(mappedBy = "userWork")
+    List<Work> works = new ArrayList<>();
 }
 
 

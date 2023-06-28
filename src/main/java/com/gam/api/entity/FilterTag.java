@@ -11,7 +11,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "\"FilterTag\"")
 @Entity
 public class FilterTag {
 
@@ -30,7 +29,7 @@ public class FilterTag {
     private boolean industrialDesign;
 
     @Column(name = "threeD")
-    private boolean threeDDesign;
+    private boolean threeDimensionalDesign;
 
     @Column(name = "graphic")
     private boolean graphicDesign;
@@ -41,8 +40,8 @@ public class FilterTag {
     @Column(name = "motion")
     private boolean motionDesign;
 
-    @Column(name = "illust")
-    private boolean illustDesign;
+    @Column(name = "Illustration")
+    private boolean IllustrationDesign;
 
     @Column(name = "edit")
     private boolean editDesign;
@@ -59,5 +58,4 @@ public class FilterTag {
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
-
 }

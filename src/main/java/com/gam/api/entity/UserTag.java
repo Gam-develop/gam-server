@@ -11,7 +11,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "\"UserTag\"")
 @Entity
 public class UserTag {
 
@@ -19,6 +18,10 @@ public class UserTag {
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "user_tag_id")
     private Long id;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "ui_ux")
     private boolean ui_uxDesign;
@@ -30,7 +33,7 @@ public class UserTag {
     private boolean industrialDesign;
 
     @Column(name = "threeD")
-    private boolean threeDDesign;
+    private boolean threeDimensionalDesign;
 
     @Column(name = "graphic")
     private boolean graphicDesign;
@@ -41,8 +44,8 @@ public class UserTag {
     @Column(name = "motion")
     private boolean motionDesign;
 
-    @Column(name = "illust")
-    private boolean illustDesign;
+    @Column(name = "Illustration")
+    private boolean IllustrationDesign;
 
     @Column(name = "edit")
     private boolean editDesign;
@@ -55,9 +58,4 @@ public class UserTag {
 
     @Column(name = "character")
     private boolean characterDesign;
-
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
 }

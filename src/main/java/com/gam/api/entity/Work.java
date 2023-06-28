@@ -11,7 +11,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "\"Work\"")
 @Entity
 public class Work {
 
@@ -20,13 +19,19 @@ public class Work {
     @Column(name = "work_id")
     private Long id;
 
-    @Column(name = "status")
-    private String status;
-
-    @Column(name = "owner_id")
-    private Long ownerId;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private User userWork;
+
+    @Column(name = "thumbnail")
+    private String thumbnail;
+
+    @Column(name = "title")
+    private String title;
+
+    @Column(name = "detail")
+    private String detail;
+
+    @Column(name = "view_count")
+    private int viewCount;
 }
