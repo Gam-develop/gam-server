@@ -52,7 +52,9 @@ public class KakaoSocialService implements SocialService {
             val refreshToken = jwtTokenManager.createRefreshToken(userId);
 
             user.updateRefreshToken(refreshToken);
-            return SocialLoginResponseDTO.of(true, userId, accessToken);
+
+            val isProfileCompleted = chkProfileCompleted(user);
+            return SocialLoginResponseDTO.of(true, isProfileCompleted, userId, accessToken);
         }
 
         val user = userRepository.save(User.builder()
@@ -71,11 +73,19 @@ public class KakaoSocialService implements SocialService {
                         .providerType(request.providerType())
                         .build());
 
-        return SocialLoginResponseDTO.of(false, userId, accessToken);
+        return SocialLoginResponseDTO.of(false, false, userId, accessToken);
     }
 
     @Override
     public void logout(Long userId) {
 
+    }
+
+    @Override
+    public boolean chkProfileCompleted(User user) {
+        if(Objects.isNull(user.getInfo()) || Objects.isNull(user.getUserTag())) {
+            return false;
+        }
+        return true;
     }
 }
