@@ -45,11 +45,13 @@ public class User {
     @Column(name = "instagram")
     private String instagram;
 
-    @Column(name = "user_tag")
-    private String userTag;
+    @OneToOne
+    @JoinColumn(name = "user_tag_id")
+    private UserTag userTag;
 
-    @Column(name = "filter_tag")
-    private String filterTag;
+    @OneToOne
+    @JoinColumn(name= "filter_tag_id")
+    private FilterTag filterTag;
 
     @Column(name = "additional_link")
     private String additionalLink;

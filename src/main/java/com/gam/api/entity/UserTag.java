@@ -19,8 +19,7 @@ public class UserTag {
     @Column(name = "user_tag_id")
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
+    @OneToOne(mappedBy = "userTag")
     private User user;
 
     @Column(name = "ui_ux")

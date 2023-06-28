@@ -55,7 +55,6 @@ public class FilterTag {
     @Column(name = "character")
     private boolean characterDesign;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
+    @OneToOne(mappedBy = "filterTag")
     private User user;
 }
