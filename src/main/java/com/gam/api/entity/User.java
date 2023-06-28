@@ -61,6 +61,9 @@ public class User {
     @Column(name = "view_count")
     private int viewCount;
 
+    @Column(name = "refresh_token")
+    private String refreshToken;
+
     @OneToMany(mappedBy = "userScrap")
     List<UserScrap> userScraps = new ArrayList<>();
 
@@ -72,6 +75,10 @@ public class User {
         this.role = role;
         this.scrapCount = 0;
         this.viewCount = 0;
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }
 

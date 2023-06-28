@@ -15,6 +15,7 @@ import com.gam.api.external.kakao.KakaoApiClient;
 import com.gam.api.external.kakao.KakaoAuthApiClient;
 import com.gam.api.dto.social.SocialLoginRequestDTO;
 
+import javax.transaction.Transactional;
 import java.util.Objects;
 
 @Service
@@ -31,6 +32,7 @@ public class KakaoSocialService implements SocialService {
     private final AuthConfig authConfig;
 
     @Override
+    @Transactional
     public SocialLoginResponseDTO login(SocialLoginRequestDTO request) {
         val kakaoAccessTokenResponse = kakaoAuthApiClient.getOAuth2AccessToken(
                 "authorization_code",
@@ -44,8 +46,12 @@ public class KakaoSocialService implements SocialService {
         val authProvider = authProviderRepository.searchAuthProviderById(userResponse.id());
 
         if(Objects.nonNull(authProvider)) {
-            val userId = authProvider.getUser().getId();
+            val user = authProvider.getUser();
+            val userId = user.getId();
             val accessToken = jwtTokenManager.createAccessToken(userId);
+            val refreshToken = jwtTokenManager.createRefreshToken(userId);
+
+            user.updateRefreshToken(refreshToken);
             return SocialLoginResponseDTO.of(true, userId, accessToken);
         }
 
@@ -55,6 +61,9 @@ public class KakaoSocialService implements SocialService {
 
         val userId = user.getId();
         val accessToken = jwtTokenManager.createAccessToken(userId);
+        val refreshToken = jwtTokenManager.createRefreshToken(userId);
+
+        user.updateRefreshToken(refreshToken);
 
         authProviderRepository.save(AuthProvider.builder()
                         .id(userResponse.id())
