@@ -1,6 +1,6 @@
 package com.gam.api.config.jwt;
 
-import com.gam.api.common.ExceptionMessage;
+import com.gam.api.common.message.ExceptionMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.security.core.context.SecurityContextHolder;

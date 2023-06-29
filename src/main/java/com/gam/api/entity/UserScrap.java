@@ -1,5 +1,6 @@
 package com.gam.api.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,4 +30,17 @@ public class UserScrap {
 
     @Column(name = "target_id")
     private Long targetId;
+
+    @Builder
+    public UserScrap(User userScrap, Long targetId) {
+            this.userScrap = userScrap;
+            this.status = true;
+            this.targetId = targetId;
+    }
+
+    public UserScrap setScrapStatus(boolean status){
+        this.status = status;
+        return this;
+    }
+
 }
