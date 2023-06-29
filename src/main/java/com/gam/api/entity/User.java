@@ -1,8 +1,6 @@
 package com.gam.api.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.GenerationType.IDENTITY;
+
 
 @Getter
 @Setter
@@ -65,11 +64,25 @@ public class User {
     @Column(name = "view_count")
     private int viewCount;
 
+    @Column(name = "refresh_token")
+    private String refreshToken;
+
     @OneToMany(mappedBy = "userScrap")
     List<UserScrap> userScraps = new ArrayList<>();
 
     @OneToMany(mappedBy = "userWork")
     List<Work> works = new ArrayList<>();
+
+    @Builder
+    public User(Role role) {
+        this.role = role;
+        this.scrapCount = 0;
+        this.viewCount = 0;
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }
 
 
