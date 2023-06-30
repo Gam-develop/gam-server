@@ -68,7 +68,7 @@ public class User {
     @Column(name = "refresh_token")
     private String refreshToken;
 
-    @Where(clause = "status=true")
+    @Where(clause = "status = true")
     @OneToMany(mappedBy = "userScrap")
     List<UserScrap> userScraps = new ArrayList<>();
 
