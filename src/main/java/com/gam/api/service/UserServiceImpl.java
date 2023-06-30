@@ -20,18 +20,18 @@ import static com.gam.api.common.message.ExceptionMessage.NOT_MATCH_DB_SCRAP_STA
 
 
 @RequiredArgsConstructor
-@Transactional
 @Service
 public class UserServiceImpl implements UserService {
     private final UserScrapRepository userScrapRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     @Override
     public UserScrapResponseDto postUserScrap(Long userId, UserScrapRequestDto request) {
         User targetUser = userRepository.findById(request.targetUserId())
-                .orElseThrow(()-> new EntityNotFoundException(NOT_FOUND_USER.getName()));
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_USER.getName()));
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new EntityNotFoundException(NOT_FOUND_USER.getName()));
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_USER.getName()));
 
         Optional<UserScrap> userScrap = userScrapRepository.findByUserScrap_idAndTargetId(userId, targetUser.getId());
         if (userScrap.isPresent()) {
@@ -45,14 +45,15 @@ public class UserServiceImpl implements UserService {
             return UserScrapResponseDto.of(targetUser.getId(), targetUser.getUserName(), userScrap.get().isStatus());
         }
         createUserScrap(user, targetUser.getId(), targetUser);
+
         return UserScrapResponseDto.of(targetUser.getId(), targetUser.getUserName(), true);
     }
+
     private void createUserScrap(User user, Long targetId, User targetUser){
-        userScrapRepository.save(
-                UserScrap.builder()
-                        .userScrap(user)
-                        .targetId(targetId)
-                        .build());
+        userScrapRepository.save(UserScrap.builder()
+                            .userScrap(user)
+                            .targetId(targetId)
+                            .build());
         targetUser.scrapCountUp();
     }
     private void chkClientAndDBStatus(boolean requestStatus, boolean DBStatus){
@@ -60,6 +61,4 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException(NOT_MATCH_DB_SCRAP_STATUS.getName());
         }
     }
-
-
 }
