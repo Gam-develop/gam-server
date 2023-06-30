@@ -43,8 +43,9 @@ public class UserController {
 
 
     private Long getUser(Principal principal){
-        if (isNull(principal.getName()))
+        if (isNull(principal.getName())) {
             throw new IllegalArgumentException(NOT_FOUND_USER.getName());
+        }
         return Long.valueOf(principal.getName());
     }
 }
