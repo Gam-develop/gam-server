@@ -10,6 +10,7 @@ import com.gam.api.repository.UserRepository;
 import com.gam.api.service.UserService;
 import com.gam.api.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,8 +34,8 @@ public class UserController {
 
     @PostMapping("/scrap")
     ResponseEntity<ApiResponse> postUserScrap(Principal principal, @RequestBody UserScrapRequestDto request){
-        Long userId = getUser(principal);
-        UserScrapResponseDto response = userService.postUserScrap(userId, request);
+        val userId = getUser(principal);
+        val response = userService.postUserScrap(userId, request);
         if (response.userScrap()){
             return ResponseEntity.ok(ApiResponse.success(SUCCESS_USER_SCRAP.getMessage(),response));
         }
