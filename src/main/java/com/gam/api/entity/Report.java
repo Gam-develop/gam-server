@@ -12,24 +12,22 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Setter
 @NoArgsConstructor
 @Entity
-public class WorkScrap {
-
+@Table(name = "\"Report\"")
+public class Report {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "work_scrap_id")
+    @Column(name = "report_id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "work_id")
-    private Work work;
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private ReportStatus status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "status")
-    private boolean status;
-
-    @Column(name = "target_id")
-    private Long targetId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "work_id")
+    private Work work;
 }

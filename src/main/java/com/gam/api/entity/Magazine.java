@@ -15,6 +15,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Setter
 @NoArgsConstructor
 @Entity
+@Table(name = "\"Magazine\"")
 public class Magazine {
 
     @Id
@@ -22,12 +23,31 @@ public class Magazine {
     @Column(name = "magazine_id")
     private Long id;
 
-    @Column(name = "contents")
-    private String content;
+    @Column(name = "thumb_nail")
+    private String thumbNail;
+
+    @Column(name = "title")
+    private String magazineTitle;
+
+    @Column(name = "introduction")
+    private String introduction;
+
+    @Column(name = "interview_person")
+    private String interviewPerson;
 
     @Column(name = "view_count")
-    private int viewCount;
+    private Long viewCount;
+
+    @Column(name = "scrap_count")
+    private int scrapCount;
 
     @OneToMany(mappedBy = "magazine")
-    private List<MagazineScrap> magazineScraps = new ArrayList<>();
+    private List<MagazinePhoto> magazinePhotos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "magazine")
+    private List<Question> questions = new ArrayList<>();
+
+    @OneToOne(mappedBy = "magazine")
+    private MagazineScrap magazineScraps;
+
 }

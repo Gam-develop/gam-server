@@ -12,6 +12,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Setter
 @NoArgsConstructor
 @Entity
+@Table(name = "\"MagazineScrap\"")
 public class MagazineScrap {
 
     @Id
@@ -19,22 +20,13 @@ public class MagazineScrap {
     @Column(name = "magazine_scrap_id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "magazine_id")
-    private Magazine magazine;
-
-    @Column(name = "thumb_nail")
-    private String thumbNail;
-
-    @Column(name = "author")
-    private String author;
-
-    @Column(name = "title")
-    private String title;
-
     @Column(name = "status")
     private boolean status;
 
-    @Column(name = "owner_id")
-    private Long owner_id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "magazine_id")
+    private Magazine magazine;
 }
