@@ -56,7 +56,6 @@ public class UserServiceImpl implements UserService {
         val user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_USER.getMessage()));
         user.setAdditionalLink(request.externalLink());
-        userRepository.save(user);
         return UserExternalLinkResponseDto.of(user.getAdditionalLink());
     }
 
