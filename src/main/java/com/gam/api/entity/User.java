@@ -19,7 +19,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "\"User\"")
 public class User {
 
     @Id
@@ -92,8 +91,6 @@ public class User {
     }
     public void scrapCountUp(){ this.scrapCount += 1; }
     public void scrapCountDown(){ this.scrapCount -= 1; }
-
-
 }
 
 
