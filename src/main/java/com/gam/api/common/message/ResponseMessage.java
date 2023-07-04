@@ -19,7 +19,8 @@ public enum ResponseMessage {
 
     /** user **/
     SUCCESS_USER_SCRAP("유저 스크랩 성공"),
-    SUCCESS_USER_DELETE_SCRAP("유저 스크랩 취소 성공");
+    SUCCESS_USER_DELETE_SCRAP("유저 스크랩 취소 성공"),
+    SUCCESS_UPDATE_EXTERNAL_LINK("유저 외부 링크 수정 성공");
 
     private final String message;
 }
