@@ -1,15 +1,14 @@
 package com.gam.api.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+
+import java.util.Objects;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "\"Work\"")
@@ -19,9 +18,6 @@ public class Work {
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "work_id")
     private Long id;
-
-    @Column(name = "thumb_nail")
-    private String thumbNail;
 
     @Column(name = "title")
     private String title;
@@ -41,4 +37,21 @@ public class Work {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Builder
+    public Work(User user, String title, String detail, String photoUrl) {
+        setUser(user);
+        this.title = title;
+        this.detail = detail;
+        this.photoUrl = photoUrl;
+        this.viewCount = 0;
+    }
+
+    private void setUser(User user) {
+        if (Objects.nonNull(this.user)) {
+            this.user.getWorks().remove(this);
+        }
+        this.user = user;
+        user.getWorks().add(this);
+    }
 }
