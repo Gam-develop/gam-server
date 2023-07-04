@@ -34,7 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             val isTokenAvailable = checkJwtAvailable(token);
 
             if (Objects.isNull(token)) {
-                throw new RuntimeException(ExceptionMessage.EMPTY_TOKEN.getName());
+                throw new RuntimeException(ExceptionMessage.EMPTY_TOKEN.getMessage());
             }
 
             if (isTokenAvailable) {

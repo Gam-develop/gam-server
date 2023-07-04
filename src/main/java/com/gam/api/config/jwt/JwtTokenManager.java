@@ -72,11 +72,11 @@ public class JwtTokenManager {
 
             val now = LocalDateTime.now(KST);
             val exp = claims.getExpiration().toInstant().atZone(KST).toLocalDateTime();
-            if (exp.isBefore(now)) throw new RuntimeException(ExceptionMessage.EXPIRED_TOKEN.getName());
+            if (exp.isBefore(now)) throw new RuntimeException(ExceptionMessage.EXPIRED_TOKEN.getMessage());
 
             return Long.parseLong(claims.getSubject());
         } catch (SignatureException e) {
-            throw new RuntimeException(ExceptionMessage.INVALID_SIGNATURE.getName());
+            throw new RuntimeException(ExceptionMessage.INVALID_SIGNATURE.getMessage());
         }
     }
 

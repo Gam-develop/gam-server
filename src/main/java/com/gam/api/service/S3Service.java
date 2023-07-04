@@ -1,6 +1,6 @@
 package com.gam.api.service;
 
-import com.gam.api.common.ExceptionMessage;
+import com.gam.api.common.message.*;
 import com.gam.api.config.S3Config;
 import com.gam.api.dto.image.PresignedRequestDTO;
 import com.gam.api.dto.image.PresignedResponseDTO;
@@ -47,7 +47,7 @@ public class S3Service {
         val contentType = "image/" + extension;
 
         if (!imageFileExtension.contains(extension)) {
-            throw new RuntimeException(ExceptionMessage.INVALID_EXTENSION.getName());
+            throw new RuntimeException(ExceptionMessage.INVALID_EXTENSION.getMessage());
         }
 
         val objectRequest = PutObjectRequest.builder()
