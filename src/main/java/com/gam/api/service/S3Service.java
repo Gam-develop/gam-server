@@ -47,7 +47,7 @@ public class S3Service {
         val contentType = "image/" + extension;
 
         if (!imageFileExtension.contains(extension)) {
-            throw new RuntimeException(ExceptionMessage.INVALID_EXTENSION.getMessage());
+            throw new IllegalArgumentException(ExceptionMessage.INVALID_EXTENSION.getMessage());
         }
 
         val objectRequest = PutObjectRequest.builder()
