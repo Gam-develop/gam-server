@@ -1,6 +1,7 @@
 package com.gam.api.entity;
 
 import lombok.*;
+import org.hibernate.annotations.Where;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;
@@ -58,6 +59,7 @@ public class User {
     @Column(name = "refresh_token")
     private String refreshToken;
 
+    @Where(clause = "status = true")
     @OneToMany(mappedBy = "user")
     private List<UserTag> userTag;
 
@@ -88,6 +90,10 @@ public class User {
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
+    public void scrapCountUp(){ this.scrapCount += 1; }
+    public void scrapCountDown(){ this.scrapCount -= 1; }
+
+
 }
 
 
