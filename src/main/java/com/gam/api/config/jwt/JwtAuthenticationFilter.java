@@ -1,8 +1,10 @@
 package com.gam.api.config.jwt;
 
+import com.gam.api.common.exception.AuthException;
 import com.gam.api.common.message.ExceptionMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -34,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             val isTokenAvailable = checkJwtAvailable(token);
 
             if (Objects.isNull(token)) {
-                throw new RuntimeException(ExceptionMessage.EMPTY_TOKEN.getMessage());
+                throw new AuthException(ExceptionMessage.EMPTY_TOKEN.getMessage(), HttpStatus.BAD_REQUEST);
             }
 
             if (isTokenAvailable) {
