@@ -29,11 +29,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserScrapResponseDto scrapUser(Long userId, UserScrapRequestDto request) {
         val targetUser = userRepository.findById(request.targetUserId())
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_USER.getName()));
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_USER.getMessage()));
         val user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_USER.getName()));
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_USER.getMessage()));
 
-        val userScrap = userScrapRepository.findByUserScrap_idAndTargetId(userId, targetUser.getId());
+        val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, targetUser.getId());
         if (userScrap.isPresent()) {
             chkClientAndDBStatus(userScrap.get().isStatus(), request.currentScrapStatus());
 
@@ -51,14 +51,14 @@ public class UserServiceImpl implements UserService {
 
     private void createUserScrap(User user, Long targetId, User targetUser){
         userScrapRepository.save(UserScrap.builder()
-                            .userScrap(user)
+                            .user(user)
                             .targetId(targetId)
                             .build());
         targetUser.scrapCountUp();
     }
     private void chkClientAndDBStatus(boolean requestStatus, boolean DBStatus){
         if (requestStatus!=DBStatus){
-            throw new IllegalArgumentException(NOT_MATCH_DB_SCRAP_STATUS.getName());
+            throw new IllegalArgumentException(NOT_MATCH_DB_SCRAP_STATUS.getMessage());
         }
     }
 }
