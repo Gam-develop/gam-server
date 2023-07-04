@@ -47,6 +47,13 @@ public class Work {
         this.viewCount = 0;
     }
 
+    public boolean isOwner(Long userId) {
+        if(!user.getId().equals(userId)) {
+            return false;
+        }
+        return true;
+    }
+
     private void setUser(User user) {
         if (Objects.nonNull(this.user)) {
             this.user.getWorks().remove(this);
