@@ -1,6 +1,6 @@
 package com.gam.api.config.jwt;
 
-import com.gam.api.common.ExceptionMessage;
+import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.config.AuthConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

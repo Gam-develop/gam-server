@@ -1,6 +1,6 @@
 package com.gam.api.controller;
 
-import com.gam.api.common.ResponseMessage;
+import com.gam.api.common.message.ResponseMessage;
 import com.gam.api.dto.image.PresignedRequestDTO;
 import com.gam.api.service.S3Service;
 import lombok.RequiredArgsConstructor;

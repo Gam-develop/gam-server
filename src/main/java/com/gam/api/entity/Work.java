@@ -12,6 +12,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Setter
 @NoArgsConstructor
 @Entity
+@Table(name = "\"Work\"")
 public class Work {
 
     @Id
@@ -19,12 +20,8 @@ public class Work {
     @Column(name = "work_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User userWork;
-
-    @Column(name = "thumbnail")
-    private String thumbnail;
+    @Column(name = "thumb_nail")
+    private String thumbNail;
 
     @Column(name = "title")
     private String title;
@@ -32,6 +29,16 @@ public class Work {
     @Column(name = "detail")
     private String detail;
 
+    @Column(name = "photo_url")
+    private String photoUrl;
+
     @Column(name = "view_count")
     private int viewCount;
+
+    @OneToOne(mappedBy = "work")
+    private Report report;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

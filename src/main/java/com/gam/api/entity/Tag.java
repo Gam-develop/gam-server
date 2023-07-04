@@ -1,5 +1,6 @@
 package com.gam.api.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,21 +13,17 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "\"MagazineScrap\"")
-public class MagazineScrap {
-
+@Table(name = "\"Tag\"")
+public class Tag {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "magazine_scrap_id")
-    private Long id;
+    @Column(name = "tag_id")
+    private int id;
 
-    @Column(name = "status")
-    private boolean status;
+    @Column(name = "tag_name")
+    private String tagName;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "magazine_id")
-    private Magazine magazine;
+    @JoinColumn(name = "user_tag_id")
+    private UserTag userTag;
 }
