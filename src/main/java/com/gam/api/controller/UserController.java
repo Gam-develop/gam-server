@@ -42,6 +42,13 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_EXTERNAL_LINK.getMessage(), response));
     }
 
+    @GetMapping("/my/profile")
+    ResponseEntity<ApiResponse> getMyProfile(Principal principal){
+        val userId = getUser(principal);
+        val response = userService.getMyProfile(userId);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_MY_PROFILE.getMessage(), response));
+    }
+
     private Long getUser(Principal principal){
         if (isNull(principal.getName())) {
             throw new IllegalArgumentException(ExceptionMessage.NOT_FOUND_USER.getMessage());

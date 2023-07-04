@@ -4,6 +4,7 @@ import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.user.request.UserExternalLinkRequestDto;
 import com.gam.api.dto.user.request.UserScrapRequestDto;
 import com.gam.api.dto.user.response.UserExternalLinkResponseDto;
+import com.gam.api.dto.user.response.UserMyProfileResponse;
 import com.gam.api.dto.user.response.UserScrapResponseDto;
 import com.gam.api.entity.User;
 import com.gam.api.entity.UserScrap;
@@ -57,6 +58,13 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_USER.getMessage()));
         user.setAdditionalLink(request.externalLink());
         return UserExternalLinkResponseDto.of(user.getAdditionalLink());
+    }
+
+    @Override
+    public UserMyProfileResponse getMyProfile(Long userId){
+        val user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_USER.getMessage()));
+        return UserMyProfileResponse.of(user);
     }
 
     private void createUserScrap(User user, Long targetId, User targetUser){
