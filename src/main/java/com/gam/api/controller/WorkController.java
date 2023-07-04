@@ -3,6 +3,7 @@ package com.gam.api.controller;
 import com.gam.api.common.util.AuthCommon;
 import com.gam.api.common.message.ResponseMessage;
 import com.gam.api.dto.work.request.WorkCreateRequestDTO;
+import com.gam.api.dto.work.request.WorkDeleteRequestDTO;
 import com.gam.api.service.WorkService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -23,6 +24,13 @@ public class WorkController {
     public ResponseEntity<ApiResponse> createWork(Principal principal, @RequestBody WorkCreateRequestDTO request) {
         val userId = AuthCommon.getUser(principal);
         val response = workService.createWork(userId, request);
-        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_LOGIN_UP.getMessage(), response));
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_CREATE_WORK.getMessage(), response));
+    }
+
+    @DeleteMapping("")
+    public ResponseEntity<ApiResponse> deleteWork(Principal principal, @RequestBody WorkDeleteRequestDTO request) {
+        val userId = AuthCommon.getUser(principal);
+        val response = workService.deleteWork(userId, request);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_DELETE_WORK.getMessage(), response));
     }
 }

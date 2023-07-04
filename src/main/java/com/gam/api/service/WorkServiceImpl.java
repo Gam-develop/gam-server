@@ -3,7 +3,8 @@ package com.gam.api.service;
 import com.gam.api.common.exception.WorkException;
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.work.request.WorkCreateRequestDTO;
-import com.gam.api.dto.work.response.WorkCreateResponseDTO;
+import com.gam.api.dto.work.request.WorkDeleteRequestDTO;
+import com.gam.api.dto.work.response.WorkResponseDTO;
 import com.gam.api.entity.Work;
 import com.gam.api.repository.UserRepository;
 import com.gam.api.repository.WorkRepository;
@@ -22,7 +23,7 @@ public class WorkServiceImpl implements WorkService {
     private final UserRepository userRepository;
 
     @Override
-    public WorkCreateResponseDTO createWork(Long userId, WorkCreateRequestDTO request) {
+    public WorkResponseDTO createWork(Long userId, WorkCreateRequestDTO request) {
         val user = userRepository.getUserById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
 
@@ -38,6 +39,22 @@ public class WorkServiceImpl implements WorkService {
                 .user(user)
                 .build());
 
-        return WorkCreateResponseDTO.of(work.getId());
+        return WorkResponseDTO.of(work.getId());
+    }
+
+    @Override
+    public WorkResponseDTO deleteWork(Long userId, WorkDeleteRequestDTO request) {
+        val workId = request.workId();
+
+        val work = workRepository.getWorkById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
+
+        if (!work.isOwner(userId)) {
+            throw new WorkException(ExceptionMessage.NOT_WORK_OWNER.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
+        workRepository.deleteById(workId);
+
+        return WorkResponseDTO.of(workId);
     }
 }
