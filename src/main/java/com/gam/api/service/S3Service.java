@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class S3Service {
     private final S3Config s3Config;
-
     private final S3Presigner s3Presigner;
     private final String workBucketPath = "work/";
     private final ArrayList<String> imageFileExtension =
