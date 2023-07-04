@@ -1,5 +1,6 @@
 package com.gam.api.config.jwt;
 
+import com.gam.api.common.exception.AuthException;
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.config.AuthConfig;
 import io.jsonwebtoken.Claims;
@@ -9,6 +10,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -72,11 +74,11 @@ public class JwtTokenManager {
 
             val now = LocalDateTime.now(KST);
             val exp = claims.getExpiration().toInstant().atZone(KST).toLocalDateTime();
-            if (exp.isBefore(now)) throw new RuntimeException(ExceptionMessage.EXPIRED_TOKEN.getMessage());
+            if (exp.isBefore(now)) throw new AuthException(ExceptionMessage.EXPIRED_TOKEN.getMessage(), HttpStatus.UNAUTHORIZED);
 
             return Long.parseLong(claims.getSubject());
         } catch (SignatureException e) {
-            throw new RuntimeException(ExceptionMessage.INVALID_SIGNATURE.getMessage());
+            throw new AuthException(ExceptionMessage.INVALID_SIGNATURE.getMessage(),HttpStatus.BAD_REQUEST);
         }
     }
 
