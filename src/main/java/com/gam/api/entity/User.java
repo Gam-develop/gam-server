@@ -2,6 +2,7 @@ package com.gam.api.entity;
 
 import lombok.*;
 import org.hibernate.annotations.Where;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,6 +30,10 @@ public class User {
     @Column(name = "user_name")
     private String userName;
 
+    @Column(name = "user_status")
+    @Enumerated(EnumType.STRING)
+    private UserStatus userStatus;
+
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -42,24 +47,10 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @Column(name= "behance")
-    private String behance;
-
-    @Column(name = "instagram")
-    private String instagram;
-
-    @OneToOne
-    @JoinColumn(name = "user_tag_id")
-    private UserTag userTag;
-
-    @OneToOne
-    @JoinColumn(name= "filter_tag_id")
-    private FilterTag filterTag;
-
     @Column(name = "additional_link")
     private String additionalLink;
 
-    @Column(name = "scarp_count")
+    @Column(name = "scrap_count")
     private int scrapCount;
 
     @Column(name = "view_count")
@@ -69,11 +60,25 @@ public class User {
     private String refreshToken;
 
     @Where(clause = "status = true")
-    @OneToMany(mappedBy = "userScrap")
+    @OneToMany(mappedBy = "user")
+    private List<UserTag> userTag;
+
+    @OneToMany(mappedBy = "user")
     List<UserScrap> userScraps = new ArrayList<>();
 
-    @OneToMany(mappedBy = "userWork")
+    @OneToMany(mappedBy = "user")
+    List<MagazineScrap> magazineScraps = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
     List<Work> works = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Report> reports;
+
+    @Type(type = "list-array")
+    @Column(name = "tag",
+            columnDefinition = "integer[]")
+    private List<Integer> tags;
 
     @Builder
     public User(Role role) {

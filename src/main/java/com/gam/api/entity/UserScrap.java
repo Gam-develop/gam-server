@@ -14,6 +14,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Setter
 @NoArgsConstructor
 @Entity
+@Table(name = "\"UserScrap\"")
 public class UserScrap {
 
     @Id
@@ -21,15 +22,15 @@ public class UserScrap {
     @Column(name = "user_scrap_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User userScrap;
-
     @Column(name = "status")
     private boolean status;
 
     @Column(name = "target_id")
     private Long targetId;
+  
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Builder
     public UserScrap(User userScrap, Long targetId) {
@@ -42,5 +43,4 @@ public class UserScrap {
         this.status = status;
         return this;
     }
-
 }

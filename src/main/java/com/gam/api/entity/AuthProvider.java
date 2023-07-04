@@ -14,13 +14,14 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @Builder
+@Table(name = "\"AuthProvider\"")
 public class AuthProvider {
 
     @Id
     @Column(name = "auth_provider_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

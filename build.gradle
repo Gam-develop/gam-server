@@ -38,6 +38,10 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+
+	// postgers int[] 관련
+	implementation 'io.hypersistence:hypersistence-utils-hibernate-5:3.5.0'
+
 }
 
 tasks.named('test') {
