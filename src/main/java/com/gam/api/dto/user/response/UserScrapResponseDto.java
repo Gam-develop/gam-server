@@ -1,6 +1,5 @@
-package com.gam.api.dto.user;
+package com.gam.api.dto.user.response;
 
-import com.gam.api.repository.UserScrapRepository;
 import lombok.Builder;
 
 

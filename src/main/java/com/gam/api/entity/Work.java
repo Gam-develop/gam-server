@@ -20,9 +20,6 @@ public class Work {
     @Column(name = "work_id")
     private Long id;
 
-    @Column(name = "thumb_nail")
-    private String thumbNail;
-
     @Column(name = "title")
     private String title;
 

@@ -1,8 +1,10 @@
 package com.gam.api.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gam.api.dto.user.UserScrapRequestDto;
-import com.gam.api.dto.user.UserScrapResponseDto;
+import com.gam.api.common.message.ExceptionMessage;
+import com.gam.api.dto.user.request.UserExternalLinkRequestDto;
+import com.gam.api.dto.user.request.UserScrapRequestDto;
+import com.gam.api.dto.user.response.UserExternalLinkResponseDto;
+import com.gam.api.dto.user.response.UserScrapResponseDto;
 import com.gam.api.entity.User;
 import com.gam.api.entity.UserScrap;
 import com.gam.api.repository.UserRepository;
@@ -13,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Optional;
 
 import static com.gam.api.common.message.ExceptionMessage.NOT_FOUND_USER;
 import static com.gam.api.common.message.ExceptionMessage.NOT_MATCH_DB_SCRAP_STATUS;
@@ -47,6 +48,16 @@ public class UserServiceImpl implements UserService {
         createUserScrap(user, targetUser.getId(), targetUser);
 
         return UserScrapResponseDto.of(targetUser.getId(), targetUser.getUserName(), true);
+    }
+
+    @Transactional
+    @Override
+    public UserExternalLinkResponseDto updateExternalLink(Long userId, UserExternalLinkRequestDto request){
+        val user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_USER.getMessage()));
+        user.setAdditionalLink(request.externalLink());
+        userRepository.save(user);
+        return UserExternalLinkResponseDto.of(user.getAdditionalLink());
     }
 
     private void createUserScrap(User user, Long targetId, User targetUser){
