@@ -33,9 +33,9 @@ public class UserController {
     private final UserServiceImpl userService;
 
     @PostMapping("/scrap")
-    ResponseEntity<ApiResponse> postUserScrap(Principal principal, @RequestBody UserScrapRequestDto request){
+    ResponseEntity<ApiResponse> scrapUser(Principal principal, @RequestBody UserScrapRequestDto request){
         val userId = getUser(principal);
-        val response = userService.postUserScrap(userId, request);
+        val response = userService.scrapUser(userId, request);
         if (response.userScrap()){
             return ResponseEntity.ok(ApiResponse.success(SUCCESS_USER_SCRAP.getMessage(),response));
         }

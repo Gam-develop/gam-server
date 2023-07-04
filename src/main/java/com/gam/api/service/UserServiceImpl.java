@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserScrapResponseDto postUserScrap(Long userId, UserScrapRequestDto request) {
+    public UserScrapResponseDto scrapUser(Long userId, UserScrapRequestDto request) {
         val targetUser = userRepository.findById(request.targetUserId())
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_USER.getName()));
         val user = userRepository.findById(userId)
