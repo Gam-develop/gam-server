@@ -27,6 +27,20 @@ public class S3Service {
             new ArrayList<>(List.of("jpg", "jpeg", "png", "JPG", "JPEG", "PNG"));
 
     public PresignedResponseDTO getPresignedUrl(String fileName) {
+        return createPresignedUrl(fileName);
+    }
+
+    public List<PresignedResponseDTO> getPresignedUrls(PresignedRequestDTO presignedRequestDTO) {
+        val fileNames = presignedRequestDTO.fileNames();
+
+        val preSignedUrls = fileNames.stream()
+                .map(fileName -> createPresignedUrl(fileName))
+                .collect(Collectors.toList());
+
+        return preSignedUrls;
+    }
+
+    private PresignedResponseDTO createPresignedUrl(String fileName) {
         val keyName = workBucketPath + UUID.randomUUID() + fileName;
         val splitFileName = fileName.split("\\.");
         val extension = splitFileName[splitFileName.length-1];
@@ -51,15 +65,5 @@ public class S3Service {
         val signedUrl = presignedRequest.url().toString();
 
         return PresignedResponseDTO.of(signedUrl, keyName);
-    }
-
-    public List<PresignedResponseDTO> getPresignedUrls(PresignedRequestDTO presignedRequestDTO) {
-        val fileNames = presignedRequestDTO.fileNames();
-
-        val preSignedUrls = fileNames.stream()
-                .map(fileName -> this.getPresignedUrl(fileName))
-                .collect(Collectors.toList());
-
-        return preSignedUrls;
     }
 }
