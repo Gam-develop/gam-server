@@ -33,8 +33,8 @@ public class UserScrap {
     private User user;
 
     @Builder
-    public UserScrap(User userScrap, Long targetId) {
-            this.userScrap = userScrap;
+    public UserScrap(User user, Long targetId) {
+            this.user = user;
             this.status = true;
             this.targetId = targetId;
     }

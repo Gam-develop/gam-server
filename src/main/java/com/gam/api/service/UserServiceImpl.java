@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
         val user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_USER.getMessage()));
 
-        val userScrap = userScrapRepository.findByUserScrap_idAndTargetId(userId, targetUser.getId());
+        val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, targetUser.getId());
         if (userScrap.isPresent()) {
             chkClientAndDBStatus(userScrap.get().isStatus(), request.currentScrapStatus());
 
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
 
     private void createUserScrap(User user, Long targetId, User targetUser){
         userScrapRepository.save(UserScrap.builder()
-                            .userScrap(user)
+                            .user(user)
                             .targetId(targetId)
                             .build());
         targetUser.scrapCountUp();
