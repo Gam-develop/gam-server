@@ -1,5 +1,9 @@
 package com.gam.api.entity;
 
+import com.gam.api.entity.superclass.TimeStamped;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,7 +16,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @NoArgsConstructor
 @Entity
 @Table(name = "\"Work\"")
-public class Work {
+public class Work extends TimeStamped {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)

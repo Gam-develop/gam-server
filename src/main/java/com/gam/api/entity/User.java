@@ -1,5 +1,6 @@
 package com.gam.api.entity;
 
+import com.gam.api.entity.superclass.TimeStamped;
 import io.hypersistence.utils.hibernate.type.array.IntArrayType;
 import lombok.*;
 import org.hibernate.annotations.TypeDef;
@@ -23,7 +24,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Entity
 @Table(name = "\"User\"")
 @TypeDef(name = "int-array", typeClass = IntArrayType.class)
-public class User {
+public class User extends TimeStamped {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -93,7 +94,9 @@ public class User {
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
+
     public void scrapCountUp(){ this.scrapCount += 1; }
+
     public void scrapCountDown(){ this.scrapCount -= 1; }
 }
 
