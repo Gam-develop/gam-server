@@ -1,4 +1,4 @@
-package com.gam.api.service;
+package com.gam.api.service.user;
 
 import com.gam.api.dto.user.request.UserExternalLinkRequestDto;
 import com.gam.api.dto.user.request.UserScrapRequestDto;

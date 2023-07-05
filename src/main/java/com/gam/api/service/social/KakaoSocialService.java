@@ -1,4 +1,4 @@
-package com.gam.api.service;
+package com.gam.api.service.social;
 
 import com.gam.api.config.AuthConfig;
 import com.gam.api.config.jwt.JwtTokenManager;

@@ -92,8 +92,6 @@ public class User {
     }
     public void scrapCountUp(){ this.scrapCount += 1; }
     public void scrapCountDown(){ this.scrapCount -= 1; }
-
-
 }
 
 
