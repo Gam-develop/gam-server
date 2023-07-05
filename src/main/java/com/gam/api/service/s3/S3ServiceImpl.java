@@ -1,9 +1,8 @@
-package com.gam.api.service;
+package com.gam.api.service.s3;
 
 import com.gam.api.common.exception.AwsException;
 import com.gam.api.common.message.*;
 import com.gam.api.config.S3Config;
-import com.gam.api.dto.s3.request.ImageDeleteRequestDTO;
 import com.gam.api.dto.s3.request.PresignedRequestDTO;
 import com.gam.api.dto.s3.response.PresignedResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class S3Service {
+public class S3ServiceImpl implements S3Service {
     private final S3Config s3Config;
     private final S3Presigner s3Presigner;
     private final S3Client s3Client;
@@ -34,10 +33,12 @@ public class S3Service {
     private final ArrayList<String> imageFileExtension =
             new ArrayList<>(List.of("jpg", "jpeg", "png", "JPG", "JPEG", "PNG"));
 
+    @Override
     public PresignedResponseDTO getPresignedUrl(String fileName) {
         return createPresignedUrl(fileName);
     }
 
+    @Override
     public List<PresignedResponseDTO> getPresignedUrls(PresignedRequestDTO presignedRequestDTO) {
         val fileNames = presignedRequestDTO.fileNames();
 
@@ -48,12 +49,11 @@ public class S3Service {
         return preSignedUrls;
     }
 
-    public void getDeletePresignedUrl(ImageDeleteRequestDTO imageDeleteRequestDTO) {
-        val keyName = imageDeleteRequestDTO.fileName();
-
+    @Override
+    public void deleteS3Image(String fileName) {
         val deleteObjectRequest = DeleteObjectRequest.builder()
                 .bucket(s3Config.getBucketName())
-                .key(keyName)
+                .key(fileName)
                 .build();
 
         try {
