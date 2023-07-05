@@ -1,6 +1,5 @@
-package com.gam.api.service;
+package com.gam.api.service.user;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gam.api.dto.user.UserScrapRequestDto;
 import com.gam.api.dto.user.UserScrapResponseDto;
 import com.gam.api.entity.User;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Optional;
 
 import static com.gam.api.common.message.ExceptionMessage.NOT_FOUND_USER;
 import static com.gam.api.common.message.ExceptionMessage.NOT_MATCH_DB_SCRAP_STATUS;

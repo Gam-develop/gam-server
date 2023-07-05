@@ -1,4 +1,4 @@
-package com.gam.api.service;
+package com.gam.api.service.work;
 
 import com.gam.api.dto.work.request.WorkCreateRequestDTO;
 import com.gam.api.dto.work.request.WorkDeleteRequestDTO;

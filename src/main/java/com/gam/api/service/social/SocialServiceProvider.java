@@ -1,4 +1,4 @@
-package com.gam.api.service;
+package com.gam.api.service.social;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

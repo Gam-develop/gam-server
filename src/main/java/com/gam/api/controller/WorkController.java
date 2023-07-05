@@ -4,7 +4,7 @@ import com.gam.api.common.util.AuthCommon;
 import com.gam.api.common.message.ResponseMessage;
 import com.gam.api.dto.work.request.WorkCreateRequestDTO;
 import com.gam.api.dto.work.request.WorkDeleteRequestDTO;
-import com.gam.api.service.WorkService;
+import com.gam.api.service.work.WorkService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.ResponseEntity;

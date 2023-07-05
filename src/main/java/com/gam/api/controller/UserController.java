@@ -4,7 +4,7 @@ import com.gam.api.common.message.*;
 import com.gam.api.common.ApiResponse;
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.user.UserScrapRequestDto;
-import com.gam.api.service.UserServiceImpl;
+import com.gam.api.service.user.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.ResponseEntity;
