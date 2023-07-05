@@ -1,4 +1,4 @@
-package com.gam.api.dto.image;
+package com.gam.api.dto.s3.response;
 
 import lombok.Builder;
 

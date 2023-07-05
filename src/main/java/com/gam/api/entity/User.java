@@ -1,7 +1,9 @@
 package com.gam.api.entity;
 
 import com.gam.api.entity.superclass.TimeStamped;
+import io.hypersistence.utils.hibernate.type.array.IntArrayType;
 import lombok.*;
+import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.Where;
 import org.hibernate.annotations.Type;
 
@@ -21,6 +23,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @NoArgsConstructor
 @Entity
 @Table(name = "\"User\"")
+@TypeDef(name = "int-array", typeClass = IntArrayType.class)
 public class User extends TimeStamped {
 
     @Id
@@ -76,10 +79,10 @@ public class User extends TimeStamped {
     @OneToMany(mappedBy = "user")
     private List<Report> reports;
 
-    @Type(type = "list-array")
+    @Type(type = "int-array")
     @Column(name = "tag",
             columnDefinition = "integer[]")
-    private List<Integer> tags;
+    private int[] tags;
 
     @Builder
     public User(Role role) {
@@ -91,10 +94,10 @@ public class User extends TimeStamped {
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
+
     public void scrapCountUp(){ this.scrapCount += 1; }
+
     public void scrapCountDown(){ this.scrapCount -= 1; }
-
-
 }
 
 

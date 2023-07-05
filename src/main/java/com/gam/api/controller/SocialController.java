@@ -1,7 +1,7 @@
 package com.gam.api.controller;
 
 import com.gam.api.common.message.ResponseMessage;
-import com.gam.api.service.SocialServiceProvider;
+import com.gam.api.service.social.SocialServiceProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.ResponseEntity;

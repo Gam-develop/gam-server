@@ -4,13 +4,15 @@ import com.gam.api.entity.superclass.TimeStamped;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+
+import java.util.Objects;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "\"Work\"")
@@ -39,4 +41,28 @@ public class Work extends TimeStamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Builder
+    public Work(User user, String title, String detail, String photoUrl) {
+        setUser(user);
+        this.title = title;
+        this.detail = detail;
+        this.photoUrl = photoUrl;
+        this.viewCount = 0;
+    }
+
+    public boolean isOwner(Long userId) {
+        if(!user.getId().equals(userId)) {
+            return false;
+        }
+        return true;
+    }
+
+    private void setUser(User user) {
+        if (Objects.nonNull(this.user)) {
+            this.user.getWorks().remove(this);
+        }
+        this.user = user;
+        user.getWorks().add(this);
+    }
 }
