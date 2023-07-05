@@ -16,6 +16,7 @@ public enum ResponseMessage {
     /** s3 **/
     SUCCESS_GET_PRESIGNED_URL("단일 이미지 업로드 URL 가져오기 성공"),
     SUCCESS_GET_PRESIGNED_URLS("다중 이미지 업로드 URL 가져오기 성공"),
+    SUCCESS_DELETE_IMAGE("이미지 삭제 성공"),
 
     /** user **/
     SUCCESS_USER_SCRAP("유저 스크랩 성공"),
