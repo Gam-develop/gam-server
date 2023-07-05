@@ -19,6 +19,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Setter
 @NoArgsConstructor
 @Entity
+@Table(name = "\"User\"")
 public class User {
 
     @Id
