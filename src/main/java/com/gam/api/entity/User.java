@@ -1,6 +1,8 @@
 package com.gam.api.entity;
 
+import io.hypersistence.utils.hibernate.type.array.IntArrayType;
 import lombok.*;
+import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.Where;
 import org.hibernate.annotations.Type;
 
@@ -20,6 +22,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @NoArgsConstructor
 @Entity
 @Table(name = "\"User\"")
+@TypeDef(name = "int-array", typeClass = IntArrayType.class)
 public class User {
 
     @Id
@@ -75,10 +78,10 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Report> reports;
 
-    @Type(type = "list-array")
+    @Type(type = "int-array")
     @Column(name = "tag",
             columnDefinition = "integer[]")
-    private Integer[] tags;
+    private int[] tags;
 
     @Builder
     public User(Role role) {
@@ -92,10 +95,6 @@ public class User {
     }
     public void scrapCountUp(){ this.scrapCount += 1; }
     public void scrapCountDown(){ this.scrapCount -= 1; }
-    public void addUserTag(UserTag usertag){
-        this.userTag.add(usertag);
-    }
-
 }
 
 
