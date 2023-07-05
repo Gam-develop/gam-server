@@ -1,5 +1,6 @@
 package com.gam.api.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,7 +27,13 @@ public class UserTag {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "userTag")
-    private List<Tag> tags;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tag_id")
+    private Tag tag;
 
+    @Builder
+    public UserTag(User user, Tag tag){
+        this.user = user;
+        this.tag = tag;
+    }
 }

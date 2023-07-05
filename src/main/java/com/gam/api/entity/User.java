@@ -78,7 +78,7 @@ public class User {
     @Type(type = "list-array")
     @Column(name = "tag",
             columnDefinition = "integer[]")
-    private List<Integer> tags;
+    private Integer[] tags;
 
     @Builder
     public User(Role role) {
@@ -92,7 +92,9 @@ public class User {
     }
     public void scrapCountUp(){ this.scrapCount += 1; }
     public void scrapCountDown(){ this.scrapCount -= 1; }
-
+    public void addUserTag(UserTag usertag){
+        this.userTag.add(usertag);
+    }
 
 }
 

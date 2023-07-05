@@ -4,6 +4,7 @@ import com.gam.api.common.message.*;
 import com.gam.api.common.ApiResponse;
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.user.request.UserExternalLinkRequestDto;
+import com.gam.api.dto.user.request.UserProfileUpdateRequestDto;
 import com.gam.api.dto.user.request.UserScrapRequestDto;
 import com.gam.api.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,14 @@ public class UserController {
         val response = userService.updateExternalLink(userId, request);
 
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_EXTERNAL_LINK.getMessage(), response));
+    }
+
+    @PatchMapping("/introduce")
+    ResponseEntity<ApiResponse> updateMyProfile(Principal principal, @RequestBody UserProfileUpdateRequestDto request){
+        val userId = getUser(principal);
+        userService.updateMyProfile(userId, request);
+
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_EXTERNAL_LINK.getMessage(), "냐"));
     }
 
     private Long getUser(Principal principal){
