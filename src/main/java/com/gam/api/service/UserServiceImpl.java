@@ -47,6 +47,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_USER.getMessage()));
 
         val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, targetUser.getId());
+
         if (userScrap.isPresent()) {
             chkClientAndDBStatus(userScrap.get().isStatus(), request.currentScrapStatus());
 
@@ -76,15 +77,19 @@ public class UserServiceImpl implements UserService {
     public UserProfileUpdateResponseDto updateMyProfile(Long userId, UserProfileUpdateRequestDto request){
         val user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_USER.getMessage()));
+
         if (request.userInfo() != null) {
             user.setInfo(request.userInfo());
         }
+
         if (request.userDetail() != null) {
             user.setDetail(request.userDetail());
         }
+
         if (request.email() != null) {
             user.setEmail(request.email());
         }
+
         if (request.tags() != null) {
             val newTags = request.tags();
             val tags = tagRepository.findAll();
@@ -98,6 +103,7 @@ public class UserServiceImpl implements UserService {
             }
            user.setTags(newTags);
         }
+
         return UserProfileUpdateResponseDto.of(user);
     }
 
