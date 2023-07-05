@@ -1,5 +1,6 @@
 package com.gam.api.entity;
 
+import com.gam.api.entity.superclass.TimeStamped;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,7 @@ import javax.persistence.*;
 @Entity
 @Builder
 @Table(name = "\"AuthProvider\"")
-public class AuthProvider {
+public class AuthProvider extends TimeStamped {
 
     @Id
     @Column(name = "auth_provider_id")

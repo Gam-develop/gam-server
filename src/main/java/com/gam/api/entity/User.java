@@ -1,5 +1,6 @@
 package com.gam.api.entity;
 
+import com.gam.api.entity.superclass.TimeStamped;
 import lombok.*;
 import org.hibernate.annotations.Where;
 import org.hibernate.annotations.Type;
@@ -20,7 +21,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @NoArgsConstructor
 @Entity
 @Table(name = "\"User\"")
-public class User {
+public class User extends TimeStamped {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
