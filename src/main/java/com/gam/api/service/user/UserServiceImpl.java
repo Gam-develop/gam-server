@@ -1,7 +1,11 @@
 package com.gam.api.service.user;
 
-import com.gam.api.dto.user.UserScrapRequestDto;
-import com.gam.api.dto.user.UserScrapResponseDto;
+import com.gam.api.common.message.ExceptionMessage;
+import com.gam.api.dto.user.request.UserExternalLinkRequestDto;
+import com.gam.api.dto.user.request.UserScrapRequestDto;
+import com.gam.api.dto.user.response.UserExternalLinkResponseDto;
+import com.gam.api.dto.user.response.UserMyProfileResponse;
+import com.gam.api.dto.user.response.UserScrapResponseDto;
 import com.gam.api.entity.User;
 import com.gam.api.entity.UserScrap;
 import com.gam.api.repository.UserRepository;
@@ -13,10 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 
-import static com.gam.api.common.message.ExceptionMessage.NOT_FOUND_USER;
-import static com.gam.api.common.message.ExceptionMessage.NOT_MATCH_DB_SCRAP_STATUS;
-
-
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
@@ -27,9 +27,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserScrapResponseDto scrapUser(Long userId, UserScrapRequestDto request) {
         val targetUser = userRepository.findById(request.targetUserId())
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_USER.getMessage()));
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
         val user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_USER.getMessage()));
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
 
         val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, targetUser.getId());
         if (userScrap.isPresent()) {
@@ -47,6 +47,22 @@ public class UserServiceImpl implements UserService {
         return UserScrapResponseDto.of(targetUser.getId(), targetUser.getUserName(), true);
     }
 
+    @Transactional
+    @Override
+    public UserExternalLinkResponseDto updateExternalLink(Long userId, UserExternalLinkRequestDto request){
+        val user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
+        user.setAdditionalLink(request.externalLink());
+        return UserExternalLinkResponseDto.of(user.getAdditionalLink());
+    }
+
+    @Override
+    public UserMyProfileResponse getMyProfile(Long userId){
+        val user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
+        return UserMyProfileResponse.of(user);
+    }
+
     private void createUserScrap(User user, Long targetId, User targetUser){
         userScrapRepository.save(UserScrap.builder()
                             .user(user)
@@ -56,7 +72,7 @@ public class UserServiceImpl implements UserService {
     }
     private void chkClientAndDBStatus(boolean requestStatus, boolean DBStatus){
         if (requestStatus!=DBStatus){
-            throw new IllegalArgumentException(NOT_MATCH_DB_SCRAP_STATUS.getMessage());
+            throw new IllegalArgumentException(ExceptionMessage.NOT_MATCH_DB_SCRAP_STATUS.getMessage());
         }
     }
 }
