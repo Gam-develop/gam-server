@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 
 import java.util.List;
+import java.util.Objects;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -33,7 +34,15 @@ public class UserTag {
 
     @Builder
     public UserTag(User user, Tag tag){
-        this.user = user;
+        setUser(user);
         this.tag = tag;
+    }
+
+    private void setUser(User user) {
+        if (Objects.nonNull(this.user)) {
+            this.user.getUserTag().remove(this);
+        }
+        this.user = user;
+        user.getUserTag().add(this);
     }
 }

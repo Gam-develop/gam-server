@@ -50,9 +50,9 @@ public class UserController {
     @PatchMapping("/introduce")
     ResponseEntity<ApiResponse> updateMyProfile(Principal principal, @RequestBody UserProfileUpdateRequestDto request){
         val userId = AuthCommon.getUser(principal);
-        userService.updateMyProfile(userId, request);
+        val response = userService.updateMyProfile(userId, request);
 
-        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_EXTERNAL_LINK.getMessage(), "냐"));
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_EXTERNAL_LINK.getMessage(), response));
     }
 
 }

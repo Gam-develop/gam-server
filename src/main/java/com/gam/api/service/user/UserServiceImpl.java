@@ -42,6 +42,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_USER.getMessage()));
 
         val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, targetUser.getId());
+
         if (userScrap.isPresent()) {
             chkClientAndDBStatus(userScrap.get().isStatus(), request.currentScrapStatus());
 
@@ -65,6 +66,7 @@ public class UserServiceImpl implements UserService {
         user.setAdditionalLink(request.externalLink());
         return UserExternalLinkResponseDto.of(user.getAdditionalLink());
     }
+
     @Transactional
     @Override
     public UserMyProfileResponse getMyProfile(Long userId){
@@ -94,7 +96,9 @@ public class UserServiceImpl implements UserService {
         if (request.tags() != null) {
             val newTags = request.tags();
             val tags = tagRepository.findAll();
+
             userTagRepository.deleteAllByUser_id(userId);
+
             for (Integer tag: newTags) {
                 userTagRepository.save(UserTag.builder()
                         .user(user)
@@ -114,8 +118,9 @@ public class UserServiceImpl implements UserService {
                 .build());
         targetUser.scrapCountUp();
     }
+
     private void chkClientAndDBStatus(boolean requestStatus, boolean DBStatus){
-        if (requestStatus!=DBStatus){
+        if (requestStatus != DBStatus){
             throw new IllegalArgumentException(NOT_MATCH_DB_SCRAP_STATUS.getMessage());
         }
     }
