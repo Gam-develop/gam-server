@@ -1,13 +1,20 @@
 package com.gam.api.service;
 
+import com.gam.api.common.exception.AwsException;
 import com.gam.api.common.message.*;
 import com.gam.api.config.S3Config;
-import com.gam.api.dto.image.PresignedRequestDTO;
-import com.gam.api.dto.image.PresignedResponseDTO;
+import com.gam.api.dto.s3.request.ImageDeleteRequestDTO;
+import com.gam.api.dto.s3.request.PresignedRequestDTO;
+import com.gam.api.dto.s3.response.PresignedResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.core.exception.SdkClientException;
+import software.amazon.awssdk.core.exception.SdkServiceException;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
@@ -22,6 +29,7 @@ import java.util.stream.Collectors;
 public class S3Service {
     private final S3Config s3Config;
     private final S3Presigner s3Presigner;
+    private final S3Client s3Client;
     private final String workBucketPath = "work/";
     private final ArrayList<String> imageFileExtension =
             new ArrayList<>(List.of("jpg", "jpeg", "png", "JPG", "JPEG", "PNG"));
@@ -38,6 +46,22 @@ public class S3Service {
                 .collect(Collectors.toList());
 
         return preSignedUrls;
+    }
+
+    public void getDeletePresignedUrl(ImageDeleteRequestDTO imageDeleteRequestDTO) {
+        val keyName = imageDeleteRequestDTO.fileName();
+
+        val deleteObjectRequest = DeleteObjectRequest.builder()
+                .bucket(s3Config.getBucketName())
+                .key(keyName)
+                .build();
+
+        try {
+            s3Client.deleteObject(deleteObjectRequest);
+        } catch (SdkClientException | SdkServiceException e) {
+            throw new AwsException(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        s3Client.deleteObject(deleteObjectRequest);
     }
 
     private PresignedResponseDTO createPresignedUrl(String fileName) {

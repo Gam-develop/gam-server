@@ -1,7 +1,8 @@
 package com.gam.api.controller;
 
 import com.gam.api.common.message.ResponseMessage;
-import com.gam.api.dto.image.PresignedRequestDTO;
+import com.gam.api.dto.s3.request.ImageDeleteRequestDTO;
+import com.gam.api.dto.s3.request.PresignedRequestDTO;
 import com.gam.api.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -25,5 +26,11 @@ public class S3Controller {
     public ResponseEntity<ApiResponse> getPresignedUrls(@RequestBody PresignedRequestDTO request) {
         val response = s3Service.getPresignedUrls(request);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_PRESIGNED_URLS.getMessage(), response));
+    }
+
+    @DeleteMapping("/image")
+    public ResponseEntity<ApiResponse> getDeletePresignedUrl(@RequestBody ImageDeleteRequestDTO request) {
+        s3Service.getDeletePresignedUrl(request);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_DELETE_IMAGE.getMessage()));
     }
 }
