@@ -92,10 +92,6 @@ public class User {
     }
     public void scrapCountUp(){ this.scrapCount += 1; }
     public void scrapCountDown(){ this.scrapCount -= 1; }
-    public void addUserTag(UserTag usertag){
-        this.userTag.add(usertag);
-    }
-
 }
 
 

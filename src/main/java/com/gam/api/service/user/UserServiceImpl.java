@@ -1,10 +1,10 @@
-package com.gam.api.service;
+package com.gam.api.service.user;
 
-import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.user.request.UserExternalLinkRequestDto;
 import com.gam.api.dto.user.request.UserProfileUpdateRequestDto;
 import com.gam.api.dto.user.request.UserScrapRequestDto;
 import com.gam.api.dto.user.response.UserExternalLinkResponseDto;
+import com.gam.api.dto.user.response.UserMyProfileResponse;
 import com.gam.api.dto.user.response.UserProfileUpdateResponseDto;
 import com.gam.api.dto.user.response.UserScrapResponseDto;
 import com.gam.api.entity.User;
@@ -21,11 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import static com.gam.api.common.message.ExceptionMessage.NOT_FOUND_USER;
 import static com.gam.api.common.message.ExceptionMessage.NOT_MATCH_DB_SCRAP_STATUS;
 
@@ -35,8 +30,8 @@ import static com.gam.api.common.message.ExceptionMessage.NOT_MATCH_DB_SCRAP_STA
 public class UserServiceImpl implements UserService {
     private final UserScrapRepository userScrapRepository;
     private final UserRepository userRepository;
-    private final UserTagRepository userTagRepository;
     private final TagRepository tagRepository;
+    private final UserTagRepository userTagRepository;
 
     @Transactional
     @Override
@@ -70,49 +65,53 @@ public class UserServiceImpl implements UserService {
         user.setAdditionalLink(request.externalLink());
         return UserExternalLinkResponseDto.of(user.getAdditionalLink());
     }
+    @Transactional
+    @Override
+    public UserMyProfileResponse getMyProfile(Long userId){
+        val user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_USER.getMessage()));
+        return UserMyProfileResponse.of(user);
+    }
 
     @Transactional
     @Override
     public UserProfileUpdateResponseDto updateMyProfile(Long userId, UserProfileUpdateRequestDto request){
         val user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_USER.getMessage()));
-        val userTags = userTagRepository.findAllByUser_Id(userId);
-        for (UserTag tag: userTags) {
-            System.out.println(tag.getTag().getId());
-            System.out.println(tag.getTag().getTagName());
-        }
+
         if (request.userInfo() != null) {
             user.setInfo(request.userInfo());
         }
+
         if (request.userDetail() != null) {
             user.setDetail(request.userDetail());
         }
+
         if (request.email() != null) {
             user.setEmail(request.email());
         }
+
         if (request.tags() != null) {
             val newTags = request.tags();
             val tags = tagRepository.findAll();
             userTagRepository.deleteAllByUser_id(userId);
             for (Integer tag: newTags) {
-                user.addUserTag(
-                        UserTag.builder()
+                userTagRepository.save(UserTag.builder()
                         .user(user)
                         .tag(tags.get(tag-1))
                         .build());
-                System.out.println(tags.get(tag-1));
             }
-//            user.setTags(newTags);
-            user.getUserTag();
+            user.setTags(newTags);
         }
-        return null;
+
+        return UserProfileUpdateResponseDto.of(user);
     }
 
     private void createUserScrap(User user, Long targetId, User targetUser){
         userScrapRepository.save(UserScrap.builder()
-                            .user(user)
-                            .targetId(targetId)
-                            .build());
+                .user(user)
+                .targetId(targetId)
+                .build());
         targetUser.scrapCountUp();
     }
     private void chkClientAndDBStatus(boolean requestStatus, boolean DBStatus){
