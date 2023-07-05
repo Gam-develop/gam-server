@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
+import java.util.List;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Getter
@@ -23,7 +25,6 @@ public class Tag {
     @Column(name = "tag_name")
     private String tagName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_tag_id")
-    private UserTag userTag;
+    @OneToMany(mappedBy = "tag")
+    private List<UserTag> userTags;
 }

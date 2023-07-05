@@ -3,8 +3,9 @@ package com.gam.api.controller;
 import com.gam.api.common.message.*;
 import com.gam.api.common.ApiResponse;
 import com.gam.api.common.util.AuthCommon;
-import com.gam.api.service.user.UserServiceImpl;
+import com.gam.api.service.user.UserService;
 import com.gam.api.dto.user.request.UserExternalLinkRequestDto;
+import com.gam.api.dto.user.request.UserProfileUpdateRequestDto;
 import com.gam.api.dto.user.request.UserScrapRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -19,7 +20,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
     @PostMapping("/scrap")
     ResponseEntity<ApiResponse> scrapUser(Principal principal, @RequestBody UserScrapRequestDto request){
@@ -45,4 +46,13 @@ public class UserController {
         val response = userService.getMyProfile(userId);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_MY_PROFILE.getMessage(), response));
     }
+
+    @PatchMapping("/introduce")
+    ResponseEntity<ApiResponse> updateMyProfile(Principal principal, @RequestBody UserProfileUpdateRequestDto request){
+        val userId = AuthCommon.getUser(principal);
+        val response = userService.updateMyProfile(userId, request);
+
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_EXTERNAL_LINK.getMessage(), response));
+    }
+
 }
