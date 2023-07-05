@@ -10,7 +10,7 @@ public record UserProfileUpdateResponseDto(
         String userInfo,
         String userDetail,
         String email,
-        Integer[] tags
+        int[] tags
 ) {
     public static UserProfileUpdateResponseDto of(User user ){
         return UserProfileUpdateResponseDto

@@ -6,6 +6,6 @@ public record UserProfileUpdateRequestDto(
         String userInfo,
         String userDetail,
         String email,
-        Integer[] tags
+        int[] tags
 ) {
 }

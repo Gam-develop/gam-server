@@ -76,11 +76,6 @@ public class UserServiceImpl implements UserService {
     public UserProfileUpdateResponseDto updateMyProfile(Long userId, UserProfileUpdateRequestDto request){
         val user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_USER.getMessage()));
-        val userTags = userTagRepository.findAllByUser_Id(userId);
-        for (UserTag tag: userTags) {
-            System.out.println(tag.getTag().getId());
-            System.out.println(tag.getTag().getTagName());
-        }
         if (request.userInfo() != null) {
             user.setInfo(request.userInfo());
         }
@@ -95,17 +90,15 @@ public class UserServiceImpl implements UserService {
             val tags = tagRepository.findAll();
             userTagRepository.deleteAllByUser_id(userId);
             for (Integer tag: newTags) {
-                user.addUserTag(
+                userTagRepository.save(
                         UserTag.builder()
                         .user(user)
                         .tag(tags.get(tag-1))
                         .build());
-                System.out.println(tags.get(tag-1));
             }
-//            user.setTags(newTags);
-            user.getUserTag();
+           user.setTags(newTags);
         }
-        return null;
+        return UserProfileUpdateResponseDto.of(user);
     }
 
     private void createUserScrap(User user, Long targetId, User targetUser){
