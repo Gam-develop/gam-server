@@ -1,4 +1,4 @@
-package com.gam.api.dto.social;
+package com.gam.api.dto.social.request;
 
 import com.gam.api.entity.ProviderType;
 

@@ -1,4 +1,4 @@
-package com.gam.api.dto.social;
+package com.gam.api.dto.social.response;
 
 import lombok.Builder;
 
