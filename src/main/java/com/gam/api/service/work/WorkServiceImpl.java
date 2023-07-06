@@ -53,7 +53,9 @@ public class WorkServiceImpl implements WorkService {
         val work = workRepository.getWorkById(workId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
 
-        isOwner(work, userId);
+        if (!isOwner(work, userId)) {
+            throw new WorkException(ExceptionMessage.NOT_WORK_OWNER.getMessage(), HttpStatus.BAD_REQUEST);
+        }
 
         val photoUrl = work.getPhotoUrl();
 
@@ -92,7 +94,7 @@ public class WorkServiceImpl implements WorkService {
 
     private boolean isOwner(Work work, Long userId){
         if (!work.isOwner(userId)) {
-            throw new WorkException(ExceptionMessage.NOT_WORK_OWNER.getMessage(), HttpStatus.BAD_REQUEST);
+            return false;
         }
         return true;
     }

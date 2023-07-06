@@ -7,7 +7,7 @@ import lombok.val;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.gam.api.common.ApiResponse;
-import com.gam.api.dto.social.SocialLoginRequestDTO;
+import com.gam.api.dto.social.request.SocialLoginRequestDTO;
 
 @RestController
 @RequiredArgsConstructor

@@ -20,6 +20,7 @@ public enum ExceptionMessage {
 
     /** user **/
     NOT_FOUND_USER("해당하는 유저를 찾을 수 없습니다."),
+    INVALID_TAG_COUNT("허용하는 태그의 개수를 초과하였습니다."),
 
     /** scarp **/
     NOT_MATCH_DB_SCRAP_STATUS("DB의 userScrap 상태와, 보낸 userScrap 상태가 같지 않습니다."),

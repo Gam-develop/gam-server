@@ -2,7 +2,7 @@ package com.gam.api.service.social;
 
 import com.gam.api.config.AuthConfig;
 import com.gam.api.config.jwt.JwtTokenManager;
-import com.gam.api.dto.social.SocialLoginResponseDTO;
+import com.gam.api.dto.social.response.SocialLoginResponseDTO;
 import com.gam.api.entity.AuthProvider;
 import com.gam.api.entity.Role;
 import com.gam.api.entity.User;
@@ -13,7 +13,7 @@ import lombok.val;
 import org.springframework.stereotype.Service;
 import com.gam.api.external.kakao.KakaoApiClient;
 import com.gam.api.external.kakao.KakaoAuthApiClient;
-import com.gam.api.dto.social.SocialLoginRequestDTO;
+import com.gam.api.dto.social.request.SocialLoginRequestDTO;
 
 import javax.transaction.Transactional;
 import java.util.Objects;
