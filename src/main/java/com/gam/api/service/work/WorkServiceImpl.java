@@ -4,6 +4,7 @@ import com.gam.api.common.exception.WorkException;
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.work.request.WorkCreateRequestDTO;
 import com.gam.api.dto.work.request.WorkDeleteRequestDTO;
+import com.gam.api.dto.work.request.WorkFirstAssignRequestDto;
 import com.gam.api.dto.work.response.WorkResponseDTO;
 import com.gam.api.entity.Work;
 import com.gam.api.repository.UserRepository;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -35,7 +37,7 @@ public class WorkServiceImpl implements WorkService {
         }
 
         val work = workRepository.save(Work.builder()
-               .title(request.title())
+                .title(request.title())
                 .detail(request.detail())
                 .photoUrl(request.image())
                 .user(user)
@@ -60,6 +62,31 @@ public class WorkServiceImpl implements WorkService {
         workRepository.deleteById(workId);
 
         return WorkResponseDTO.of(workId);
+    }
+
+    @Override
+    @Transactional
+    public void updateFirstWork(Long userId, WorkFirstAssignRequestDto request){
+        val workId = request.workId();
+
+        val currentWork = workRepository.getWorkById(workId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
+
+        if (currentWork.isFirst()){
+            throw new IllegalArgumentException(ExceptionMessage.ALREADY_FIRST_WORK.getMessage());
+        }
+
+        val pastFirstWork = workRepository.getWorkByUserIdAndIsFirst(userId, true);
+
+        if (pastFirstWork.isPresent()){
+            pastFirstWork.get().setIsFirst(false);
+        }
+        currentWork.setIsFirst(true);
+
+        val user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
+
+        user.setWorkThumbNail(currentWork.getPhotoUrl());
     }
 
 

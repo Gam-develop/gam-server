@@ -74,4 +74,8 @@ public class Work extends TimeStamped {
         this.user = user;
         user.getWorks().add(this);
     }
+
+    public void setIsFirst(boolean status){
+        this.isFirst = status;
+    }
 }
