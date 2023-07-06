@@ -35,7 +35,7 @@ public class WorkController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_DELETE_WORK.getMessage(), response));
     }
 
-    @PatchMapping("main")
+    @PatchMapping("/main")
     public ResponseEntity<ApiResponse> updateFirstWork(Principal principal, @RequestBody WorkFirstAssignRequestDto request){
         val userId = AuthCommon.getUser(principal);
         workService.updateFirstWork(userId, request);

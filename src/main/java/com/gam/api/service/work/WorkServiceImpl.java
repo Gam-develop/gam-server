@@ -77,7 +77,7 @@ public class WorkServiceImpl implements WorkService {
             throw new IllegalArgumentException(ExceptionMessage.ALREADY_FIRST_WORK.getMessage());
         }
 
-        val pastFirstWork = workRepository.getWorkByIsFirst(true);
+        val pastFirstWork = workRepository.getWorkByUserIdAndIsFirst(userId, true);
 
         if (pastFirstWork.isPresent()){
             pastFirstWork.get().setIsFirst(false);

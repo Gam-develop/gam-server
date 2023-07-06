@@ -1,14 +1,12 @@
 package com.gam.api.repository;
 
-import com.gam.api.entity.User;
 import com.gam.api.entity.Work;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
 public interface WorkRepository extends JpaRepository<Work, Long> {
     Optional<Work> getWorkById(Long workId);
     void deleteById(Long workId);
-    Optional<Work> getWorkByIsFirst(Boolean status);
+    Optional<Work> getWorkByUserIdAndIsFirst(Long userId, Boolean status);
 }
