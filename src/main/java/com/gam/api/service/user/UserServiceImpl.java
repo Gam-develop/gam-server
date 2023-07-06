@@ -1,18 +1,19 @@
 package com.gam.api.service.user;
 
+import com.gam.api.common.exception.WorkException;
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.user.request.UserExternalLinkRequestDto;
 import com.gam.api.dto.user.request.UserOnboardRequestDTO;
 import com.gam.api.dto.user.request.UserProfileUpdateRequestDto;
 import com.gam.api.dto.user.request.UserScrapRequestDto;
 import com.gam.api.dto.user.response.*;
+import com.gam.api.dto.user.request.UserWorkEditRequestDTO;
 import com.gam.api.entity.User;
 import com.gam.api.entity.UserScrap;
 import com.gam.api.entity.UserTag;
-import com.gam.api.repository.TagRepository;
-import com.gam.api.repository.UserRepository;
-import com.gam.api.repository.UserScrapRepository;
-import com.gam.api.repository.UserTagRepository;
+import com.gam.api.entity.Work;
+import com.gam.api.repository.*;
+import com.gam.api.service.s3.S3ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.HttpStatus;
@@ -20,9 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-
-import static com.gam.api.common.message.ExceptionMessage.NOT_FOUND_USER;
-import static com.gam.api.common.message.ExceptionMessage.NOT_MATCH_DB_SCRAP_STATUS;
 
 
 @RequiredArgsConstructor
@@ -32,6 +30,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final UserTagRepository userTagRepository;
+    private final WorkRepository workRepository;
+    private final S3ServiceImpl s3Service;
 
     @Transactional
     @Override
@@ -120,7 +120,7 @@ public class UserServiceImpl implements UserService {
 
     private User findUser(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_USER.getMessage()));
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
     }
 
     private void createUserScrap(User user, Long targetId, User targetUser){
@@ -131,9 +131,40 @@ public class UserServiceImpl implements UserService {
         targetUser.scrapCountUp();
     }
 
+    @Transactional
+    @Override
+    public UserWorkEditResponseDTO updateWork(Long userId, UserWorkEditRequestDTO request) {
+        val workId = request.workId();
+
+        val work = workRepository.getWorkById(workId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
+
+        if(!isOwner(work, userId)) {
+            throw new WorkException(ExceptionMessage.NOT_WORK_OWNER.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
+        if (request.title() != null) {
+            work.setTitle(request.title());
+        }
+
+        if (request.detail() != null) {
+            work.setDetail(request.detail());
+        }
+
+        if (request.image() != null) {
+            val deletePhotoUrl = work.getPhotoUrl();
+            s3Service.deleteS3Image(deletePhotoUrl);
+
+            val newPhotoUrl = request.image();
+            work.setPhotoUrl(newPhotoUrl);
+        }
+
+        return UserWorkEditResponseDTO.of(workId);
+    }
+
     private void chkClientAndDBStatus(boolean requestStatus, boolean DBStatus){
         if (requestStatus != DBStatus){
-            throw new IllegalArgumentException(NOT_MATCH_DB_SCRAP_STATUS.getMessage());
+            throw new IllegalArgumentException(ExceptionMessage.NOT_MATCH_DB_SCRAP_STATUS.getMessage());
         }
     }
 
@@ -149,5 +180,12 @@ public class UserServiceImpl implements UserService {
                     .build());
         }
         user.setTags(newTags);
+    }
+
+    private boolean isOwner(Work work, Long userId){
+        if (!work.isOwner(userId)) {
+            return false;
+        }
+        return true;
     }
 }
