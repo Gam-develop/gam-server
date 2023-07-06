@@ -4,11 +4,9 @@ import com.gam.api.dto.user.request.UserExternalLinkRequestDto;
 import com.gam.api.dto.user.request.UserOnboardRequestDTO;
 import com.gam.api.dto.user.request.UserProfileUpdateRequestDto;
 import com.gam.api.dto.user.request.UserScrapRequestDto;
-import com.gam.api.dto.user.response.UserScrapResponseDTO;
-import com.gam.api.dto.user.response.UserExternalLinkResponseDTO;
-import com.gam.api.dto.user.response.UserProfileUpdateResponseDTO;
-import com.gam.api.dto.user.response.UserMyProfileResponseDTO;
-import com.gam.api.dto.user.response.UserNameCheckResponseDTO;
+import com.gam.api.dto.user.response.*;
+
+import java.util.List;
 
 public interface UserService {
     UserScrapResponseDTO scrapUser(Long userId, UserScrapRequestDto request);
@@ -18,4 +16,5 @@ public interface UserService {
 
     void onboardUser(Long userId, UserOnboardRequestDTO userOnboardRequestDTO);
     UserNameCheckResponseDTO checkUserNameDuplicated(String userName);
+    List<UserScrapsResponseDTO> getUserScraps(Long userId);
 }

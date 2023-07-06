@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -27,8 +29,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final UserTagRepository userTagRepository;
-    private final WorkRepository workRepository;
-    private final S3ServiceImpl s3Service;
 
     @Transactional
     @Override
@@ -113,6 +113,25 @@ public class UserServiceImpl implements UserService {
     public UserNameCheckResponseDTO checkUserNameDuplicated(String userName) {
         val isDuplicated = userRepository.existsByUserName(userName);
         return UserNameCheckResponseDTO.of(isDuplicated);
+    }
+
+    @Override
+    public List<UserScrapsResponseDTO> getUserScraps(Long userId) {
+        val scraps = userScrapRepository.getAllByUser_idAndStatus(userId, true);
+
+        try {
+            val scrapUsers = scraps.stream()
+                    .map((scrap) -> {
+                        val scrapId = scrap.getId();
+                        val targetId = scrap.getTargetId();
+                        val targetUser =  userRepository.findById(targetId).get();
+                        return UserScrapsResponseDTO.of(scrapId, targetUser);
+                    })
+                    .collect(Collectors.toList());
+            return scrapUsers;
+        } catch (EntityNotFoundException e){
+            throw new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage());
+        }
     }
 
     private User findUser(Long userId) {
