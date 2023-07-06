@@ -23,6 +23,7 @@ public enum ResponseMessage {
     SUCCESS_USER_DELETE_SCRAP("유저 스크랩 취소 성공"),
     SUCCESS_UPDATE_EXTERNAL_LINK("유저 외부 링크 수정 성공"),
     SUCCESS_GET_MY_PROFILE("내 프로필 보기 성공"),
+    SUCCESS_USER_ONBOARD("온보딩 성공"),
 
     /** work **/
     SUCCESS_CREATE_WORK("작업물 생성 성공"),
