@@ -37,7 +37,6 @@ public class UserController {
     ResponseEntity<ApiResponse> updateExternalLink(Principal principal, @RequestBody UserExternalLinkRequestDto request) {
         val userId = AuthCommon.getUser(principal);
         val response = userService.updateExternalLink(userId, request);
-
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_EXTERNAL_LINK.getMessage(), response));
     }
 
@@ -52,7 +51,6 @@ public class UserController {
     ResponseEntity<ApiResponse> updateMyProfile(Principal principal, @RequestBody UserProfileUpdateRequestDto request) {
         val userId = AuthCommon.getUser(principal);
         val response = userService.updateMyProfile(userId, request);
-
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_EXTERNAL_LINK.getMessage(), response));
     }
 
@@ -60,7 +58,12 @@ public class UserController {
     ResponseEntity<ApiResponse> onboardUser(Principal principal, @RequestBody UserOnboardRequestDTO request) {
         val userId = AuthCommon.getUser(principal);
         userService.onboardUser(userId, request);
-
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_USER_ONBOARD.getMessage()));
+    }
+
+    @GetMapping("/name/check")
+    ResponseEntity<ApiResponse> onboardUser(@RequestParam String userName) {
+        val response = userService.checkUserNameDuplicated(userName);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_USER_NAME_DUPLICATE_CHECK.getMessage(), response));
     }
 }

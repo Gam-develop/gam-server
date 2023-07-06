@@ -5,10 +5,7 @@ import com.gam.api.dto.user.request.UserExternalLinkRequestDto;
 import com.gam.api.dto.user.request.UserOnboardRequestDTO;
 import com.gam.api.dto.user.request.UserProfileUpdateRequestDto;
 import com.gam.api.dto.user.request.UserScrapRequestDto;
-import com.gam.api.dto.user.response.UserExternalLinkResponseDto;
-import com.gam.api.dto.user.response.UserMyProfileResponse;
-import com.gam.api.dto.user.response.UserProfileUpdateResponseDto;
-import com.gam.api.dto.user.response.UserScrapResponseDto;
+import com.gam.api.dto.user.response.*;
 import com.gam.api.entity.User;
 import com.gam.api.entity.UserScrap;
 import com.gam.api.entity.UserTag;
@@ -113,6 +110,12 @@ public class UserServiceImpl implements UserService {
 
         createUserTags(tags, user);
         user.onboardUser(userName, info, tags);
+    }
+
+    @Override
+    public UserNameCheckResponseDTO checkUserNameDuplicated(String userName) {
+        val isDuplicated = userRepository.existsByUserName(userName);
+        return UserNameCheckResponseDTO.of(isDuplicated);
     }
 
     private User findUser(Long userId) {
