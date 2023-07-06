@@ -1,6 +1,7 @@
 package com.gam.api.service.user;
 
 import com.gam.api.dto.user.request.UserExternalLinkRequestDto;
+import com.gam.api.dto.user.request.UserOnboardRequestDTO;
 import com.gam.api.dto.user.request.UserProfileUpdateRequestDto;
 import com.gam.api.dto.user.request.UserScrapRequestDto;
 import com.gam.api.dto.user.response.UserExternalLinkResponseDto;
@@ -13,4 +14,6 @@ public interface UserService {
     UserExternalLinkResponseDto updateExternalLink(Long userId, UserExternalLinkRequestDto request);
     UserProfileUpdateResponseDto updateMyProfile(Long userId, UserProfileUpdateRequestDto request);
     UserMyProfileResponse getMyProfile(Long userId);
+
+    void onboardUser(Long userId, UserOnboardRequestDTO userOnboardRequestDTO);
 }
