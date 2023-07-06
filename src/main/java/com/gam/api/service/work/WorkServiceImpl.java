@@ -83,5 +83,10 @@ public class WorkServiceImpl implements WorkService {
             pastFirstWork.get().setIsFirst(false);
         }
         currentWork.setIsFirst(true);
+
+        val user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
+
+        user.setWorkThumbNail(currentWork.getPhotoUrl());
     }
 }
