@@ -63,6 +63,9 @@ public class User extends TimeStamped {
     @Column(name = "refresh_token")
     private String refreshToken;
 
+    @Column(name = "work_thumb_nail")
+    private String workThumbNail;
+
     @Where(clause = "status = true")
     @OneToMany(mappedBy = "user")
     private List<UserTag> userTag;

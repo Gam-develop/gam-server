@@ -42,6 +42,10 @@ public class Work extends TimeStamped {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name = "is_first")
+    private boolean isFirst;
+
+
     @Builder
     public Work(User user, String title, String detail, String photoUrl) {
         setUser(user);
