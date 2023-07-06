@@ -27,6 +27,7 @@ public enum ExceptionMessage {
     /** Work **/
     WORK_COUNT_EXCEED("올릴 수 있는 작업물 개수를 초과했습니다."),
     NOT_FOUND_WORK("해당하는 작업을 찾을 수 없습니다."),
+    ALREADY_FIRST_WORK("이미 대표 게시글 입니다."),
     NOT_WORK_OWNER("작업물의 주인이 아닙니다.");
 
     private final String message;
