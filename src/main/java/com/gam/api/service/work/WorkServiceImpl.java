@@ -4,7 +4,9 @@ import com.gam.api.common.exception.WorkException;
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.work.request.WorkCreateRequestDTO;
 import com.gam.api.dto.work.request.WorkDeleteRequestDTO;
+import com.gam.api.dto.work.request.WorkEditRequestDTO;
 import com.gam.api.dto.work.request.WorkFirstAssignRequestDto;
+import com.gam.api.dto.work.response.WorkEditResponseDTO;
 import com.gam.api.dto.work.response.WorkResponseDTO;
 import com.gam.api.entity.Work;
 import com.gam.api.repository.UserRepository;
@@ -91,6 +93,36 @@ public class WorkServiceImpl implements WorkService {
         user.setWorkThumbNail(currentWork.getPhotoUrl());
     }
 
+    @Transactional
+    @Override
+    public WorkEditResponseDTO updateWork(Long userId, WorkEditRequestDTO request) {
+        val workId = request.workId();
+
+        val work = workRepository.getWorkById(workId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
+
+        if(!isOwner(work, userId)) {
+            throw new WorkException(ExceptionMessage.NOT_WORK_OWNER.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
+        if (request.title() != null) {
+            work.setTitle(request.title());
+        }
+
+        if (request.detail() != null) {
+            work.setDetail(request.detail());
+        }
+
+        if (request.image() != null) {
+            val deletePhotoUrl = work.getPhotoUrl();
+            s3Service.deleteS3Image(deletePhotoUrl);
+
+            val newPhotoUrl = request.image();
+            work.setPhotoUrl(newPhotoUrl);
+        }
+
+        return WorkEditResponseDTO.of(workId);
+    }
 
     private boolean isOwner(Work work, Long userId){
         if (!work.isOwner(userId)) {

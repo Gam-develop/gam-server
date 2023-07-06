@@ -1,6 +1,6 @@
-package com.gam.api.dto.user.request;
+package com.gam.api.dto.work.request;
 
-public record UserWorkEditRequestDTO(
+public record WorkEditRequestDTO(
         Long workId,
         String image,
         String title,

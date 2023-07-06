@@ -9,8 +9,8 @@ import com.gam.api.dto.user.response.UserExternalLinkResponseDto;
 import com.gam.api.dto.user.response.UserProfileUpdateResponseDto;
 import com.gam.api.dto.user.response.UserMyProfileResponse;
 import com.gam.api.dto.user.response.UserNameCheckResponseDTO;
-import com.gam.api.dto.user.response.UserWorkEditResponseDTO;
-import com.gam.api.dto.user.request.UserWorkEditRequestDTO;
+import com.gam.api.dto.work.response.WorkEditResponseDTO;
+import com.gam.api.dto.work.request.WorkEditRequestDTO;
 
 public interface UserService {
     UserScrapResponseDto scrapUser(Long userId, UserScrapRequestDto request);
@@ -20,5 +20,4 @@ public interface UserService {
 
     void onboardUser(Long userId, UserOnboardRequestDTO userOnboardRequestDTO);
     UserNameCheckResponseDTO checkUserNameDuplicated(String userName);
-    UserWorkEditResponseDTO updateWork(Long userId, UserWorkEditRequestDTO request);
 }

@@ -7,7 +7,8 @@ import com.gam.api.dto.user.request.UserOnboardRequestDTO;
 import com.gam.api.dto.user.request.UserProfileUpdateRequestDto;
 import com.gam.api.dto.user.request.UserScrapRequestDto;
 import com.gam.api.dto.user.response.*;
-import com.gam.api.dto.user.request.UserWorkEditRequestDTO;
+import com.gam.api.dto.work.request.WorkEditRequestDTO;
+import com.gam.api.dto.work.response.WorkEditResponseDTO;
 import com.gam.api.entity.User;
 import com.gam.api.entity.UserScrap;
 import com.gam.api.entity.UserTag;
@@ -131,36 +132,6 @@ public class UserServiceImpl implements UserService {
         targetUser.scrapCountUp();
     }
 
-    @Transactional
-    @Override
-    public UserWorkEditResponseDTO updateWork(Long userId, UserWorkEditRequestDTO request) {
-        val workId = request.workId();
-
-        val work = workRepository.getWorkById(workId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
-
-        if(!isOwner(work, userId)) {
-            throw new WorkException(ExceptionMessage.NOT_WORK_OWNER.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-
-        if (request.title() != null) {
-            work.setTitle(request.title());
-        }
-
-        if (request.detail() != null) {
-            work.setDetail(request.detail());
-        }
-
-        if (request.image() != null) {
-            val deletePhotoUrl = work.getPhotoUrl();
-            s3Service.deleteS3Image(deletePhotoUrl);
-
-            val newPhotoUrl = request.image();
-            work.setPhotoUrl(newPhotoUrl);
-        }
-
-        return UserWorkEditResponseDTO.of(workId);
-    }
 
     private void chkClientAndDBStatus(boolean requestStatus, boolean DBStatus){
         if (requestStatus != DBStatus){

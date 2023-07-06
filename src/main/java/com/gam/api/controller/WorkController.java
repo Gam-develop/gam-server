@@ -2,6 +2,7 @@ package com.gam.api.controller;
 
 import com.gam.api.common.util.AuthCommon;
 import com.gam.api.common.message.ResponseMessage;
+import com.gam.api.dto.work.request.WorkEditRequestDTO;
 import com.gam.api.dto.work.request.WorkCreateRequestDTO;
 import com.gam.api.dto.work.request.WorkDeleteRequestDTO;
 import com.gam.api.dto.work.request.WorkFirstAssignRequestDto;
@@ -40,5 +41,13 @@ public class WorkController {
         val userId = AuthCommon.getUser(principal);
         workService.updateFirstWork(userId, request);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_FIRST_WORK.getMessage()));
+    }
+
+    @PatchMapping("/edit")
+    public ResponseEntity<ApiResponse> updateWork(Principal principal, @RequestBody WorkEditRequestDTO request){
+        val userId = AuthCommon.getUser(principal);
+        val response = workService.updateWork(userId, request);
+
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_WORK.getMessage(), response));
     }
 }
