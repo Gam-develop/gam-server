@@ -13,8 +13,7 @@ public record UserProfileUpdateResponseDto(
         int[] tags
 ) {
     public static UserProfileUpdateResponseDto of(User user ){
-        return UserProfileUpdateResponseDto
-                .builder()
+        return UserProfileUpdateResponseDto.builder()
                 .userInfo(user.getInfo())
                 .userDetail(user.getDetail())
                 .email(user.getEmail())

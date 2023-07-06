@@ -7,8 +7,7 @@ public record UserExternalLinkResponseDto (
         String externalLink
 ){
     public static UserExternalLinkResponseDto of(String externalLink){
-        return UserExternalLinkResponseDto
-                .builder()
+        return UserExternalLinkResponseDto.builder()
                 .externalLink(externalLink)
                 .build();
     }

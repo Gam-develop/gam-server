@@ -11,8 +11,7 @@ public record UserScrapResponseDto (
         boolean userScrap
 ) {
     public static UserScrapResponseDto of(Long targetUserId, String userName, boolean userScrap) {
-        return UserScrapResponseDto
-                .builder()
+        return UserScrapResponseDto.builder()
                 .targetUserId(targetUserId)
                 .userName(userName)
                 .userScrap(userScrap)
