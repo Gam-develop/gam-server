@@ -66,6 +66,7 @@ public class WorkServiceImpl implements WorkService {
         return WorkResponseDTO.of(workId);
     }
 
+    @Override
     @Transactional
     public void updateFirstWork(Long userId, WorkFirstAssignRequestDto request){
         val workId = request.workId();
