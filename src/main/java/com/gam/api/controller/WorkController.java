@@ -4,7 +4,6 @@ import com.gam.api.common.util.AuthCommon;
 import com.gam.api.common.message.ResponseMessage;
 import com.gam.api.dto.work.request.WorkCreateRequestDTO;
 import com.gam.api.dto.work.request.WorkDeleteRequestDTO;
-import com.gam.api.dto.work.request.WorkEditRequestDTO;
 import com.gam.api.service.work.WorkService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -35,10 +34,4 @@ public class WorkController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_DELETE_WORK.getMessage(), response));
     }
 
-    @PatchMapping("")
-    public ResponseEntity<ApiResponse> updateWork(Principal principal, @RequestBody WorkEditRequestDTO request){
-        val userId = AuthCommon.getUser(principal);
-        val response = workService.updateWork(userId, request);
-        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_WORK.getMessage(), response));
-    }
 }

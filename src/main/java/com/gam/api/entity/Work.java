@@ -13,6 +13,7 @@ import java.util.Objects;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "\"Work\"")
@@ -60,6 +61,10 @@ public class Work extends TimeStamped {
             return false;
         }
         return true;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
     }
 
     private void setUser(User user) {

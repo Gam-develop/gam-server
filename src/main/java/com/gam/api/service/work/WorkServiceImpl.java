@@ -4,8 +4,6 @@ import com.gam.api.common.exception.WorkException;
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.work.request.WorkCreateRequestDTO;
 import com.gam.api.dto.work.request.WorkDeleteRequestDTO;
-import com.gam.api.dto.work.request.WorkEditRequestDTO;
-import com.gam.api.dto.work.response.WorkEditResponseDTO;
 import com.gam.api.dto.work.response.WorkResponseDTO;
 import com.gam.api.entity.Work;
 import com.gam.api.repository.UserRepository;
@@ -15,10 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.security.Principal;
 
 
 @RequiredArgsConstructor
@@ -66,18 +62,6 @@ public class WorkServiceImpl implements WorkService {
         return WorkResponseDTO.of(workId);
     }
 
-    @Transactional
-    @Override
-    public WorkEditResponseDTO updateWork(Long userId, WorkEditRequestDTO request) {
-        val workId = request.workId();
-
-        val work = workRepository.getWorkById(workId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
-
-        isOwner(work, userId);
-
-        s3Service.deleteS3Image(photoUrl);
-    }
 
     private boolean isOwner(Work work, Long userId){
         if (!work.isOwner(userId)) {
