@@ -13,7 +13,7 @@ public record UserMyProfileResponse(
         String info,
         String detail,
         String email,
-        List<Integer> userTag
+        int[] userTag
 ) {
     public static UserMyProfileResponse of(User user){
         return UserMyProfileResponse.builder()
