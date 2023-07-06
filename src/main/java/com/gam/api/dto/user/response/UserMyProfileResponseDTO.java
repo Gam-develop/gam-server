@@ -4,10 +4,8 @@ package com.gam.api.dto.user.response;
 import com.gam.api.entity.User;
 import lombok.Builder;
 
-import java.util.List;
-
 @Builder
-public record UserMyProfileResponse(
+public record UserMyProfileResponseDTO(
         Long userId,
         String userName,
         String info,
@@ -15,8 +13,8 @@ public record UserMyProfileResponse(
         String email,
         int[] userTag
 ) {
-    public static UserMyProfileResponse of(User user){
-        return UserMyProfileResponse.builder()
+    public static UserMyProfileResponseDTO of(User user){
+        return UserMyProfileResponseDTO.builder()
                 .userId(user.getId())
                 .userName(user.getUserName())
                 .info(user.getInfo())

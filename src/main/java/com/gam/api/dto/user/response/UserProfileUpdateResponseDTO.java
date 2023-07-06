@@ -3,17 +3,15 @@ package com.gam.api.dto.user.response;
 import com.gam.api.entity.User;
 import lombok.Builder;
 
-import java.util.List;
-
 @Builder
-public record UserProfileUpdateResponseDto(
+public record UserProfileUpdateResponseDTO(
         String userInfo,
         String userDetail,
         String email,
         int[] tags
 ) {
-    public static UserProfileUpdateResponseDto of(User user ){
-        return UserProfileUpdateResponseDto.builder()
+    public static UserProfileUpdateResponseDTO of(User user ){
+        return UserProfileUpdateResponseDTO.builder()
                 .userInfo(user.getInfo())
                 .userDetail(user.getDetail())
                 .email(user.getEmail())
