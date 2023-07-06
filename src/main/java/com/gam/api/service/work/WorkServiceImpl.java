@@ -4,6 +4,8 @@ import com.gam.api.common.exception.WorkException;
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.work.request.WorkCreateRequestDTO;
 import com.gam.api.dto.work.request.WorkDeleteRequestDTO;
+import com.gam.api.dto.work.request.WorkEditRequestDTO;
+import com.gam.api.dto.work.response.WorkEditResponseDTO;
 import com.gam.api.dto.work.response.WorkResponseDTO;
 import com.gam.api.entity.Work;
 import com.gam.api.repository.UserRepository;
@@ -13,8 +15,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.security.Principal;
 
 
 @RequiredArgsConstructor
@@ -35,7 +39,7 @@ public class WorkServiceImpl implements WorkService {
         }
 
         val work = workRepository.save(Work.builder()
-                .title(request.title())
+               .title(request.title())
                 .detail(request.detail())
                 .photoUrl(request.image())
                 .user(user)
@@ -51,9 +55,7 @@ public class WorkServiceImpl implements WorkService {
         val work = workRepository.getWorkById(workId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
 
-        if (!work.isOwner(userId)) {
-            throw new WorkException(ExceptionMessage.NOT_WORK_OWNER.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        isOwner(work, userId);
 
         val photoUrl = work.getPhotoUrl();
 
@@ -62,5 +64,25 @@ public class WorkServiceImpl implements WorkService {
         workRepository.deleteById(workId);
 
         return WorkResponseDTO.of(workId);
+    }
+
+    @Transactional
+    @Override
+    public WorkEditResponseDTO updateWork(Long userId, WorkEditRequestDTO request) {
+        val workId = request.workId();
+
+        val work = workRepository.getWorkById(workId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
+
+        isOwner(work, userId);
+
+        s3Service.deleteS3Image(photoUrl);
+    }
+
+    private boolean isOwner(Work work, Long userId){
+        if (!work.isOwner(userId)) {
+            throw new WorkException(ExceptionMessage.NOT_WORK_OWNER.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return true;
     }
 }

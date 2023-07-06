@@ -26,7 +26,8 @@ public enum ResponseMessage {
 
     /** work **/
     SUCCESS_CREATE_WORK("작업물 생성 성공"),
-    SUCCESS_DELETE_WORK("작업물 삭제 성공");
+    SUCCESS_DELETE_WORK("작업물 삭제 성공"),
+    SUCCESS_UPDATE_WORK("유저 작업물 수정이 완료 됐습니다.");
 
     private final String message;
 }
