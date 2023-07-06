@@ -101,6 +101,12 @@ public class User extends TimeStamped {
     public void scrapCountUp(){ this.scrapCount += 1; }
 
     public void scrapCountDown(){ this.scrapCount -= 1; }
+
+    public void onboardUser(String userName, String info, int[] tags) {
+        this.userName = userName;
+        this.info = info;
+        this.tags = tags;
+    }
 }
 
 
