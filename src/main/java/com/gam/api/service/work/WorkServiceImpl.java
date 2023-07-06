@@ -53,9 +53,7 @@ public class WorkServiceImpl implements WorkService {
         val work = workRepository.getWorkById(workId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
 
-        if (!work.isOwner(userId)) {
-            throw new WorkException(ExceptionMessage.NOT_WORK_OWNER.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        isOwner(work, userId);
 
         val photoUrl = work.getPhotoUrl();
 
@@ -89,5 +87,13 @@ public class WorkServiceImpl implements WorkService {
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
 
         user.setWorkThumbNail(currentWork.getPhotoUrl());
+    }
+
+
+    private boolean isOwner(Work work, Long userId){
+        if (!work.isOwner(userId)) {
+            throw new WorkException(ExceptionMessage.NOT_WORK_OWNER.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return true;
     }
 }
