@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
         val tags = userOnboardRequestDTO.tags();
 
         if (tags.length > 3) {
-            throw new IllegalArgumentException(ExceptionMessage.INVAID_TAG_COUNT.getMessage());
+            throw new IllegalArgumentException(ExceptionMessage.INVALID_TAG_COUNT.getMessage());
         }
 
         val user = findUser(userId);
