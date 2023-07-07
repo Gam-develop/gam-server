@@ -33,7 +33,8 @@ public enum ResponseMessage {
     SUCCESS_UPDATE_FIRST_WORK("대표 작업물 설정 성공"),
 
     /** magazine **/
-    SUCCESS_GET_MAGAZINE_DETAIL(" 매거진 상세 가져오기 성공");
+    SUCCESS_GET_MAGAZINE_LIST("매거진 목록 가져오기 성공"),
+    SUCCESS_GET_MAGAZINE_DETAIL("매거진 상세 가져오기 성공");
 
     private final String message;
 }
