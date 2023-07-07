@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class MagazineController {
     private final MagazineService magazineService;
 
-    @GetMapping("")
+    @GetMapping("/detail")
     public ResponseEntity<ApiResponse> getMagazineDetail(@RequestParam Long magazineId) {
         val response = magazineService.getMagazineDetail(magazineId);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_MAGAZINE_DETAIL.getMessage(), response));
