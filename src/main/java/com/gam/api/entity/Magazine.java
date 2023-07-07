@@ -50,4 +50,8 @@ public class Magazine extends TimeStamped {
 
     @OneToMany(mappedBy = "magazine")
     private List<MagazineScrap> magazineScraps = new ArrayList<>();
+
+    public void scrapCountUp(){ this.scrapCount += 1; }
+
+    public void scrapCountDown(){ this.scrapCount -= 1; }
 }
