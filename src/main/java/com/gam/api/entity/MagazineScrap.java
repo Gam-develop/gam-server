@@ -35,4 +35,8 @@ public class MagazineScrap extends TimeStamped {
     public Long getMagazineId() {
         return this.magazine.getId();
     }
+
+    public Magazine getMagazine() {
+        return this.magazine;
+    }
 }
