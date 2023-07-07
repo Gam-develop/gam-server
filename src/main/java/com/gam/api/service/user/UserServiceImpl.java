@@ -7,8 +7,7 @@ import com.gam.api.dto.user.request.UserOnboardRequestDTO;
 import com.gam.api.dto.user.request.UserProfileUpdateRequestDto;
 import com.gam.api.dto.user.request.UserScrapRequestDto;
 import com.gam.api.dto.user.response.*;
-import com.gam.api.dto.work.request.WorkEditRequestDTO;
-import com.gam.api.dto.work.response.WorkEditResponseDTO;
+import com.gam.api.dto.work.response.WorkPortfolioListResponseDTO;
 import com.gam.api.entity.User;
 import com.gam.api.entity.UserScrap;
 import com.gam.api.entity.UserTag;
@@ -23,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 
-
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
@@ -32,7 +30,6 @@ public class UserServiceImpl implements UserService {
     private final TagRepository tagRepository;
     private final UserTagRepository userTagRepository;
     private final WorkRepository workRepository;
-    private final S3ServiceImpl s3Service;
 
     @Transactional
     @Override
@@ -117,6 +114,21 @@ public class UserServiceImpl implements UserService {
     public UserNameCheckResponseDTO checkUserNameDuplicated(String userName) {
         val isDuplicated = userRepository.existsByUserName(userName);
         return UserNameCheckResponseDTO.of(isDuplicated);
+    }
+
+    @Override
+    public WorkPortfolioListResponseDTO getMyProtfolio(Long userId) {
+        val user = findUser(userId);
+        val addtionalLink = user.getAdditionalLink();
+
+        val works = workRepository.findByUserIdAndIsFirstOrderByCreatedAtDesc(userId, false);
+
+        val representiveWork = workRepository.getWorkByUserIdAndIsFirst(userId, true)
+                        .orElseThrow(() -> new WorkException(ExceptionMessage.NOT_FOUND_FIRST_WORK.getMessage(), HttpStatus.BAD_REQUEST));
+
+        works.add(0, representiveWork);
+
+        return WorkPortfolioListResponseDTO.of(addtionalLink, works);
     }
 
     private User findUser(Long userId) {
