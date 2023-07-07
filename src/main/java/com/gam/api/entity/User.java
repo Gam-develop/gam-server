@@ -90,8 +90,8 @@ public class User extends TimeStamped {
     @Builder
     public User(Role role) {
         this.role = role;
-        this.scrapCount = 0;
-        this.viewCount = 0;
+        this.scrapCount = 0L;
+        this.viewCount = 0L;
     }
 
     public void updateRefreshToken(String refreshToken) {
