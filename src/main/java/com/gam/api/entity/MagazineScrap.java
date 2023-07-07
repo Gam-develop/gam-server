@@ -25,9 +25,14 @@ public class MagazineScrap extends TimeStamped {
     private boolean status;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "magazine_id")
     private Magazine magazine;
+
+    public Long getMagazineId() {
+        return this.magazine.getId();
+    }
 }
