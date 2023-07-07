@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
+import java.util.Objects;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 
@@ -35,7 +37,7 @@ public class UserScrap extends TimeStamped {
 
     @Builder
     public UserScrap(User user, Long targetId) {
-            this.user = user;
+            setUser(user);
             this.status = true;
             this.targetId = targetId;
     }
@@ -43,5 +45,13 @@ public class UserScrap extends TimeStamped {
     public UserScrap setScrapStatus(boolean status){
         this.status = status;
         return this;
+    }
+
+    private void setUser(User user) {
+        if (Objects.nonNull(this.user)) {
+            this.user.getUserScraps().remove(this);
+        }
+        this.user = user;
+        user.getUserScraps().add(this);
     }
 }
