@@ -1,14 +1,11 @@
 package com.gam.api.service.user;
 
-import com.gam.api.common.exception.WorkException;
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.user.request.UserExternalLinkRequestDto;
 import com.gam.api.dto.user.request.UserOnboardRequestDTO;
 import com.gam.api.dto.user.request.UserProfileUpdateRequestDto;
 import com.gam.api.dto.user.request.UserScrapRequestDto;
 import com.gam.api.dto.user.response.*;
-import com.gam.api.dto.work.request.WorkEditRequestDTO;
-import com.gam.api.dto.work.response.WorkEditResponseDTO;
 import com.gam.api.entity.User;
 import com.gam.api.entity.UserScrap;
 import com.gam.api.entity.UserTag;
@@ -17,7 +14,6 @@ import com.gam.api.repository.*;
 import com.gam.api.service.s3.S3ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,9 +62,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserMyProfileResponse getMyProfile(Long userId){
+    public UserMyProfileResponseDTO getMyProfile(Long userId){
         val user = findUser(userId);
-        return UserMyProfileResponse.of(user);
+        return UserMyProfileResponseDTO.of(user);
     }
 
     @Transactional
