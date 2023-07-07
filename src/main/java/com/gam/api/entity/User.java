@@ -55,10 +55,10 @@ public class User extends TimeStamped {
     private String additionalLink;
 
     @Column(name = "scrap_count")
-    private int scrapCount;
+    private Long scrapCount;
 
     @Column(name = "view_count")
-    private int viewCount;
+    private Long viewCount;
 
     @Column(name = "refresh_token")
     private String refreshToken;
