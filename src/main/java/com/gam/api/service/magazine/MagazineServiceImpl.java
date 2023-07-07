@@ -53,6 +53,7 @@ public class MagazineServiceImpl implements MagazineService {
         );
     }
 
+    @Override
     public MagazineScrapsResponseDTO getMagazineScraps(Long userId) {
         val user = findUser(userId);
         val magazineScraps = user.getMagazineScraps();
