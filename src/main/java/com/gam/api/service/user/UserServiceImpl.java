@@ -119,6 +119,17 @@ public class UserServiceImpl implements UserService {
         return UserNameCheckResponseDTO.of(isDuplicated);
     }
 
+    @Override
+    public UserProfileResponse getUserProfile(Long myId, Long userId) {
+        val user = findUser(userId);
+        val userScrap = userScrapRepository.findByUser_idAndTargetId(myId, userId);
+
+        if(userScrap.isPresent()){
+            return UserProfileResponse.of(true, UserInfo.of(user));
+        }
+        return UserProfileResponse.of(false, UserInfo.of(user));
+    }
+
     private User findUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));

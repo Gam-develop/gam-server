@@ -66,4 +66,11 @@ public class UserController {
         val response = userService.checkUserNameDuplicated(userName);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_USER_NAME_DUPLICATE_CHECK.getMessage(), response));
     }
+
+    @GetMapping("/detail/profile")
+    ResponseEntity<ApiResponse> getUserProfile(Principal principal, @RequestParam Long userId) {
+        val myId = AuthCommon.getUser(principal);
+        val response = userService.getUserProfile(myId, userId);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_USER_PROFILE.getMessage(), response));
+    }
 }
