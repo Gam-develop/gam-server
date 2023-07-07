@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -117,6 +119,19 @@ public class UserServiceImpl implements UserService {
     public UserNameCheckResponseDTO checkUserNameDuplicated(String userName) {
         val isDuplicated = userRepository.existsByUserName(userName);
         return UserNameCheckResponseDTO.of(isDuplicated);
+    }
+
+    @Override
+    public List<UserResponseDTO> getPopularDesigners(Long userId) {
+        val users = userRepository.findAllByIdNotOrderByScrapCountDesc(userId);
+
+        return users.stream().map((user) -> {
+            val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, user.getId());
+            if (userScrap.isPresent()){
+                return UserResponseDTO.of(user,true);
+            }
+            return UserResponseDTO.of(user, false);
+         }).collect(Collectors.toList());
     }
 
     private User findUser(Long userId) {

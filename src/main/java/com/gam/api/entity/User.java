@@ -55,10 +55,10 @@ public class User extends TimeStamped {
     private String additionalLink;
 
     @Column(name = "scrap_count")
-    private Long scrapCount;
+    private int scrapCount;
 
     @Column(name = "view_count")
-    private Long viewCount;
+    private int viewCount;
 
     @Column(name = "refresh_token")
     private String refreshToken;
@@ -90,8 +90,8 @@ public class User extends TimeStamped {
     @Builder
     public User(Role role) {
         this.role = role;
-        this.scrapCount = 0L;
-        this.viewCount = 0L;
+        this.scrapCount = 0;
+        this.viewCount = 0;
     }
 
     public void updateRefreshToken(String refreshToken) {

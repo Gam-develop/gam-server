@@ -66,4 +66,12 @@ public class UserController {
         val response = userService.checkUserNameDuplicated(userName);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_USER_NAME_DUPLICATE_CHECK.getMessage(), response));
     }
+
+    @GetMapping("/popular")
+    ResponseEntity<ApiResponse> getPopularDesigners(Principal principal) {
+        val userId = AuthCommon.getUser(principal);
+        val response = userService.getPopularDesigners(userId);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_POPULAR_USER.getMessage(), response));
+    }
+
 }
