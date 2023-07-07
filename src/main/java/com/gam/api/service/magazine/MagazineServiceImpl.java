@@ -1,27 +1,34 @@
 package com.gam.api.service.magazine;
 
 import com.gam.api.common.message.ExceptionMessage;
+import com.gam.api.dto.magazine.request.MagazineScrapRequestDTO;
 import com.gam.api.dto.magazine.response.MagazineDetailResponseDTO;
 import com.gam.api.dto.magazine.response.MagazineResponseDTO;
+import com.gam.api.dto.magazine.response.MagazineScrapResponseDTO;
 import com.gam.api.dto.magazine.response.MagazineScrapsResponseDTO;
+import com.gam.api.entity.Magazine;
 import com.gam.api.entity.MagazineScrap;
 import com.gam.api.entity.User;
 import com.gam.api.entity.superclass.TimeStamped;
 import com.gam.api.repository.MagazineRepository;
+import com.gam.api.repository.MagazineScrapRepository;
 import com.gam.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
 public class MagazineServiceImpl implements MagazineService {
     private final MagazineRepository magazineRepository;
     private final UserRepository userRepository;
+    private final MagazineScrapRepository magazineScrapRepository;
 
     @Override
     public MagazineResponseDTO getMagazines(Long userId) {
@@ -34,9 +41,7 @@ public class MagazineServiceImpl implements MagazineService {
 
     @Override
     public MagazineDetailResponseDTO getMagazineDetail(Long magazineId) {
-        val magazine = magazineRepository.getMagazineById(magazineId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_MAGAZINE.getMessage()));
-
+        val magazine = getMagazine(magazineId);
         val magazinePhotos = magazine.getMagazinePhotos();
         val magazineQuestions = magazine.getQuestions();
 
@@ -51,7 +56,7 @@ public class MagazineServiceImpl implements MagazineService {
     public MagazineScrapsResponseDTO getMagazineScraps(Long userId) {
         val user = findUser(userId);
         val magazineScraps = user.getMagazineScraps();
-        magazineScraps.sort(Comparator.comparing(TimeStamped::getCreatedAt).reversed());
+        magazineScraps.sort(Comparator.comparing(TimeStamped::getModifiedAt).reversed());
 
         val magazineList = magazineScraps.stream()
                 .map(MagazineScrap::getMagazine)
@@ -69,6 +74,42 @@ public class MagazineServiceImpl implements MagazineService {
         return MagazineResponseDTO.of(magazineList, magazineScrapList);
     }
 
+    @Transactional
+    @Override
+    public MagazineScrapResponseDTO scrapMagazine(Long userId, MagazineScrapRequestDTO magazineScrapRequestDTO) {
+        val magazineId = magazineScrapRequestDTO.targetMagazineId();
+        val magazine = getMagazine(magazineId);
+        val user = findUser(userId);
+
+        val magazineScrap = magazineScrapRepository
+                .findByUser_IdAndMagazine_Id(
+                        userId,
+                        magazineScrapRequestDTO.targetMagazineId()
+                );
+
+        if (Objects.nonNull(magazineScrap)) {
+            val status = magazineScrap.isStatus();
+            validateStatusRequest(status, magazineScrapRequestDTO.currentScrapStatus());
+
+            if (status) {
+                magazine.scrapCountDown();
+            } else {
+                magazine.scrapCountUp();
+            }
+
+            magazineScrap.setScrapStatus(!status);
+
+            return MagazineScrapResponseDTO.of(magazineId, magazineScrap.isStatus());
+        }
+
+        val createdMagazineScrap = magazineScrapRepository.save(MagazineScrap.builder()
+                .user(user)
+                .magazine(magazine)
+                .build());
+
+        return MagazineScrapResponseDTO.of(magazineId, createdMagazineScrap.isStatus());
+    }
+
     private List<Long> getMagazineScrapList(User user) {
         return user.getMagazineScraps().stream()
                 .map(MagazineScrap::getMagazineId)
@@ -78,5 +119,16 @@ public class MagazineServiceImpl implements MagazineService {
     private User findUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
+    }
+
+    private Magazine getMagazine(Long magazineId) {
+        return magazineRepository.getMagazineById(magazineId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_MAGAZINE.getMessage()));
+    }
+
+    private void validateStatusRequest(boolean status, boolean requestStatus) {
+        if (status != requestStatus) {
+            throw new IllegalArgumentException(ExceptionMessage.NOT_MATCH_MAGAZINE_SCARP_STATUS.getMessage());
+        }
     }
 }
