@@ -36,7 +36,8 @@ public enum ResponseMessage {
     SUCCESS_GET_MAGAZINE_LIST("매거진 목록 가져오기 성공"),
     SUCCESS_GET_MAIN_MAGAZINE_LIST("영감 매거진 목록 가져오기 성공"),
     SUCCESS_GET_MAGAZINE_SCRAP_LIST("매거진 스크랩 목록 가져오기 성공"),
-    SUCCESS_GET_MAGAZINE_DETAIL("매거진 상세 가져오기 성공");
+    SUCCESS_GET_MAGAZINE_DETAIL("매거진 상세 가져오기 성공"),
+    SUCCESS_MAGAZINE_SCRAP("매거진 스크랩 성공");
 
     private final String message;
 }
