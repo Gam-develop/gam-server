@@ -36,4 +36,11 @@ public class MagazineController {
         val response = magazineService.getMagazineScraps(userId);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_MAGAZINE_SCRAP_LIST.getMessage(), response));
     }
+
+    @GetMapping("/popular")
+    public ResponseEntity<ApiResponse> getPopularMagazines(Principal principal) {
+        val userId = AuthCommon.getUser(principal);
+        val response = magazineService.getPopularMagazines(userId);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_MAIN_MAGAZINE_LIST.getMessage(), response));
+    }
 }

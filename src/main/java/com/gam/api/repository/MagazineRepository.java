@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface MagazineRepository extends JpaRepository<Magazine, Long> {
     Optional<Magazine> getMagazineById(Long magazineId);
     List<Magazine> findTop4ByOrderByCreatedAtDesc();
+    List<Magazine> findTop3ByOrderByViewCountDesc();
 }

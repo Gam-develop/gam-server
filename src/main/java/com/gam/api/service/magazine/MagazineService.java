@@ -8,4 +8,5 @@ public interface MagazineService {
     MagazineResponseDTO getMagazines(Long userId);
     MagazineDetailResponseDTO getMagazineDetail(Long magazineID);
     MagazineScrapsResponseDTO getMagazineScraps(Long userId);
+    MagazineResponseDTO getPopularMagazines(Long userId);
 }

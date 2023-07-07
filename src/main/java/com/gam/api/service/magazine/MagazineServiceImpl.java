@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Comparator;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -25,10 +26,7 @@ public class MagazineServiceImpl implements MagazineService {
     @Override
     public MagazineResponseDTO getMagazines(Long userId) {
         val user = findUser(userId);
-        val magazineScrapList = user.getMagazineScraps().stream()
-                .map(MagazineScrap::getMagazineId)
-                .toList();
-
+        val magazineScrapList = getMagazineScrapList(user);
         val magazineList = magazineRepository.findTop4ByOrderByCreatedAtDesc();
 
         return MagazineResponseDTO.of(magazineList, magazineScrapList);
@@ -52,9 +50,7 @@ public class MagazineServiceImpl implements MagazineService {
 
     public MagazineScrapsResponseDTO getMagazineScraps(Long userId) {
         val user = findUser(userId);
-
         val magazineScraps = user.getMagazineScraps();
-
         magazineScraps.sort(Comparator.comparing(TimeStamped::getCreatedAt).reversed());
 
         val magazineList = magazineScraps.stream()
@@ -62,6 +58,21 @@ public class MagazineServiceImpl implements MagazineService {
                 .toList();
 
         return MagazineScrapsResponseDTO.of(magazineList);
+    }
+
+    @Override
+    public MagazineResponseDTO getPopularMagazines(Long userId) {
+        val user = findUser(userId);
+        val magazineScrapList = getMagazineScrapList(user);
+        val magazineList = magazineRepository.findTop3ByOrderByViewCountDesc();
+
+        return MagazineResponseDTO.of(magazineList, magazineScrapList);
+    }
+
+    private List<Long> getMagazineScrapList(User user) {
+        return user.getMagazineScraps().stream()
+                .map(MagazineScrap::getMagazineId)
+                .toList();
     }
 
     private User findUser(Long userId) {
