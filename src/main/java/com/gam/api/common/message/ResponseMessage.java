@@ -25,6 +25,7 @@ public enum ResponseMessage {
     SUCCESS_GET_MY_PROFILE("내 프로필 보기 성공"),
     SUCCESS_USER_ONBOARD("온보딩 성공"),
     SUCCESS_USER_NAME_DUPLICATE_CHECK("닉네임 중복 확인 성공"),
+    SUCCESS_GET_USER_PROFILE("유저 프로필 보기 성공"),
 
     /** work **/
     SUCCESS_CREATE_WORK("작업물 생성 성공"),
