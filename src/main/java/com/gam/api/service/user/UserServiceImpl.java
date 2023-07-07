@@ -7,6 +7,7 @@ import com.gam.api.dto.user.request.UserOnboardRequestDTO;
 import com.gam.api.dto.user.request.UserProfileUpdateRequestDto;
 import com.gam.api.dto.user.request.UserScrapRequestDto;
 import com.gam.api.dto.user.response.*;
+import com.gam.api.dto.work.response.WorkPortfolioGetResponseDTO;
 import com.gam.api.dto.work.response.WorkPortfolioListResponseDTO;
 import com.gam.api.entity.User;
 import com.gam.api.entity.UserScrap;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -117,18 +119,38 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public WorkPortfolioListResponseDTO getMyProtfolio(Long userId) {
+    public WorkPortfolioListResponseDTO getMyPortfolio(Long userId) {
         val user = findUser(userId);
         val addtionalLink = user.getAdditionalLink();
+        val works = getUserPortfolio(userId);
 
+        return WorkPortfolioListResponseDTO.of(addtionalLink, works);
+    }
+
+    @Override
+    public WorkPortfolioGetResponseDTO getPortfolio(Long requestUserId, Long userId) {
+        val requestUser = findUser(requestUserId);
+        val user = findUser(userId);
+        val works = getUserPortfolio(userId);
+
+        val scrapList = requestUser.getUserScraps().stream()
+                .map(UserScrap::getTargetId)
+                .toList();
+
+        val isScraped = scrapList.contains(user.getId());
+
+        return WorkPortfolioGetResponseDTO.of(isScraped, works);
+    }
+
+    private List<Work> getUserPortfolio(Long userId) {
         val works = workRepository.findByUserIdAndIsFirstOrderByCreatedAtDesc(userId, false);
 
         val representiveWork = workRepository.getWorkByUserIdAndIsFirst(userId, true)
-                        .orElseThrow(() -> new WorkException(ExceptionMessage.NOT_FOUND_FIRST_WORK.getMessage(), HttpStatus.BAD_REQUEST));
+                .orElseThrow(() -> new WorkException(ExceptionMessage.NOT_FOUND_FIRST_WORK.getMessage(), HttpStatus.BAD_REQUEST));
 
         works.add(0, representiveWork);
 
-        return WorkPortfolioListResponseDTO.of(addtionalLink, works);
+        return works;
     }
 
     private User findUser(Long userId) {

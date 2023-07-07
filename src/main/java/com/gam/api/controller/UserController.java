@@ -50,7 +50,13 @@ public class UserController {
     @GetMapping("/my/portfolio")
     ResponseEntity<ApiResponse> getMyPortfolio(Principal principal) {
         val userId = AuthCommon.getUser(principal);
-        val response = userService.getMyProtfolio(userId);
+        val response = userService.getMyPortfolio(userId);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_PROTFOLIO_LIST.getMessage(), response));
+    }
+    @GetMapping("/portfolio/{userId}")
+    ResponseEntity<ApiResponse> getPortfolio(Principal principal, @PathVariable Long userId) {
+        val requestUserId = AuthCommon.getUser(principal);
+        val response = userService.getPortfolio(requestUserId, userId);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_PROTFOLIO_LIST.getMessage(), response));
     }
 
@@ -69,7 +75,7 @@ public class UserController {
     }
 
     @GetMapping("/name/check")
-    ResponseEntity<ApiResponse> onboardUser(@RequestParam String userName) {
+    ResponseEntity<ApiResponse> checkUserNameDuplicated(@RequestParam String userName) {
         val response = userService.checkUserNameDuplicated(userName);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_USER_NAME_DUPLICATE_CHECK.getMessage(), response));
     }

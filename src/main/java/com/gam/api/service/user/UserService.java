@@ -11,6 +11,7 @@ import com.gam.api.dto.user.response.UserMyProfileResponse;
 import com.gam.api.dto.user.response.UserNameCheckResponseDTO;
 import com.gam.api.dto.work.response.WorkEditResponseDTO;
 import com.gam.api.dto.work.request.WorkEditRequestDTO;
+import com.gam.api.dto.work.response.WorkPortfolioGetResponseDTO;
 import com.gam.api.dto.work.response.WorkPortfolioListResponseDTO;
 
 public interface UserService {
@@ -21,5 +22,6 @@ public interface UserService {
 
     void onboardUser(Long userId, UserOnboardRequestDTO userOnboardRequestDTO);
     UserNameCheckResponseDTO checkUserNameDuplicated(String userName);
-    WorkPortfolioListResponseDTO getMyProtfolio(Long userId);
+    WorkPortfolioListResponseDTO getMyPortfolio(Long userId);
+    WorkPortfolioGetResponseDTO getPortfolio(Long requestUserId, Long userId);
 }
