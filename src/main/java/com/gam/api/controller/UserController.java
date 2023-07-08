@@ -47,6 +47,19 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_MY_PROFILE.getMessage(), response));
     }
 
+    @GetMapping("/my/portfolio")
+    ResponseEntity<ApiResponse> getMyPortfolio(Principal principal) {
+        val userId = AuthCommon.getUser(principal);
+        val response = userService.getMyPortfolio(userId);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_PROTFOLIO_LIST.getMessage(), response));
+    }
+    @GetMapping("/portfolio/{userId}")
+    ResponseEntity<ApiResponse> getPortfolio(Principal principal, @PathVariable Long userId) {
+        val requestUserId = AuthCommon.getUser(principal);
+        val response = userService.getPortfolio(requestUserId, userId);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_PROTFOLIO_LIST.getMessage(), response));
+    }
+
     @PatchMapping("/introduce")
     ResponseEntity<ApiResponse> updateMyProfile(Principal principal, @RequestBody UserProfileUpdateRequestDto request) {
         val userId = AuthCommon.getUser(principal);
@@ -62,8 +75,30 @@ public class UserController {
     }
 
     @GetMapping("/name/check")
-    ResponseEntity<ApiResponse> onboardUser(@RequestParam String userName) {
+    ResponseEntity<ApiResponse> checkUserNameDuplicated(@RequestParam String userName) {
         val response = userService.checkUserNameDuplicated(userName);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_USER_NAME_DUPLICATE_CHECK.getMessage(), response));
     }
+
+    @GetMapping("/scraps")
+    ResponseEntity<ApiResponse> getUserScraps(Principal principal) {
+        val userId = AuthCommon.getUser(principal);
+        val response = userService.getUserScraps(userId);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_USER_SCRAPS.getMessage(), response));
+    }
+
+    @GetMapping("/detail/profile")
+    ResponseEntity<ApiResponse> getUserProfile(Principal principal, @RequestParam Long userId) {
+        val myId = AuthCommon.getUser(principal);
+        val response = userService.getUserProfile(myId, userId);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_USER_PROFILE.getMessage(), response));
+    }
+
+    @GetMapping("/popular")
+    ResponseEntity<ApiResponse> getPopularDesigners(Principal principal) {
+        val userId = AuthCommon.getUser(principal);
+        val response = userService.getPopularDesigners(userId);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_POPULAR_USER.getMessage(), response));
+    }
+
 }

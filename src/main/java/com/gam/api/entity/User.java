@@ -69,6 +69,7 @@ public class User extends TimeStamped {
     @OneToMany(mappedBy = "user")
     private List<UserTag> userTag;
 
+    @Where(clause = "status = true")
     @OneToMany(mappedBy = "user")
     List<UserScrap> userScraps = new ArrayList<>();
 
