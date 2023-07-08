@@ -119,19 +119,16 @@ public class UserServiceImpl implements UserService {
     public List<UserScrapsResponseDTO> getUserScraps(Long userId) {
         val scraps = userScrapRepository.getAllByUser_idAndStatus(userId, true);
 
-        try {
-            val scrapUsers = scraps.stream()
-                    .map((scrap) -> {
-                        val scrapId = scrap.getId();
-                        val targetId = scrap.getTargetId();
-                        val targetUser =  userRepository.findById(targetId).get();
-                        return UserScrapsResponseDTO.of(scrapId, targetUser);
+        val scrapUsers = scraps.stream()
+                .map((scrap) -> {
+                    val scrapId = scrap.getId();
+                    val targetId = scrap.getTargetId();
+                    val targetUser =  userRepository.findById(targetId)
+                            .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
+                    return UserScrapsResponseDTO.of(scrapId, targetUser);
                     })
-                    .collect(Collectors.toList());
+                .collect(Collectors.toList());
             return scrapUsers;
-        } catch (EntityNotFoundException e){
-            throw new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage());
-        }
     }
 
     private User findUser(Long userId) {
