@@ -3,11 +3,11 @@ package com.gam.api.dto.user.response;
 import lombok.Builder;
 
 @Builder
-public record UserExternalLinkResponseDto (
+public record UserExternalLinkResponseDTO(
         String externalLink
 ){
-    public static UserExternalLinkResponseDto of(String externalLink){
-        return UserExternalLinkResponseDto.builder()
+    public static UserExternalLinkResponseDTO of(String externalLink){
+        return UserExternalLinkResponseDTO.builder()
                 .externalLink(externalLink)
                 .build();
     }
