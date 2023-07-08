@@ -30,7 +30,11 @@ public enum ExceptionMessage {
     NOT_FOUND_WORK("해당하는 작업을 찾을 수 없습니다."),
     ALREADY_FIRST_WORK("이미 대표 작업물 입니다."),
     NOT_FOUND_FIRST_WORK("대표 작업을 찾을 수 없습니다."),
-    NOT_WORK_OWNER("작업물의 주인이 아닙니다.");
+    NOT_WORK_OWNER("작업물의 주인이 아닙니다."),
+
+    /** Magazine **/
+    NOT_FOUND_MAGAZINE("해당하는 매거진을 찾을 수 없습니다."),
+    NOT_MATCH_MAGAZINE_SCARP_STATUS("보낸 매거진 스크랩 상태가 유효하지 않습니다.");
 
     private final String message;
 }

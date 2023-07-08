@@ -66,7 +66,6 @@ public class User extends TimeStamped {
     @Column(name = "work_thumb_nail")
     private String workThumbNail;
 
-    @Where(clause = "status = true")
     @OneToMany(mappedBy = "user")
     private List<UserTag> userTag;
 
@@ -74,6 +73,7 @@ public class User extends TimeStamped {
     @OneToMany(mappedBy = "user")
     List<UserScrap> userScraps = new ArrayList<>();
 
+    @Where(clause = "status = true")
     @OneToMany(mappedBy = "user")
     List<MagazineScrap> magazineScraps = new ArrayList<>();
 
