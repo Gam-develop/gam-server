@@ -1,24 +1,28 @@
 package com.gam.api.service.user;
 
+import com.gam.api.common.exception.WorkException;
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.user.request.UserExternalLinkRequestDto;
 import com.gam.api.dto.user.request.UserOnboardRequestDTO;
 import com.gam.api.dto.user.request.UserProfileUpdateRequestDto;
 import com.gam.api.dto.user.request.UserScrapRequestDto;
 import com.gam.api.dto.user.response.*;
+import com.gam.api.dto.work.response.WorkPortfolioGetResponseDTO;
+import com.gam.api.dto.work.response.WorkPortfolioListResponseDTO;
 import com.gam.api.entity.User;
+import com.gam.api.entity.Work;
 import com.gam.api.entity.UserScrap;
 import com.gam.api.entity.UserTag;
 import com.gam.api.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 @RequiredArgsConstructor
 @Service
@@ -27,6 +31,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final UserTagRepository userTagRepository;
+    private final WorkRepository workRepository;
 
     @Transactional
     @Override
@@ -151,6 +156,41 @@ public class UserServiceImpl implements UserService {
             }
             return UserResponseDTO.of(user, false);
          }).collect(Collectors.toList());
+    }
+
+    @Override
+    public WorkPortfolioListResponseDTO getMyPortfolio(Long userId) {
+        val user = findUser(userId);
+        val addtionalLink = user.getAdditionalLink();
+        val works = getUserPortfolio(userId);
+
+        return WorkPortfolioListResponseDTO.of(addtionalLink, works);
+    }
+
+    @Override
+    public WorkPortfolioGetResponseDTO getPortfolio(Long requestUserId, Long userId) {
+        val requestUser = findUser(requestUserId);
+        val user = findUser(userId);
+        val works = getUserPortfolio(userId);
+
+        val scrapList = requestUser.getUserScraps().stream()
+                .map(UserScrap::getTargetId)
+                .toList();
+
+        val isScraped = scrapList.contains(user.getId());
+
+        return WorkPortfolioGetResponseDTO.of(isScraped, works);
+    }
+
+    private List<Work> getUserPortfolio(Long userId) {
+        val works = workRepository.findByUserIdAndIsFirstOrderByCreatedAtDesc(userId, false);
+
+        val representiveWork = workRepository.getWorkByUserIdAndIsFirst(userId, true)
+                .orElseThrow(() -> new WorkException(ExceptionMessage.NOT_FOUND_FIRST_WORK.getMessage(), HttpStatus.BAD_REQUEST));
+
+        works.add(0, representiveWork);
+
+        return works;
     }
 
     private User findUser(Long userId) {
