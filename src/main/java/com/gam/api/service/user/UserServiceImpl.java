@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -41,15 +42,19 @@ public class UserServiceImpl implements UserService {
 
         val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, targetUser.getId());
 
-        if (userScrap.isPresent()) {
-            chkClientAndDBStatus(userScrap.get().isStatus(), request.currentScrapStatus());
+        if (Objects.nonNull(userScrap)) {
+            val status = userScrap.isStatus();
+            validateStatusRequest(status, request.currentScrapStatus());
 
-            if (userScrap.get().isStatus()) targetUser.scrapCountDown();
-            else targetUser.scrapCountUp();
+            if (status) {
+                targetUser.scrapCountDown();
+            } else {
+                targetUser.scrapCountUp();
+            }
 
-            userScrap.get().setScrapStatus(!userScrap.get().isStatus());
+            userScrap.setScrapStatus(!status);
 
-            return UserScrapResponseDTO.of(targetUser.getId(), targetUser.getUserName(), userScrap.get().isStatus());
+            return UserScrapResponseDTO.of(targetUser.getId(), targetUser.getUserName(), userScrap.isStatus());
         }
         createUserScrap(user, targetUser.getId(), targetUser);
 
@@ -139,7 +144,7 @@ public class UserServiceImpl implements UserService {
         val user = findUser(userId);
         val userScrap = userScrapRepository.findByUser_idAndTargetId(myId, userId);
 
-        if(userScrap.isPresent()){
+        if(Objects.nonNull(userScrap)){
             return UserProfileResponseDTO.of(true, user);
         }
         return UserProfileResponseDTO.of(false, user);
@@ -151,7 +156,7 @@ public class UserServiceImpl implements UserService {
 
         return users.stream().map((user) -> {
             val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, user.getId());
-            if (userScrap.isPresent()){
+            if (Objects.nonNull(userScrap)){
                 return UserResponseDTO.of(user,true);
             }
             return UserResponseDTO.of(user, false);
@@ -207,8 +212,8 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    private void chkClientAndDBStatus(boolean requestStatus, boolean DBStatus){
-        if (requestStatus != DBStatus){
+    private void validateStatusRequest(boolean status, boolean requestStatus) {
+        if (status != requestStatus) {
             throw new IllegalArgumentException(ExceptionMessage.NOT_MATCH_DB_SCRAP_STATUS.getMessage());
         }
     }
