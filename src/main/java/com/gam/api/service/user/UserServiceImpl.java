@@ -19,6 +19,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
@@ -137,6 +138,19 @@ public class UserServiceImpl implements UserService {
             return UserProfileResponseDTO.of(true, user);
         }
         return UserProfileResponseDTO.of(false, user);
+    }
+
+    @Override
+    public List<UserResponseDTO> getPopularDesigners(Long userId) {
+        val users = userRepository.findAllByIdNotOrderByScrapCountDesc(userId);
+
+        return users.stream().map((user) -> {
+            val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, user.getId());
+            if (userScrap.isPresent()){
+                return UserResponseDTO.of(user,true);
+            }
+            return UserResponseDTO.of(user, false);
+         }).collect(Collectors.toList());
     }
 
     private User findUser(Long userId) {

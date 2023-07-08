@@ -80,4 +80,12 @@ public class UserController {
         val response = userService.getUserProfile(myId, userId);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_USER_PROFILE.getMessage(), response));
     }
+
+    @GetMapping("/popular")
+    ResponseEntity<ApiResponse> getPopularDesigners(Principal principal) {
+        val userId = AuthCommon.getUser(principal);
+        val response = userService.getPopularDesigners(userId);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_POPULAR_USER.getMessage(), response));
+    }
+
 }

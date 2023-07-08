@@ -18,4 +18,5 @@ public interface UserService {
     UserNameCheckResponseDTO checkUserNameDuplicated(String userName);
     UserProfileResponseDTO getUserProfile(Long myId, Long userId);
     List<UserScrapsResponseDTO> getUserScraps(Long userId);
+    List<UserResponseDTO> getPopularDesigners(Long userId);
 }
