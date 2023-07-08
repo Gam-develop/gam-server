@@ -116,14 +116,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserProfileResponse getUserProfile(Long myId, Long userId) {
+    public UserProfileResponseDTO getUserProfile(Long myId, Long userId) {
         val user = findUser(userId);
         val userScrap = userScrapRepository.findByUser_idAndTargetId(myId, userId);
 
         if(userScrap.isPresent()){
-            return UserProfileResponse.of(true, UserInfo.of(user));
+            return UserProfileResponseDTO.of(true, user);
         }
-        return UserProfileResponse.of(false, UserInfo.of(user));
+        return UserProfileResponseDTO.of(false, user);
     }
 
     private User findUser(Long userId) {
