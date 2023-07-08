@@ -73,4 +73,11 @@ public class UserController {
         val response = userService.getUserScraps(userId);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_USER_SCRAPS.getMessage(), response));
     }
+
+    @GetMapping("/detail/profile")
+    ResponseEntity<ApiResponse> getUserProfile(Principal principal, @RequestParam Long userId) {
+        val myId = AuthCommon.getUser(principal);
+        val response = userService.getUserProfile(myId, userId);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_USER_PROFILE.getMessage(), response));
+    }
 }

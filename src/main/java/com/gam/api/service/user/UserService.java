@@ -16,5 +16,6 @@ public interface UserService {
 
     void onboardUser(Long userId, UserOnboardRequestDTO userOnboardRequestDTO);
     UserNameCheckResponseDTO checkUserNameDuplicated(String userName);
+    UserProfileResponseDTO getUserProfile(Long myId, Long userId);
     List<UserScrapsResponseDTO> getUserScraps(Long userId);
 }

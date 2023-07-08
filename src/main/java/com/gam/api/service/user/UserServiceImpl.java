@@ -9,9 +9,7 @@ import com.gam.api.dto.user.response.*;
 import com.gam.api.entity.User;
 import com.gam.api.entity.UserScrap;
 import com.gam.api.entity.UserTag;
-import com.gam.api.entity.Work;
 import com.gam.api.repository.*;
-import com.gam.api.service.s3.S3ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.stereotype.Service;
@@ -20,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 @RequiredArgsConstructor
 @Service
@@ -131,6 +128,17 @@ public class UserServiceImpl implements UserService {
             return scrapUsers;
     }
 
+    @Override
+    public UserProfileResponseDTO getUserProfile(Long myId, Long userId) {
+        val user = findUser(userId);
+        val userScrap = userScrapRepository.findByUser_idAndTargetId(myId, userId);
+
+        if(userScrap.isPresent()){
+            return UserProfileResponseDTO.of(true, user);
+        }
+        return UserProfileResponseDTO.of(false, user);
+    }
+
     private User findUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
@@ -163,12 +171,5 @@ public class UserServiceImpl implements UserService {
                     .build());
         }
         user.setTags(newTags);
-    }
-
-    private boolean isOwner(Work work, Long userId){
-        if (!work.isOwner(userId)) {
-            return false;
-        }
-        return true;
     }
 }
