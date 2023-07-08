@@ -4,15 +4,15 @@ import lombok.Builder;
 
 @Builder
 public record MagazineScrapResponseDTO(
-        Long tagretMagazineId,
+        Long targetMagazineId,
         boolean currentScrapStatus
 ) {
     public static MagazineScrapResponseDTO of(
-            Long tagretMagazineId,
+            Long targetMagazineId,
             boolean currentScrapStatus
     ) {
         return MagazineScrapResponseDTO.builder()
-                .tagretMagazineId(tagretMagazineId)
+                .targetMagazineId(targetMagazineId)
                 .currentScrapStatus(currentScrapStatus)
                 .build();
     }
