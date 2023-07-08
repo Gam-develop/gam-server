@@ -42,15 +42,7 @@ public class MagazineServiceImpl implements MagazineService {
     @Override
     public MagazineDetailResponseDTO getMagazineDetail(Long magazineId) {
         val magazine = getMagazine(magazineId);
-        val magazinePhotos = magazine.getMagazinePhotos();
-        val magazineQuestions = magazine.getQuestions();
-
-        return MagazineDetailResponseDTO.of(
-                magazine.getId(),
-                magazinePhotos,
-                magazine.getIntroduction(),
-                magazineQuestions
-        );
+        return MagazineDetailResponseDTO.of(magazine);
     }
 
     @Override

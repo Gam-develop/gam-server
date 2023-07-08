@@ -1,6 +1,6 @@
 package com.gam.api.dto.magazine.response;
 
-import com.gam.api.entity.MagazinePhoto;
+import com.gam.api.entity.Magazine;
 import com.gam.api.entity.Question;
 import lombok.Builder;
 
@@ -14,16 +14,13 @@ public record MagazineDetailResponseDTO(
         List<MagazineDetailResponseVO> questions
 ) {
     public static MagazineDetailResponseDTO of(
-            Long magazineId,
-            List<MagazinePhoto> magazinePhotos,
-            String magazineIntro,
-            List<Question> questions
+           Magazine magazine
     ) {
         return MagazineDetailResponseDTO.builder()
-                .magazineId(magazineId)
-                .magazinePhotos(magazinePhotos.stream().map(magazinePhoto -> magazinePhoto.getUrl()).toList())
-                .magazineIntro(magazineIntro)
-                .questions(questions.stream().map(MagazineDetailResponseVO::of).toList())
+                .magazineId(magazine.getId())
+                .magazinePhotos(magazine.getMagazinePhotos().stream().map(magazinePhoto -> magazinePhoto.getUrl()).toList())
+                .magazineIntro(magazine.getIntroduction())
+                .questions(magazine.getQuestions().stream().map(MagazineDetailResponseVO::of).toList())
                 .build();
     }
 }
