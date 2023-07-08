@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface UserScrapRepository extends JpaRepository<UserScrap, Long> {
-    Optional<UserScrap> findByUser_idAndTargetId(Long user_id, Long target_id);
+    UserScrap findByUser_idAndTargetId(Long user_id, Long target_id);
 }
