@@ -19,14 +19,14 @@ public class Question extends TimeStamped {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "question_id")
-    private int id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "magazine_id")
     private Magazine magazine;
 
-    @Column(name = "order")
-    private Long order;
+    @Column(name = "question_order")
+    private int questionOrder;
 
     @Column(name = "question")
     private String question;

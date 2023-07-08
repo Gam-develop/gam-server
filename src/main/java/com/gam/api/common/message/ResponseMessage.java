@@ -25,13 +25,23 @@ public enum ResponseMessage {
     SUCCESS_GET_MY_PROFILE("내 프로필 보기 성공"),
     SUCCESS_USER_ONBOARD("온보딩 성공"),
     SUCCESS_USER_NAME_DUPLICATE_CHECK("닉네임 중복 확인 성공"),
+    SUCCESS_GET_POPULAR_USER("홈-인기디자이너 갖고 오기 성공"),
+    SUCCESS_GET_USER_PROFILE("유저 프로필 보기 성공"),
+    SUCCESS_GET_USER_SCRAPS("스크랩한 유저들의 정보를 갖고 왔습니다."),
 
     /** work **/
     SUCCESS_CREATE_WORK("작업물 생성 성공"),
     SUCCESS_DELETE_WORK("작업물 삭제 성공"),
     SUCCESS_UPDATE_WORK("유저 작업물 수정이 완료 됐습니다."),
-    SUCCESS_GET_PROTFOLIO_LIST("포트폴리오 상세보기 성공"),
-    SUCCESS_UPDATE_FIRST_WORK("대표 작업물 설정 성공");
+    SUCCESS_UPDATE_FIRST_WORK("대표 작업물 설정 성공"),
+
+    /** magazine **/
+    SUCCESS_GET_MAGAZINE_LIST("매거진 목록 가져오기 성공"),
+    SUCCESS_GET_MAIN_MAGAZINE_LIST("영감 매거진 목록 가져오기 성공"),
+    SUCCESS_GET_MAGAZINE_SCRAP_LIST("매거진 스크랩 목록 가져오기 성공"),
+    SUCCESS_GET_MAGAZINE_DETAIL("매거진 상세 가져오기 성공"),
+    SUCCESS_MAGAZINE_SCRAP("매거진 스크랩 성공"),
+    SUCCESS_GET_PROTFOLIO_LIST("포트폴리오 상세보기 성공");
 
     private final String message;
 }
