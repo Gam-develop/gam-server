@@ -51,8 +51,14 @@ public class User extends TimeStamped {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "additional_link")
-    private String additionalLink;
+    @Column(name = "behance")
+    private String behanceLink;
+
+    @Column(name = "instagram")
+    private String instagramLink;
+
+    @Column(name = "notion")
+    private String notionLink;
 
     @Column(name = "scrap_count")
     private int scrapCount;
