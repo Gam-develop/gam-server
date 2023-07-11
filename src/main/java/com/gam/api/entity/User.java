@@ -89,14 +89,19 @@ public class User extends TimeStamped {
     private int[] tags;
 
     @Builder
-    public User(Role role) {
+    public User(Role role, UserStatus userStatus) {
         this.role = role;
+        this.userStatus = userStatus;
         this.scrapCount = 0;
         this.viewCount = 0;
     }
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public void updateUserStatus(UserStatus userStatus) {
+        this.userStatus = userStatus;
     }
 
     public void scrapCountUp(){ this.scrapCount += 1; }
