@@ -31,11 +31,6 @@ public class MagazineController {
 
     @GetMapping("/scraps")
     public ResponseEntity<ApiResponse> getMagazineScraps(@AuthenticationPrincipal GamUserDetails userDetails) {
-        System.out.println(userDetails.getId());
-        System.out.println(userDetails.getAuthUserId());
-        System.out.println(userDetails.getPassword());
-        System.out.println(userDetails.getUsername());
-        System.out.println(userDetails.getAuthorities());
         val response = magazineService.getMagazineScraps(userDetails.getId());
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_MAGAZINE_SCRAP_LIST.getMessage(), response));
     }
