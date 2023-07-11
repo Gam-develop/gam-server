@@ -6,6 +6,7 @@ import com.gam.api.dto.social.response.SocialLoginResponseDTO;
 import com.gam.api.entity.AuthProvider;
 import com.gam.api.entity.Role;
 import com.gam.api.entity.User;
+import com.gam.api.entity.UserStatus;
 import com.gam.api.repository.AuthProviderRepository;
 import com.gam.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -59,6 +60,7 @@ public class KakaoSocialService implements SocialService {
 
         val user = userRepository.save(User.builder()
                 .role(Role.USER)
+                .userStatus(UserStatus.NOT_PERMITTED)
                 .build());
 
         val userId = user.getId();
