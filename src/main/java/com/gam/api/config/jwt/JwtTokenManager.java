@@ -3,6 +3,7 @@ package com.gam.api.config.jwt;
 import com.gam.api.common.exception.AuthException;
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.config.AuthConfig;
+import com.gam.api.service.user.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
@@ -26,8 +26,10 @@ public class JwtTokenManager {
     private final AuthConfig authConfig;
     private final ZoneId KST = ZoneId.of("Asia/Seoul");
 
+    private final UserDetailsServiceImpl userDetailsService;
+
     public String createAccessToken(Long userId) {
-        val signatureAlgorithm= SignatureAlgorithm.HS256;
+        val signatureAlgorithm = SignatureAlgorithm.HS256;
         val secretKeyBytes = DatatypeConverter.parseBase64Binary(authConfig.getJwtSecretKey());
         val signingKey = new SecretKeySpec(secretKeyBytes, signatureAlgorithm.getJcaName());
         val exp = new Date().toInstant().atZone(KST)
@@ -56,34 +58,27 @@ public class JwtTokenManager {
 
     public boolean verifyAuthToken (String token) {
         try {
-            val claims = getClaimsFromToken(token);
-
-            val now = LocalDateTime.now(KST);
-            val exp = claims.getExpiration().toInstant().atZone(KST).toLocalDateTime();
-            if (exp.isBefore(now)) return false;
-
+            getClaimsFromToken(token);
             return true;
         } catch (SignatureException | ExpiredJwtException e) {
             return false;
         }
     }
 
-    public Long getUserIdFromAuthToken (String token) {
+    public String getUserIdFromAuthToken (String token) {
         try {
             val claims = getClaimsFromToken(token);
 
-            val now = LocalDateTime.now(KST);
-            val exp = claims.getExpiration().toInstant().atZone(KST).toLocalDateTime();
-            if (exp.isBefore(now)) throw new AuthException(ExceptionMessage.EXPIRED_TOKEN.getMessage(), HttpStatus.UNAUTHORIZED);
-
-            return Long.parseLong(claims.getSubject());
-        } catch (SignatureException e) {
+            return claims.getSubject();
+        } catch (SignatureException | ExpiredJwtException e) {
             throw new AuthException(ExceptionMessage.INVALID_SIGNATURE.getMessage(),HttpStatus.BAD_REQUEST);
         }
     }
 
     public AdminAuthentication getAuthentication(String token) {
-        return new AdminAuthentication(getUserIdFromAuthToken(token), null, null);
+        val userId = getUserIdFromAuthToken(token);
+        val userDetails = userDetailsService.loadUserByUsername(userId);
+        return new AdminAuthentication(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
     }
 
     private Claims getClaimsFromToken (String token) throws SignatureException {
