@@ -7,6 +7,6 @@ import java.util.Collection;
 public class AdminAuthentication extends UsernamePasswordAuthenticationToken {
 
     public AdminAuthentication(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
-        super(principal, credentials);
+        super(principal, credentials, authorities);
     }
 }
