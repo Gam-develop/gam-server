@@ -105,6 +105,6 @@ public class UserController {
     ResponseEntity<ApiResponse> getDiscoveryUsers(Principal principal) {
         val userId = AuthCommon.getUser(principal);
         val response = userService.getDiscoveryUsers(userId);
-        return null;
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_DISCOVERY_GET_USERS.getMessage(), response));
     }
 }

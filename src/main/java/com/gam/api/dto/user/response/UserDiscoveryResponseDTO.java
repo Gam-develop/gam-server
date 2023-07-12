@@ -10,10 +10,10 @@ public record UserDiscoveryResponseDTO(
 		UserInfoVO UserInfo,
 		WorkInfoVO WorkInfo
 ) {
-	public static UserDiscoveryResponseDTO of(UserInfoVO userInfo, WorkInfoVO workInfo){
+	public static UserDiscoveryResponseDTO of(User user,boolean designerScrap, Work work){
 		return UserDiscoveryResponseDTO.builder()
-				.UserInfo(userInfo)
-				.WorkInfo(workInfo)
+				.UserInfo(UserInfoVO.of(user,designerScrap))
+				.WorkInfo(WorkInfoVO.of(work))
 				.build();
 	}
 }

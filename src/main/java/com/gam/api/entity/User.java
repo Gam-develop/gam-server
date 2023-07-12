@@ -74,6 +74,9 @@ public class User extends TimeStamped {
     @Column(name = "work_thumb_nail")
     private String workThumbNail;
 
+    @Column(name = "first_work_id")
+    private Long firstWorkId;
+
     @OneToMany(mappedBy = "user")
     private List<UserTag> userTag;
 
@@ -100,10 +103,10 @@ public class User extends TimeStamped {
     @Column(name = "selected_first_at")
     private LocalDateTime selectedFirstAt;
 
-    //추가
     public void updateSelectedFirstAt() {
         this.selectedFirstAt = LocalDateTime.now();
     }
+
 
     @Builder
     public User(Role role) {

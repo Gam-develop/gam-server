@@ -193,8 +193,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId) {
-        val users = userRepository.findAllByOrderBySelectedFirstAtDesc();
-        return null;
+        val users = userRepository.findAllByIdNotOrderBySelectedFirstAtDesc(userId);
+
+        return users.stream().map((user) -> {
+            val targetUserId = user.getId();
+            val firstWorkId = user.getFirstWorkId();
+            val firstWork = findWork(firstWorkId);
+
+            val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, targetUserId);
+            if (Objects.nonNull(userScrap)){
+                return UserDiscoveryResponseDTO.of(user, userScrap.isStatus(), firstWork);
+                }
+            return UserDiscoveryResponseDTO.of(user, false, firstWork);
+        }).collect(Collectors.toList());
     }
 
     private List<Work> getUserPortfolio(Long userId) {
@@ -211,6 +222,11 @@ public class UserServiceImpl implements UserService {
     private User findUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
+    }
+
+    private Work findWork(Long workId) {
+        return workRepository.findById(workId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
     }
 
     private void createUserScrap(User user, Long targetId, User targetUser){

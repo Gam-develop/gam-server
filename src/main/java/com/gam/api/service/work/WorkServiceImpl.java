@@ -92,6 +92,7 @@ public class WorkServiceImpl implements WorkService {
 
         user.setWorkThumbNail(currentWork.getPhotoUrl());
         user.updateSelectedFirstAt();
+        user.setFirstWorkId(workId);
     }
 
     @Transactional
