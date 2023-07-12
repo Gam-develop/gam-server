@@ -1,13 +1,17 @@
 package com.gam.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gam.api.entity.superclass.TimeStamped;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static javax.persistence.GenerationType.IDENTITY;

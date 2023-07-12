@@ -61,13 +61,13 @@ public class UserServiceImpl implements UserService {
         return UserScrapResponseDTO.of(targetUser.getId(), targetUser.getUserName(), true);
     }
 
-    @Transactional
-    @Override
-    public UserExternalLinkResponseDTO updateExternalLink(Long userId, UserExternalLinkRequestDto request){
-        val user = findUser(userId);
-        user.setAdditionalLink(request.externalLink());
-        return UserExternalLinkResponseDTO.of(user.getAdditionalLink());
-    }
+//    @Transactional
+//    @Override
+//    public UserExternalLinkResponseDTO updateExternalLink(Long userId, UserExternalLinkRequestDto request){
+//        val user = findUser(userId);
+//        user.setAdditionalLink(request.externalLink());
+//        return UserExternalLinkResponseDTO.of(user.getAdditionalLink());
+//    }
 
     @Override
     public UserMyProfileResponseDTO getMyProfile(Long userId){
@@ -167,14 +167,14 @@ public class UserServiceImpl implements UserService {
          }).collect(Collectors.toList());
     }
 
-    @Override
-    public WorkPortfolioListResponseDTO getMyPortfolio(Long userId) {
-        val user = findUser(userId);
-        val addtionalLink = user.getAdditionalLink();
-        val works = getUserPortfolio(userId);
-
-        return WorkPortfolioListResponseDTO.of(addtionalLink, works);
-    }
+//    @Override
+//    public WorkPortfolioListResponseDTO getMyPortfolio(Long userId) {
+//        val user = findUser(userId);
+//        val addtionalLink = user.getAdditionalLink();
+//        val works = getUserPortfolio(userId);
+//
+//        return WorkPortfolioListResponseDTO.of(addtionalLink, works);
+//    }
 
     @Override
     public WorkPortfolioGetResponseDTO getPortfolio(Long requestUserId, Long userId) {
@@ -189,6 +189,13 @@ public class UserServiceImpl implements UserService {
         val isScraped = scrapList.contains(user.getId());
 
         return WorkPortfolioGetResponseDTO.of(isScraped, works);
+    }
+
+    @Override
+    public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId) {
+        val users = userRepository.findAllByOrderBySelectedFirstAtDesc();
+
+        return null;
     }
 
     private List<Work> getUserPortfolio(Long userId) {

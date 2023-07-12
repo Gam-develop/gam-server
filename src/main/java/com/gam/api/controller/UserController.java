@@ -33,12 +33,12 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_USER_DELETE_SCRAP.getMessage(),response));
     }
 
-    @PatchMapping("/link")
-    ResponseEntity<ApiResponse> updateExternalLink(Principal principal, @RequestBody UserExternalLinkRequestDto request) {
-        val userId = AuthCommon.getUser(principal);
-        val response = userService.updateExternalLink(userId, request);
-        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_EXTERNAL_LINK.getMessage(), response));
-    }
+//    @PatchMapping("/link")
+//    ResponseEntity<ApiResponse> updateExternalLink(Principal principal, @RequestBody UserExternalLinkRequestDto request) {
+//        val userId = AuthCommon.getUser(principal);
+//        val response = userService.updateExternalLink(userId, request);
+//        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_EXTERNAL_LINK.getMessage(), response));
+//    }
 
     @GetMapping("/my/profile")
     ResponseEntity<ApiResponse> getMyProfile(Principal principal) {
@@ -47,12 +47,12 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_MY_PROFILE.getMessage(), response));
     }
 
-    @GetMapping("/my/portfolio")
-    ResponseEntity<ApiResponse> getMyPortfolio(Principal principal) {
-        val userId = AuthCommon.getUser(principal);
-        val response = userService.getMyPortfolio(userId);
-        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_PROTFOLIO_LIST.getMessage(), response));
-    }
+//    @GetMapping("/my/portfolio")
+//    ResponseEntity<ApiResponse> getMyPortfolio(Principal principal) {
+//        val userId = AuthCommon.getUser(principal);
+//        val response = userService.getMyPortfolio(userId);
+//        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_PROTFOLIO_LIST.getMessage(), response));
+//    }
     @GetMapping("/portfolio/{userId}")
     ResponseEntity<ApiResponse> getPortfolio(Principal principal, @PathVariable Long userId) {
         val requestUserId = AuthCommon.getUser(principal);
@@ -101,4 +101,10 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_POPULAR_USER.getMessage(), response));
     }
 
+    @GetMapping("")
+    ResponseEntity<ApiResponse> getDiscoveryUsers(Principal principal) {
+        val userId = AuthCommon.getUser(principal);
+        val response = userService.getDiscoveryUsers(userId);
+        return null;
+    }
 }

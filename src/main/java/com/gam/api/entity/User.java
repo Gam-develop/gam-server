@@ -1,5 +1,6 @@
 package com.gam.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gam.api.entity.superclass.TimeStamped;
 import io.hypersistence.utils.hibernate.type.array.IntArrayType;
 import lombok.*;
@@ -12,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,6 +95,15 @@ public class User extends TimeStamped {
     @Column(name = "tag",
             columnDefinition = "integer[]")
     private int[] tags;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:SS")
+    @Column(name = "selected_first_at")
+    private LocalDateTime selectedFirstAt;
+
+    //추가
+    public void updateSelectedFirstAt() {
+        this.selectedFirstAt = LocalDateTime.now();
+    }
 
     @Builder
     public User(Role role) {

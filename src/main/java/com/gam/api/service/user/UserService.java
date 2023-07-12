@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface UserService {
     UserScrapResponseDTO scrapUser(Long userId, UserScrapRequestDto request);
-    UserExternalLinkResponseDTO updateExternalLink(Long userId, UserExternalLinkRequestDto request);
+//    UserExternalLinkResponseDTO updateExternalLink(Long userId, UserExternalLinkRequestDto request);
     UserProfileUpdateResponseDTO updateMyProfile(Long userId, UserProfileUpdateRequestDto request);
     UserMyProfileResponseDTO getMyProfile(Long userId);
     void onboardUser(Long userId, UserOnboardRequestDTO userOnboardRequestDTO);
@@ -20,6 +20,8 @@ public interface UserService {
     UserProfileResponseDTO getUserProfile(Long myId, Long userId);
     List<UserScrapsResponseDTO> getUserScraps(Long userId);
     List<UserResponseDTO> getPopularDesigners(Long userId);
-    WorkPortfolioListResponseDTO getMyPortfolio(Long userId);
+//    WorkPortfolioListResponseDTO getMyPortfolio(Long userId);
     WorkPortfolioGetResponseDTO getPortfolio(Long requestUserId, Long userId);
+    List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId);
+
 }
