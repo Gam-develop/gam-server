@@ -194,7 +194,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId) {
         val users = userRepository.findAllByOrderBySelectedFirstAtDesc();
-
         return null;
     }
 
