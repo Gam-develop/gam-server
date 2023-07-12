@@ -152,8 +152,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserResponseDTO> getPopularDesigners(Long userId) {
-        val users = userRepository.findAllByIdNotOrderByScrapCountDesc(userId);
+        val users = userRepository.findTop5ByOrderByScrapCountDesc();
+        for (User user: users
+             ) {
+            System.out.println(user.getScrapCount());
 
+        }
         return users.stream().map((user) -> {
             val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, user.getId());
             if (Objects.nonNull(userScrap)){

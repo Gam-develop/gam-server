@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> getUserById(Long userId);
     boolean existsByUserName(String userName);
-    List<User> findAllByIdNotOrderByScrapCountDesc(Long id);
+    List<User> findTop5ByOrderByScrapCountDesc();
 }
