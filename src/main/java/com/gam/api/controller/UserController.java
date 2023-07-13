@@ -6,8 +6,8 @@ import com.gam.api.common.util.AuthCommon;
 import com.gam.api.dto.user.request.UserOnboardRequestDTO;
 import com.gam.api.dto.user.request.UserUpdateLinkRequestDTO;
 import com.gam.api.service.user.UserService;
-import com.gam.api.dto.user.request.UserProfileUpdateRequestDto;
-import com.gam.api.dto.user.request.UserScrapRequestDto;
+import com.gam.api.dto.user.request.UserProfileUpdateRequestDTO;
+import com.gam.api.dto.user.request.UserScrapRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/scrap")
-    ResponseEntity<ApiResponse> scrapUser(Principal principal, @RequestBody UserScrapRequestDto request) {
+    ResponseEntity<ApiResponse> scrapUser(Principal principal, @RequestBody UserScrapRequestDTO request) {
         val userId = AuthCommon.getUser(principal);
         val response = userService.scrapUser(userId, request);
         if (response.userScrap()){
@@ -54,7 +54,7 @@ public class UserController {
     }
 
     @PatchMapping("/introduce")
-    ResponseEntity<ApiResponse> updateMyProfile(Principal principal, @RequestBody UserProfileUpdateRequestDto request) {
+    ResponseEntity<ApiResponse> updateMyProfile(Principal principal, @RequestBody UserProfileUpdateRequestDTO request) {
         val userId = AuthCommon.getUser(principal);
         val response = userService.updateMyProfile(userId, request);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_EXTERNAL_LINK.getMessage(), response));

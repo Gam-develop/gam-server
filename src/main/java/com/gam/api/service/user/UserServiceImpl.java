@@ -3,8 +3,8 @@ package com.gam.api.service.user;
 import com.gam.api.common.exception.WorkException;
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.user.request.UserOnboardRequestDTO;
-import com.gam.api.dto.user.request.UserProfileUpdateRequestDto;
-import com.gam.api.dto.user.request.UserScrapRequestDto;
+import com.gam.api.dto.user.request.UserProfileUpdateRequestDTO;
+import com.gam.api.dto.user.request.UserScrapRequestDTO;
 import com.gam.api.dto.user.request.UserUpdateLinkRequestDTO;
 import com.gam.api.dto.user.response.*;
 import com.gam.api.dto.work.response.WorkPortfolioGetResponseDTO;
@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserScrapResponseDTO scrapUser(Long userId, UserScrapRequestDto request) {
+    public UserScrapResponseDTO scrapUser(Long userId, UserScrapRequestDTO request) {
         val targetUser = findUser(request.targetUserId());
         val user = findUser(userId);
 
@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserProfileUpdateResponseDTO updateMyProfile(Long userId, UserProfileUpdateRequestDto request){
+    public UserProfileUpdateResponseDTO updateMyProfile(Long userId, UserProfileUpdateRequestDTO request){
         val user = findUser(userId);
 
         if (request.userInfo() != null) {
