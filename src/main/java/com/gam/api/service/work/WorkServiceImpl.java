@@ -8,6 +8,7 @@ import com.gam.api.dto.work.request.WorkEditRequestDTO;
 import com.gam.api.dto.work.request.WorkFirstAssignRequestDto;
 import com.gam.api.dto.work.response.WorkEditResponseDTO;
 import com.gam.api.dto.work.response.WorkResponseDTO;
+import com.gam.api.entity.UserStatus;
 import com.gam.api.entity.Work;
 import com.gam.api.repository.UserRepository;
 import com.gam.api.repository.WorkRepository;
@@ -29,6 +30,7 @@ public class WorkServiceImpl implements WorkService {
     private final S3ServiceImpl s3Service;
 
     @Override
+    @Transactional
     public WorkResponseDTO createWork(Long userId, WorkCreateRequestDTO request) {
         val user = userRepository.getUserById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
@@ -36,6 +38,10 @@ public class WorkServiceImpl implements WorkService {
         val userWorkCount = user.getWorks().size();
         if (userWorkCount >= 4) {
             throw new WorkException(ExceptionMessage.WORK_COUNT_EXCEED.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
+        if (user.getUserStatus().equals(UserStatus.NOT_PERMITTED)) {
+            user.updateUserStatus(UserStatus.PERMITTED);
         }
 
         val work = workRepository.save(Work.builder()
@@ -49,8 +55,16 @@ public class WorkServiceImpl implements WorkService {
     }
 
     @Override
+    @Transactional
     public WorkResponseDTO deleteWork(Long userId, WorkDeleteRequestDTO request) {
         val workId = request.workId();
+
+        val user = userRepository.getUserById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
+
+        if (user.getWorks().size() == 1) {
+            user.updateUserStatus(UserStatus.NOT_PERMITTED);
+        }
 
         val work = workRepository.getWorkById(workId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));

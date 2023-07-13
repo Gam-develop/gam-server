@@ -11,6 +11,7 @@ public enum ExceptionMessage {
     INVALID_TOKEN("유효하지 않은 토큰입니다."),
     EXPIRED_TOKEN("만료된 토큰입니다."),
     INVALID_SIGNATURE("유효하지 않은 서명입니다."),
+    PROFILE_UNCOMPLETED_USER("마이페이지를 작성하지 않은 유저입니다."),
 
     /** exception **/
     EMPTY_METHOD_ARGUMENT("빈 요청값이 있습니다."),
