@@ -196,10 +196,10 @@ public class UserServiceImpl implements UserService {
             val firstWork = findWork(firstWorkId);
 
             val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, targetUserId);
-            if (Objects.nonNull(userScrap)){
-                return UserDiscoveryResponseDTO.of(user, userScrap.isStatus(), firstWork);
+            if (Objects.isNull(userScrap)) {
+                return UserDiscoveryResponseDTO.of(user, false, firstWork);
                 }
-            return UserDiscoveryResponseDTO.of(user, false, firstWork);
+            return UserDiscoveryResponseDTO.of(user, userScrap.isStatus(), firstWork);
         }).collect(Collectors.toList());
     }
 
