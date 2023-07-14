@@ -11,4 +11,10 @@ public class TestController {
     public ResponseEntity<ApiResponse> test(){
         return ResponseEntity.ok(ApiResponse.success("Hello gam Server!"));
     }
+
+    @GetMapping("/ci/test")
+    public ResponseEntity<ApiResponse> ciTest(){
+        return ResponseEntity.ok(ApiResponse.success("Hello gam Server!"));
+    }
+
 }
