@@ -1,9 +1,9 @@
 package com.gam.api.service.user;
 
-import com.gam.api.dto.user.request.UserExternalLinkRequestDto;
 import com.gam.api.dto.user.request.UserOnboardRequestDTO;
-import com.gam.api.dto.user.request.UserProfileUpdateRequestDto;
-import com.gam.api.dto.user.request.UserScrapRequestDto;
+import com.gam.api.dto.user.request.UserProfileUpdateRequestDTO;
+import com.gam.api.dto.user.request.UserScrapRequestDTO;
+import com.gam.api.dto.user.request.UserUpdateLinkRequestDTO;
 import com.gam.api.dto.user.response.*;
 import com.gam.api.dto.work.response.*;
 
@@ -11,9 +11,8 @@ import java.util.List;
 
 
 public interface UserService {
-    UserScrapResponseDTO scrapUser(Long userId, UserScrapRequestDto request);
-    UserExternalLinkResponseDTO updateExternalLink(Long userId, UserExternalLinkRequestDto request);
-    UserProfileUpdateResponseDTO updateMyProfile(Long userId, UserProfileUpdateRequestDto request);
+    UserScrapResponseDTO scrapUser(Long userId, UserScrapRequestDTO request);
+    UserProfileUpdateResponseDTO updateMyProfile(Long userId, UserProfileUpdateRequestDTO request);
     UserMyProfileResponseDTO getMyProfile(Long userId);
     void onboardUser(Long userId, UserOnboardRequestDTO userOnboardRequestDTO);
     UserNameCheckResponseDTO checkUserNameDuplicated(String userName);
@@ -22,4 +21,8 @@ public interface UserService {
     List<UserResponseDTO> getPopularDesigners(Long userId);
     WorkPortfolioListResponseDTO getMyPortfolio(Long userId);
     WorkPortfolioGetResponseDTO getPortfolio(Long requestUserId, Long userId);
-}
+
+    void updateInstagramLink(Long userId, UserUpdateLinkRequestDTO request);
+    void updateBehanceLink(Long userId, UserUpdateLinkRequestDTO request);
+    void updateNotionLink(Long userId, UserUpdateLinkRequestDTO request);
+    }

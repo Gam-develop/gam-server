@@ -3,11 +3,11 @@ package com.gam.api.controller;
 import com.gam.api.common.message.*;
 import com.gam.api.common.ApiResponse;
 import com.gam.api.dto.user.request.UserOnboardRequestDTO;
+import com.gam.api.dto.user.request.UserUpdateLinkRequestDTO;
 import com.gam.api.entity.GamUserDetails;
 import com.gam.api.service.user.UserService;
-import com.gam.api.dto.user.request.UserExternalLinkRequestDto;
-import com.gam.api.dto.user.request.UserProfileUpdateRequestDto;
-import com.gam.api.dto.user.request.UserScrapRequestDto;
+import com.gam.api.dto.user.request.UserProfileUpdateRequestDTO;
+import com.gam.api.dto.user.request.UserScrapRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.ResponseEntity;
@@ -33,16 +33,7 @@ public class UserController {
         }
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_USER_DELETE_SCRAP.getMessage(),response));
     }
-
-    @PatchMapping("/link")
-    ResponseEntity<ApiResponse> updateExternalLink(
-            @AuthenticationPrincipal GamUserDetails userDetails,
-            @RequestBody UserExternalLinkRequestDto request)
-    {
-        val response = userService.updateExternalLink(userDetails.getId(), request);
-        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_EXTERNAL_LINK.getMessage(), response));
-    }
-
+  
     @GetMapping("/my/profile")
     ResponseEntity<ApiResponse> getMyProfile(@AuthenticationPrincipal GamUserDetails userDetails) {
         val response = userService.getMyProfile(userDetails.getId());
@@ -108,4 +99,24 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_POPULAR_USER.getMessage(), response));
     }
 
+    @PatchMapping("/link/instagram")
+    ResponseEntity<ApiResponse> updateInstagramLink(Principal principal, UserUpdateLinkRequestDTO request) {
+        val userId = AuthCommon.getUser(principal);
+        userService.updateInstagramLink(userId, request);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_INSTAGRAM_LINK.getMessage(),null));
+    }
+
+    @PatchMapping("/link/behance")
+    ResponseEntity<ApiResponse> updateBehanceLink(Principal principal, UserUpdateLinkRequestDTO request) {
+        val userId = AuthCommon.getUser(principal);
+        userService.updateBehanceLink(userId, request);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_BEHANCE_LINK.getMessage(),null));
+    }
+
+    @PatchMapping("/link/notion")
+    ResponseEntity<ApiResponse> updateNotionLink(Principal principal, UserUpdateLinkRequestDTO request) {
+        val userId = AuthCommon.getUser(principal);
+         userService.updateNotionLink(userId, request);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_NOTION_LINK.getMessage(),null));
+    }
 }

@@ -28,6 +28,9 @@ public enum ResponseMessage {
     SUCCESS_GET_POPULAR_USER("홈-인기디자이너 갖고 오기 성공"),
     SUCCESS_GET_USER_PROFILE("유저 프로필 보기 성공"),
     SUCCESS_GET_USER_SCRAPS("스크랩한 유저들의 정보를 갖고 왔습니다."),
+    SUCCESS_UPDATE_INSTAGRAM_LINK("인스타그램 링크 변경을 완료했습니다."),
+    SUCCESS_UPDATE_BEHANCE_LINK("비헨스 링크 변경을 완료했습니다."),
+    SUCCESS_UPDATE_NOTION_LINK("노션 링크 변경을 완료했습니다."),
 
     /** work **/
     SUCCESS_CREATE_WORK("작업물 생성 성공"),
