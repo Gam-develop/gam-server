@@ -89,7 +89,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
       run:
         aws deploy create-deployment 
-        --application-name gam-dev-server-codedeploy
+        --application-name gam-dev-codedeploy
         --deployment-group-name gam-dev-server-codedeploy-group
         --file-exists-behavior OVERWRITE 
         --s3-location bucket=gam-image-test,bundleType=zip,key=gam-dev-server.zip
