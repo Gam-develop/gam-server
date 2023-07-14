@@ -66,7 +66,7 @@ public class UserController {
             @RequestBody UserProfileUpdateRequestDTO request)
     {
         val response = userService.updateMyProfile(userDetails.getId(), request);
-        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_EXTERNAL_LINK.getMessage(), response));
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage. SUCCESS_UPDATE_MY_PROFILE.getMessage(), response));
     }
 
     @PostMapping("/onboard")
@@ -107,10 +107,10 @@ public class UserController {
 
 
     @GetMapping("")
-    ResponseEntity<ApiResponse> getDiscoveryUsers(Principal principal) {
-        val userId = AuthCommon.getUser(principal);
-        val response = userService.getDiscoveryUsers(userId);
+    ResponseEntity<ApiResponse> getDiscoveryUsers(@AuthenticationPrincipal GamUserDetails userDetails) {
+        val response = userService.getDiscoveryUsers(userDetails.getId());
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_DISCOVERY_GET_USERS.getMessage(), response));
+    }
 
     @PatchMapping("/link/instagram")
     ResponseEntity<ApiResponse> updateInstagramLink(

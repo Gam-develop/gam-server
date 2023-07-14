@@ -24,6 +24,7 @@ public enum ResponseMessage {
     SUCCESS_USER_SCRAP("유저 스크랩 성공"),
     SUCCESS_USER_DELETE_SCRAP("유저 스크랩 취소 성공"),
     SUCCESS_GET_MY_PROFILE("내 프로필 보기 성공"),
+    SUCCESS_UPDATE_MY_PROFILE("유저 정보 수정 성공"),
     SUCCESS_GET_USER_PROFILE("유저 프로필 보기 성공"),
     SUCCESS_UPDATE_INSTAGRAM_LINK("인스타그램 링크 변경을 완료했습니다."),
     SUCCESS_UPDATE_BEHANCE_LINK("비헨스 링크 변경을 완료했습니다."),
