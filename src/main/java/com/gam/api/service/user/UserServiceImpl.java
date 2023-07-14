@@ -166,11 +166,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserResponseDTO> getPopularDesigners(Long userId) {
         val users = userRepository.findTop5ByOrderByScrapCountDesc();
-        for (User user: users
-             ) {
-            System.out.println(user.getScrapCount());
-
-        }
         return users.stream().map((user) -> {
             val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, user.getId());
             if (Objects.nonNull(userScrap)){
@@ -187,6 +182,7 @@ public class UserServiceImpl implements UserService {
         return WorkPortfolioListResponseDTO.of(user, works);
     }
 
+
     @Override
     public WorkPortfolioGetResponseDTO getPortfolio(Long requestUserId, Long userId) {
         val requestUser = findUser(requestUserId);
@@ -200,6 +196,23 @@ public class UserServiceImpl implements UserService {
         val isScraped = scrapList.contains(user.getId());
 
         return WorkPortfolioGetResponseDTO.of(isScraped, works);
+    }
+
+    @Override
+    public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId) {
+        val users = userRepository.findAllByIdNotOrderBySelectedFirstAtDesc(userId);
+
+        return users.stream().map((user) -> {
+            val targetUserId = user.getId();
+            val firstWorkId = user.getFirstWorkId();
+            val firstWork = findWork(firstWorkId);
+
+            val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, targetUserId);
+            if (Objects.isNull(userScrap)) {
+                return UserDiscoveryResponseDTO.of(user, false, firstWork);
+                }
+            return UserDiscoveryResponseDTO.of(user, userScrap.isStatus(), firstWork);
+        }).collect(Collectors.toList());
     }
 
     private List<Work> getUserPortfolio(Long userId) {
@@ -216,6 +229,11 @@ public class UserServiceImpl implements UserService {
     private User findUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
+    }
+
+    private Work findWork(Long workId) {
+        return workRepository.findById(workId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
     }
 
     private void createUserScrap(User user, Long targetId, User targetUser){

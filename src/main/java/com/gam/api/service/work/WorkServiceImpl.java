@@ -105,6 +105,8 @@ public class WorkServiceImpl implements WorkService {
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
 
         user.setWorkThumbNail(currentWork.getPhotoUrl());
+        user.updateSelectedFirstAt();
+        user.setFirstWorkId(workId);
     }
 
     @Transactional

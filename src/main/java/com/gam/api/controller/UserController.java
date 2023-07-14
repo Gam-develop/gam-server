@@ -32,7 +32,7 @@ public class UserController {
         }
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_USER_DELETE_SCRAP.getMessage(),response));
     }
-  
+
     @GetMapping("/my/profile")
     ResponseEntity<ApiResponse> getMyProfile(
             @AuthenticationPrincipal GamUserDetails userDetails)
@@ -41,6 +41,7 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_MY_PROFILE.getMessage(), response));
     }
 
+
     @GetMapping("/my/portfolio")
     ResponseEntity<ApiResponse> getMyPortfolio(
             @AuthenticationPrincipal GamUserDetails userDetails)
@@ -48,6 +49,8 @@ public class UserController {
         val response = userService.getMyPortfolio(userDetails.getId());
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_PROTFOLIO_LIST.getMessage(), response));
     }
+
+ 
     @GetMapping("/portfolio/{userId}")
     ResponseEntity<ApiResponse> getPortfolio(
             @AuthenticationPrincipal GamUserDetails userDetails,
@@ -102,6 +105,13 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_POPULAR_USER.getMessage(), response));
     }
 
+
+    @GetMapping("")
+    ResponseEntity<ApiResponse> getDiscoveryUsers(Principal principal) {
+        val userId = AuthCommon.getUser(principal);
+        val response = userService.getDiscoveryUsers(userId);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_DISCOVERY_GET_USERS.getMessage(), response));
+
     @PatchMapping("/link/instagram")
     ResponseEntity<ApiResponse> updateInstagramLink(
             @AuthenticationPrincipal GamUserDetails userDetails,
@@ -127,5 +137,6 @@ public class UserController {
     {
          userService.updateNotionLink(userDetails.getId(), request);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_NOTION_LINK.getMessage(),null));
+
     }
 }
