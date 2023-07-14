@@ -1,5 +1,6 @@
 package com.gam.api.dto.work.response;
 
+import com.gam.api.entity.User;
 import com.gam.api.entity.Work;
 import lombok.Builder;
 
@@ -7,12 +8,16 @@ import java.util.List;
 
 @Builder
 public record WorkPortfolioListResponseDTO(
-        String additionalLink,
+        String behanceLink,
+        String instagramLink,
+        String notionLink,
         List<WorkPortfolioListResponseVO> works
 ) {
-    public static WorkPortfolioListResponseDTO of(String additionalLink, List<Work> works) {
+    public static WorkPortfolioListResponseDTO of(User user, List<Work> works) {
         return WorkPortfolioListResponseDTO.builder()
-                .additionalLink(additionalLink)
+                .behanceLink(user.getBehanceLink())
+                .instagramLink(user.getInstagramLink())
+                .notionLink(user.getNotionLink())
                 .works(works.stream().map(WorkPortfolioListResponseVO::of).toList())
                 .build();
     }
