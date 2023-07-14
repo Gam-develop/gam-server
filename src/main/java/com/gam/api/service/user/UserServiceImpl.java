@@ -181,7 +181,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public WorkPortfolioListResponseDTO getMyPortfolio(Long userId) {
+    public WorkPortfolioListResponseDTO userDetails.getId()(Long userId) {
         val user = findUser(userId);
         val addtionalLink = user.getAdditionalLink();
         val works = getUserPortfolio(userId);

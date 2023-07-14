@@ -105,7 +105,7 @@ public class UserController {
     @PatchMapping("/link/instagram")
     ResponseEntity<ApiResponse> updateInstagramLink(
             @AuthenticationPrincipal GamUserDetails userDetails,
-            UserUpdateLinkRequestDTO request)
+            @RequestBody UserUpdateLinkRequestDTO request)
     {
         userService.updateInstagramLink(userDetails.getId(), request);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_INSTAGRAM_LINK.getMessage(),null));
@@ -114,7 +114,7 @@ public class UserController {
     @PatchMapping("/link/behance")
     ResponseEntity<ApiResponse> updateBehanceLink(
             @AuthenticationPrincipal GamUserDetails userDetails,
-            UserUpdateLinkRequestDTO request)
+            @RequestBody UserUpdateLinkRequestDTO request)
     {
         userService.updateBehanceLink(userDetails.getId(), request);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_BEHANCE_LINK.getMessage(),null));
@@ -123,7 +123,7 @@ public class UserController {
     @PatchMapping("/link/notion")
     ResponseEntity<ApiResponse> updateNotionLink(
             @AuthenticationPrincipal GamUserDetails userDetails,
-            UserUpdateLinkRequestDTO request)
+            @RequestBody UserUpdateLinkRequestDTO request)
     {
          userService.updateNotionLink(userDetails.getId(), request);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_NOTION_LINK.getMessage(),null));

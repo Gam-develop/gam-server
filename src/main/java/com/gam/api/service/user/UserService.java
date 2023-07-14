@@ -21,7 +21,6 @@ public interface UserService {
     List<UserResponseDTO> getPopularDesigners(Long userId);
     WorkPortfolioListResponseDTO getMyPortfolio(Long userId);
     WorkPortfolioGetResponseDTO getPortfolio(Long requestUserId, Long userId);
-
     void updateInstagramLink(Long userId, UserUpdateLinkRequestDTO request);
     void updateBehanceLink(Long userId, UserUpdateLinkRequestDTO request);
     void updateNotionLink(Long userId, UserUpdateLinkRequestDTO request);
