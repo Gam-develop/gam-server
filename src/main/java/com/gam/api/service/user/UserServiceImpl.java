@@ -2,10 +2,10 @@ package com.gam.api.service.user;
 
 import com.gam.api.common.exception.WorkException;
 import com.gam.api.common.message.ExceptionMessage;
-import com.gam.api.dto.user.request.UserExternalLinkRequestDto;
 import com.gam.api.dto.user.request.UserOnboardRequestDTO;
-import com.gam.api.dto.user.request.UserProfileUpdateRequestDto;
-import com.gam.api.dto.user.request.UserScrapRequestDto;
+import com.gam.api.dto.user.request.UserProfileUpdateRequestDTO;
+import com.gam.api.dto.user.request.UserScrapRequestDTO;
+import com.gam.api.dto.user.request.UserUpdateLinkRequestDTO;
 import com.gam.api.dto.user.response.*;
 import com.gam.api.dto.work.response.WorkPortfolioGetResponseDTO;
 import com.gam.api.dto.work.response.WorkPortfolioListResponseDTO;
@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserScrapResponseDTO scrapUser(Long userId, UserScrapRequestDto request) {
+    public UserScrapResponseDTO scrapUser(Long userId, UserScrapRequestDTO request) {
         val targetUser = findUser(request.targetUserId());
         val user = findUser(userId);
 
@@ -61,13 +61,26 @@ public class UserServiceImpl implements UserService {
         return UserScrapResponseDTO.of(targetUser.getId(), targetUser.getUserName(), true);
     }
 
-//    @Transactional
-//    @Override
-//    public UserExternalLinkResponseDTO updateExternalLink(Long userId, UserExternalLinkRequestDto request){
-//        val user = findUser(userId);
-//        user.setAdditionalLink(request.externalLink());
-//        return UserExternalLinkResponseDTO.of(user.getAdditionalLink());
-//    }
+    @Transactional
+    @Override
+    public void updateInstagramLink(Long userId, UserUpdateLinkRequestDTO request) {
+        val user = findUser(userId);
+        user.setInstagramLink(request.link());
+    }
+
+    @Transactional
+    @Override
+    public void updateBehanceLink(Long userId, UserUpdateLinkRequestDTO request) {
+        val user = findUser(userId);
+        user.setBehanceLink(request.link());
+    }
+
+    @Transactional
+    @Override
+    public void updateNotionLink(Long userId, UserUpdateLinkRequestDTO request) {
+        val user = findUser(userId);
+        user.setNotionLink(request.link());
+    }
 
     @Override
     public UserMyProfileResponseDTO getMyProfile(Long userId){
@@ -77,7 +90,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserProfileUpdateResponseDTO updateMyProfile(Long userId, UserProfileUpdateRequestDto request){
+    public UserProfileUpdateResponseDTO updateMyProfile(Long userId, UserProfileUpdateRequestDTO request){
         val user = findUser(userId);
 
         if (request.userInfo() != null) {
@@ -162,14 +175,13 @@ public class UserServiceImpl implements UserService {
          }).collect(Collectors.toList());
     }
 
-//    @Override
-//    public WorkPortfolioListResponseDTO getMyPortfolio(Long userId) {
-//        val user = findUser(userId);
-//        val addtionalLink = user.getAdditionalLink();
-//        val works = getUserPortfolio(userId);
-//
-//        return WorkPortfolioListResponseDTO.of(addtionalLink, works);
-//    }
+    @Override
+    public WorkPortfolioListResponseDTO getMyPortfolio(Long userId) {
+        val user = findUser(userId);
+        val works = getUserPortfolio(userId);
+        return WorkPortfolioListResponseDTO.of(user, works);
+    }
+
 
     @Override
     public WorkPortfolioGetResponseDTO getPortfolio(Long requestUserId, Long userId) {

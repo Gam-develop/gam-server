@@ -33,18 +33,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if ((uri.startsWith("/api/v1")) && !uri.contains("social")
                 && !uri.contains("s3") &&!uri.contains("/name/check")) {
             val token = resolveToken(request);
-
             val isTokenAvailable = checkJwtAvailable(token);
 
             if (Objects.isNull(token)) {
                 throw new AuthException(ExceptionMessage.EMPTY_TOKEN.getMessage(), HttpStatus.BAD_REQUEST);
             }
 
-            if (isTokenAvailable) {
-                val auth = jwtTokenManager.getAuthentication(token);
-                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(auth);
+            if (!isTokenAvailable) {
+                throw new AuthException(ExceptionMessage.INVALID_TOKEN.getMessage(), HttpStatus.UNAUTHORIZED);
             }
+
+            val auth = jwtTokenManager.getAuthentication(token);
+            auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(auth);
         }
 
         filterChain.doFilter(request, response);

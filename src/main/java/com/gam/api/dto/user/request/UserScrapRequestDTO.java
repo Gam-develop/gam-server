@@ -3,7 +3,7 @@ package com.gam.api.dto.user.request;
 import lombok.Builder;
 
 @Builder
-public record UserScrapRequestDto(
+public record UserScrapRequestDTO(
         Long targetUserId,
         boolean currentScrapStatus
 ) {

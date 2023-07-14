@@ -19,16 +19,18 @@ public enum ResponseMessage {
     SUCCESS_DELETE_IMAGE("이미지 삭제 성공"),
 
     /** user **/
+    SUCCESS_USER_NAME_DUPLICATE_CHECK("닉네임 중복 확인 성공"),
+    SUCCESS_USER_ONBOARD("온보딩 성공"),
     SUCCESS_USER_SCRAP("유저 스크랩 성공"),
     SUCCESS_USER_DELETE_SCRAP("유저 스크랩 취소 성공"),
-    SUCCESS_UPDATE_EXTERNAL_LINK("유저 외부 링크 수정 성공"),
     SUCCESS_GET_MY_PROFILE("내 프로필 보기 성공"),
-    SUCCESS_USER_ONBOARD("온보딩 성공"),
-    SUCCESS_USER_NAME_DUPLICATE_CHECK("닉네임 중복 확인 성공"),
-    SUCCESS_GET_POPULAR_USER("홈-인기디자이너 갖고 오기 성공"),
     SUCCESS_GET_USER_PROFILE("유저 프로필 보기 성공"),
-    SUCCESS_GET_USER_SCRAPS("스크랩한 유저들의 정보를 갖고 왔습니다."),
+    SUCCESS_UPDATE_INSTAGRAM_LINK("인스타그램 링크 변경을 완료했습니다."),
+    SUCCESS_UPDATE_BEHANCE_LINK("비헨스 링크 변경을 완료했습니다."),
+    SUCCESS_UPDATE_NOTION_LINK("노션 링크 변경을 완료했습니다."),
+    SUCCESS_GET_POPULAR_USER("홈-인기디자이너 갖고 오기 성공"),
     SUCCESS_DISCOVERY_GET_USERS("둘러보기-발견에서 유저들의 정보를 갖고왔습니다."),
+    SUCCESS_GET_USER_SCRAPS("스크랩한 유저들의 정보를 갖고 왔습니다."),
 
     /** work **/
     SUCCESS_CREATE_WORK("작업물 생성 성공"),
