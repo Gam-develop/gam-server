@@ -8,13 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestController {
     @GetMapping("/health")
-    public ResponseEntity<ApiResponse> test(){
+    public ResponseEntity<ApiResponse> test() {
         return ResponseEntity.ok(ApiResponse.success("Hello gam Server!"));
     }
-
-    @GetMapping("/ci/test")
-    public ResponseEntity<ApiResponse> ciTest(){
-        return ResponseEntity.ok(ApiResponse.success("Hello gam Server!"));
-    }
-
 }
