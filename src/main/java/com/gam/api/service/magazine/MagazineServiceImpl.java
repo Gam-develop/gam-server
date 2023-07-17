@@ -19,6 +19,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -100,7 +101,13 @@ public class MagazineServiceImpl implements MagazineService {
         return MagazineScrapResponseDTO.of(magazineId, createdMagazineScrap.isStatus());
     }
 
-
+    @Override
+    public List<MagazineSearchResponseDTO> searchMagazine(String keyword) {
+        val magazines = magazineRepository.findAllSearch(keyword);
+        return magazines.stream()
+                .map((magazine) -> MagazineSearchResponseDTO.of(magazine))
+                .collect(Collectors.toList());
+    }
 
     private List<Long> getMagazineScrapList(User user) {
         return user.getMagazineScraps().stream()
