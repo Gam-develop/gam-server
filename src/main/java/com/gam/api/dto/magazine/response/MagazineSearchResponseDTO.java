@@ -8,14 +8,16 @@ public record MagazineSearchResponseDTO (
         String thumbNail,
         String title,
         String interviewPerson,
-        Long viewCount
+        Long viewCount,
+        boolean magazineScrap
 ){
-    public static MagazineSearchResponseDTO of(Magazine magazine) {
+    public static MagazineSearchResponseDTO of(Magazine magazine, boolean magazineScrap) {
         return MagazineSearchResponseDTO.builder()
                 .thumbNail(magazine.getThumbNail())
                 .title(magazine.getMagazineTitle())
                 .interviewPerson(magazine.getInterviewPerson())
                 .viewCount(magazine.getViewCount())
+                .magazineScrap(magazineScrap)
                 .build();
     }
 }

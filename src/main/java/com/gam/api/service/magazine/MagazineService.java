@@ -11,5 +11,5 @@ public interface MagazineService {
     MagazineScrapsResponseDTO getMagazineScraps(Long userId);
     MagazineResponseDTO getPopularMagazines(Long userId);
     MagazineScrapResponseDTO scrapMagazine(Long userId, MagazineScrapRequestDTO magazineScrapRequestDTO);
-    List<MagazineSearchResponseDTO> searchMagazine(String keyword);
+    List<MagazineSearchResponseDTO> searchMagazine(Long userId, String keyword);
 }
