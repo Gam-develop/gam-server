@@ -1,6 +1,5 @@
 package com.gam.api.service.magazine;
 
-import com.gam.api.common.exception.AuthException;
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.magazine.request.MagazineScrapRequestDTO;
 import com.gam.api.dto.magazine.response.*;
@@ -13,7 +12,6 @@ import com.gam.api.repository.MagazineScrapRepository;
 import com.gam.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,16 +102,10 @@ public class MagazineServiceImpl implements MagazineService {
     }
 
     @Override
-    public List<MagazineSearchResponseDTO> searchMagazine(Long userId, String keyword) {
+    public List<MagazineSearchResponseDTO> searchMagazine(String keyword) {
         val magazines = magazineRepository.findAllSearch(keyword);
         return magazines.stream()
-                .map(magazine -> {
-                    val magazineScrap = magazineScrapRepository.findByUser_IdAndMagazine_Id(userId, magazine.getId());
-                    if (Objects.isNull(magazineScrap)) {
-                        return MagazineSearchResponseDTO.of(magazine, false);
-                    }
-                    return MagazineSearchResponseDTO.of(magazine, true);
-                })
+                .map((magazine) -> MagazineSearchResponseDTO.of(magazine))
                 .collect(Collectors.toList());
     }
 

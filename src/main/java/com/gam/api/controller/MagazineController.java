@@ -48,9 +48,8 @@ public class MagazineController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse> searchMagazine(@AuthenticationPrincipal GamUserDetails userDetails, @RequestParam String keyword) {
-        val response = magazineService.searchMagazine(userDetails.getId(),keyword);
+    public ResponseEntity<ApiResponse> searchMagazine(@RequestParam String keyword) {
+        val response = magazineService.searchMagazine(keyword);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_SEARCH_MAGAZINE.getMessage(),response));
     }
-
 }
