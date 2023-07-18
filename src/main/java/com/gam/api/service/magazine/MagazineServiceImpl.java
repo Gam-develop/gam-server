@@ -2,10 +2,7 @@ package com.gam.api.service.magazine;
 
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.magazine.request.MagazineScrapRequestDTO;
-import com.gam.api.dto.magazine.response.MagazineDetailResponseDTO;
-import com.gam.api.dto.magazine.response.MagazineResponseDTO;
-import com.gam.api.dto.magazine.response.MagazineScrapResponseDTO;
-import com.gam.api.dto.magazine.response.MagazineScrapsResponseDTO;
+import com.gam.api.dto.magazine.response.*;
 import com.gam.api.entity.Magazine;
 import com.gam.api.entity.MagazineScrap;
 import com.gam.api.entity.User;
@@ -22,6 +19,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -101,6 +99,14 @@ public class MagazineServiceImpl implements MagazineService {
                 .build());
 
         return MagazineScrapResponseDTO.of(magazineId, createdMagazineScrap.isStatus());
+    }
+
+    @Override
+    public List<MagazineSearchResponseDTO> searchMagazine(String keyword) {
+        val magazines = magazineRepository.findAllSearch(keyword);
+        return magazines.stream()
+                .map((magazine) -> MagazineSearchResponseDTO.of(magazine))
+                .collect(Collectors.toList());
     }
 
     private List<Long> getMagazineScrapList(User user) {
