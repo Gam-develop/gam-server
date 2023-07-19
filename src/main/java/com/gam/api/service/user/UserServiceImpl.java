@@ -2,6 +2,7 @@ package com.gam.api.service.user;
 
 import com.gam.api.common.exception.WorkException;
 import com.gam.api.common.message.ExceptionMessage;
+import com.gam.api.dto.search.response.SearchUserWorkDTO;
 import com.gam.api.dto.user.request.UserOnboardRequestDTO;
 import com.gam.api.dto.user.request.UserProfileUpdateRequestDTO;
 import com.gam.api.dto.user.request.UserScrapRequestDTO;
@@ -9,13 +10,12 @@ import com.gam.api.dto.user.request.UserUpdateLinkRequestDTO;
 import com.gam.api.dto.user.response.*;
 import com.gam.api.dto.work.response.WorkPortfolioGetResponseDTO;
 import com.gam.api.dto.work.response.WorkPortfolioListResponseDTO;
-import com.gam.api.entity.User;
-import com.gam.api.entity.Work;
-import com.gam.api.entity.UserScrap;
-import com.gam.api.entity.UserTag;
+import com.gam.api.entity.*;
 import com.gam.api.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,6 +80,15 @@ public class UserServiceImpl implements UserService {
     public void updateNotionLink(Long userId, UserUpdateLinkRequestDTO request) {
         val user = findUser(userId);
         user.setNotionLink(request.link());
+    }
+
+    @Override
+    public List<SearchUserWorkDTO> searchUserAndWork(String keyword) {
+        // 유저 찾기
+        val user = userRepository.findByUserName(keyword);
+        // works찾기
+        val userWorks = workRepository.findByUserId(user.getId());
+        val keywordWorks = workRepository.findByKeyword(keyword);
     }
 
     @Override
