@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -84,11 +85,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<SearchUserWorkDTO> searchUserAndWork(String keyword) {
+        val workList = new ArrayList<Work>();
         // 유저 찾기
         val user = userRepository.findByUserName(keyword);
         // works찾기
-        val userWorks = workRepository.findByUserId(user.getId());
-        val keywordWorks = workRepository.findByKeyword(keyword);
+        workList.addAll(workRepository.findByUserId(user.getId()));
+        workList.addAll(workRepository.findByKeyword(keyword));
     }
 
     @Override
