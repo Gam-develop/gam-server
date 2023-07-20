@@ -21,9 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -85,12 +83,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<SearchUserWorkDTO> searchUserAndWork(String keyword) {
-        val workList = new ArrayList<Work>();
-        // 유저 찾기
+
+        Set<Work> workSet = new HashSet<>();
         val user = userRepository.findByUserName(keyword);
-        // works찾기
-        workList.addAll(workRepository.findByUserId(user.getId()));
-        workList.addAll(workRepository.findByKeyword(keyword));
+        workSet.addAll(workRepository.findByUserId(user.getId()));
+        workSet.addAll(workRepository.findByKeyword(keyword));
+        val workList = new ArrayList<>(workSet);
+
+        //워크 리스트 돌면서 return,
+        //createAt 넣을지 말지 고민중, 아마 넣어야할듯
     }
 
     @Override
