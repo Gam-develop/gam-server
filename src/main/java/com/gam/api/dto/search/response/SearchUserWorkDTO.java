@@ -1,5 +1,6 @@
 package com.gam.api.dto.search.response;
 
+import com.gam.api.entity.Work;
 import lombok.Builder;
 
 @Builder
@@ -9,11 +10,11 @@ public record SearchUserWorkDTO(
         String userName,
         int viewCount
 ) {
-    public static SearchUserWorkDTO of (String thumbNail, String userName, int viewCount) {
+    public static SearchUserWorkDTO of (Work work) {
         return SearchUserWorkDTO.builder()
-                .thumbNail(thumbNail)
-                .userName(userName)
-                .viewCount(viewCount)
+                .thumbNail(work.getPhotoUrl())
+                .userName(work.getUser().getUserName())
+                .viewCount(work.getViewCount())
                 .build();
     }
 }

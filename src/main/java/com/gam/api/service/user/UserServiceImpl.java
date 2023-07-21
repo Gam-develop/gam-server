@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
         if (workList.size()!=0) {
             workList.sort(comparing(Work::getCreatedAt).reversed());
             return workList.stream()
-                    .map((w) -> SearchUserWorkDTO.of(w.getPhotoUrl(), w.getUser().getUserName(), w.getViewCount())
+                    .map((w) -> SearchUserWorkDTO.of(w)
                     ).collect(Collectors.toList());
         }
         return null;
