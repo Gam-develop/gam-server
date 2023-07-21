@@ -7,9 +7,9 @@ public record SearchUserWorkDTO(
         String thumbNail,
         String title,
         String userName,
-        Long viewCount
+        int viewCount
 ) {
-    public static SearchUserWorkDTO of (String thumbNail, String userName, Long viewCount) {
+    public static SearchUserWorkDTO of (String thumbNail, String userName, int viewCount) {
         return SearchUserWorkDTO.builder()
                 .thumbNail(thumbNail)
                 .userName(userName)

@@ -2,6 +2,7 @@ package com.gam.api.service.user;
 
 import com.gam.api.common.exception.WorkException;
 import com.gam.api.common.message.ExceptionMessage;
+import com.gam.api.dto.magazine.response.MagazineSearchResponseDTO;
 import com.gam.api.dto.search.response.SearchUserWorkDTO;
 import com.gam.api.dto.user.request.UserOnboardRequestDTO;
 import com.gam.api.dto.user.request.UserProfileUpdateRequestDTO;
@@ -23,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.Comparator.comparing;
 
 @RequiredArgsConstructor
 @Service
@@ -83,15 +86,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<SearchUserWorkDTO> searchUserAndWork(String keyword) {
-
         Set<Work> workSet = new HashSet<>();
         val user = userRepository.findByUserName(keyword);
-        workSet.addAll(workRepository.findByUserId(user.getId()));
+        if (user.isPresent()) {
+            workSet.addAll(workRepository.findByUserId(user.get().getId()));
+        }
         workSet.addAll(workRepository.findByKeyword(keyword));
         val workList = new ArrayList<>(workSet);
-
-        //워크 리스트 돌면서 return,
-        //createAt 넣을지 말지 고민중, 아마 넣어야할듯
+        if (workList.size()!=0) {
+            workList.sort(comparing(Work::getCreatedAt).reversed());
+            return workList.stream()
+                    .map((w) -> SearchUserWorkDTO.of(w.getPhotoUrl(), w.getUser().getUserName(), w.getViewCount())
+                    ).collect(Collectors.toList());
+        }
+        return null;
     }
 
     @Override
