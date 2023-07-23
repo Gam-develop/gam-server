@@ -11,7 +11,4 @@ public class TestController {
     public ResponseEntity<ApiResponse> test() {
         return ResponseEntity.ok(ApiResponse.success("Hello gam Server!"));
     }
-
-    @GetMapping("/test/deploy")
-    public ResponseEntity<ApiResponse> deployTest() { return ResponseEntity.ok(ApiResponse.success("CI/CD 구축 완료")); }
 }
