@@ -20,4 +20,4 @@ else
 fi
 
 echo "> $JAR_NAME 실행"
-nohup java -jar -Duser.timezone=Asia/Seoul -Dspring.profiles.active=$IDLE_APPLICATION $IDLE_APPLICATION_PATH >> /home/ubuntu/app/nohup.out 2>&1 &
+nohup java -jar -Duser.timezone=Asia/Seoul -Dspring.profiles.active=dev $IDLE_APPLICATION_PATH >> /home/ubuntu/app/nohup.out 2>&1 &
