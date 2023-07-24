@@ -1,7 +1,10 @@
 package com.gam.api.repository;
 
+import com.gam.api.entity.Magazine;
 import com.gam.api.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,5 +14,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUserName(String userName);
     List<User> findTop5ByOrderByScrapCountDesc();
     List<User> findAllByIdNotOrderBySelectedFirstAtDesc(Long id);
-    Optional<User> findByUserName(String userName);
+    @Query(value = "SELECT u FROM User u WHERE u.userName LIKE %:keyword% ORDER BY u.createdAt DESC")
+    List<User> findByUserName(@Param("keyword") String keyword);
 }

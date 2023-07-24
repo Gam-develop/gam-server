@@ -87,19 +87,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<SearchUserWorkDTO> searchUserAndWork(String keyword) {
         Set<Work> workSet = new HashSet<>();
-        val user = userRepository.findByUserName(keyword);
-        if (user.isPresent()) {
-            workSet.addAll(workRepository.findByUserId(user.get().getId()));
+        val userList = userRepository.findByUserName(keyword);
+
+        if (userList.size() != 0 ) {
+            userList.stream()
+                    .map((user) -> workSet.addAll(workRepository.findByUserId(user.getId())))
+                    .collect(Collectors.toList());
         }
+
         workSet.addAll(workRepository.findByKeyword(keyword));
         val workList = new ArrayList<>(workSet);
-        if (workList.size()!=0) {
-            workList.sort(comparing(Work::getCreatedAt).reversed());
-            return workList.stream()
-                    .map((w) -> SearchUserWorkDTO.of(w)
-                    ).collect(Collectors.toList());
+
+        if (workList.size() == 0) {
+           return null;
         }
-        return null;
+
+        workList.sort(comparing(Work::getCreatedAt).reversed());
+        return workList.stream()
+                .map((work) -> SearchUserWorkDTO.of(work))
+                .collect(Collectors.toList());
     }
 
     @Override
