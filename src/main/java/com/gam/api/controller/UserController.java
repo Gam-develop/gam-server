@@ -139,4 +139,10 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_NOTION_LINK.getMessage(),null));
 
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse> searchUserAndWork(@RequestParam String keyword) {
+        val response = userService.searchUserAndWork(keyword);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_SEARCH_USE_WORKS.getMessage(),response));
+    }
 }

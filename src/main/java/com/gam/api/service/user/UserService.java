@@ -1,5 +1,6 @@
 package com.gam.api.service.user;
 
+import com.gam.api.dto.search.response.SearchUserWorkDTO;
 import com.gam.api.dto.user.request.UserOnboardRequestDTO;
 import com.gam.api.dto.user.request.UserProfileUpdateRequestDTO;
 import com.gam.api.dto.user.request.UserScrapRequestDTO;
@@ -25,4 +26,5 @@ public interface UserService {
     void updateInstagramLink(Long userId, UserUpdateLinkRequestDTO request);
     void updateBehanceLink(Long userId, UserUpdateLinkRequestDTO request);
     void updateNotionLink(Long userId, UserUpdateLinkRequestDTO request);
+    List<SearchUserWorkDTO> searchUserAndWork(String keyword);
     }
