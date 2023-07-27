@@ -40,6 +40,7 @@ public class MagazineServiceImpl implements MagazineService {
     @Override
     public MagazineDetailResponseDTO getMagazineDetail(Long magazineId) {
         val magazine = getMagazine(magazineId);
+        magazine.setViewCount(magazine.getViewCount()+1);
         return MagazineDetailResponseDTO.of(magazine);
     }
 
