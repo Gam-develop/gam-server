@@ -49,7 +49,7 @@ public enum ResponseMessage {
     SUCCESS_SEARCH_MAGAZINE("매거진 검색 성공"),
 
     /** search **/
-    SUCCESS_SEARCH_USE_WORKS("매거진, 유저 검색 성공");
+    SUCCESS_SEARCH_USE_WORKS("작업물, 유저 검색 성공");
 
     private final String message;
 }
