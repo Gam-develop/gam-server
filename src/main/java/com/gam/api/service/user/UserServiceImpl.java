@@ -209,10 +209,13 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    @Transactional
     @Override
     public WorkPortfolioGetResponseDTO getPortfolio(Long requestUserId, Long userId) {
         val requestUser = findUser(requestUserId);
         val user = findUser(userId);
+        user.setViewCount(user.getViewCount()+1);
+//        userRepository.save(user);
         val works = getUserPortfolio(userId);
 
         val scrapList = requestUser.getUserScraps().stream()
