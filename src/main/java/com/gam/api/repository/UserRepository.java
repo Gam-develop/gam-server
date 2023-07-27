@@ -14,6 +14,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUserName(String userName);
     List<User> findTop5ByOrderByScrapCountDesc();
     List<User> findAllByIdNotOrderBySelectedFirstAtDesc(Long id);
-    @Query(value = "SELECT u FROM User u WHERE u.userName LIKE %:keyword% ORDER BY u.createdAt DESC")
+    @Query(value = "SELECT u FROM User u WHERE LOWER(u.userName) LIKE %:keyword% ORDER BY u.createdAt DESC")
     List<User> findByUserName(@Param("keyword") String keyword);
 }
