@@ -214,8 +214,7 @@ public class UserServiceImpl implements UserService {
     public WorkPortfolioGetResponseDTO getPortfolio(Long requestUserId, Long userId) {
         val requestUser = findUser(requestUserId);
         val user = findUser(userId);
-        user.setViewCount(user.getViewCount()+1);
-//        userRepository.save(user);
+        user.setViewCount(user.getViewCount() +1 );
         val works = getUserPortfolio(userId);
 
         val scrapList = requestUser.getUserScraps().stream()
