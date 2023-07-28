@@ -12,6 +12,10 @@ public interface MagazineRepository extends JpaRepository<Magazine, Long> {
     Optional<Magazine> getMagazineById(Long magazineId);
     List<Magazine> findTop4ByOrderByCreatedAtDesc();
     List<Magazine> findTop3ByOrderByViewCountDesc();
-    @Query(value = "SELECT m FROM Magazine  m WHERE m.interviewPerson LIKE %:keyword% OR m.magazineTitle LIKE %:keyword% ORDER BY m.createdAt DESC")
-    List<Magazine> findAllSearch(@Param("keyword") String keyword);
+    @Query("SELECT m FROM Magazine m WHERE LOWER(m.interviewPerson) LIKE %:interviewPersonKeyword% OR LOWER(m.magazineTitle) LIKE %:magazineTitleKeyword% ORDER BY m.createdAt DESC")
+    List<Magazine> finAllByKeyword(
+            @Param("interviewPersonKeyword") String userNameKeyWord,
+            @Param("magazineTitleKeyword") String titleNameKeyWord
+    );
 }
+

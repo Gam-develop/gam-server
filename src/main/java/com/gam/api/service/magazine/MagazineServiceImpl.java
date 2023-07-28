@@ -37,9 +37,11 @@ public class MagazineServiceImpl implements MagazineService {
         return MagazineResponseDTO.of(magazineList, magazineScrapList);
     }
 
+    @Transactional
     @Override
     public MagazineDetailResponseDTO getMagazineDetail(Long magazineId) {
         val magazine = getMagazine(magazineId);
+        magazine.setViewCount(magazine.getViewCount() + 1);
         return MagazineDetailResponseDTO.of(magazine);
     }
 
@@ -103,7 +105,7 @@ public class MagazineServiceImpl implements MagazineService {
 
     @Override
     public List<MagazineSearchResponseDTO> searchMagazine(String keyword) {
-        val magazines = magazineRepository.findAllSearch(keyword);
+        val magazines = magazineRepository.finAllByKeyword(keyword, keyword);
         return magazines.stream()
                 .map((magazine) -> MagazineSearchResponseDTO.of(magazine))
                 .collect(Collectors.toList());
