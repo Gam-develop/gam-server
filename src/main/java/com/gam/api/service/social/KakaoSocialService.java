@@ -1,6 +1,7 @@
 package com.gam.api.service.social;
 
 import com.gam.api.config.AuthConfig;
+import com.gam.api.config.GamConfig;
 import com.gam.api.config.jwt.JwtTokenManager;
 import com.gam.api.dto.social.response.SocialLoginResponseDTO;
 import com.gam.api.entity.AuthProvider;
@@ -31,6 +32,7 @@ public class KakaoSocialService implements SocialService {
 
     private final JwtTokenManager jwtTokenManager;
     private final AuthConfig authConfig;
+    private final GamConfig gamConfig;
 
     @Override
     @Transactional
@@ -55,7 +57,7 @@ public class KakaoSocialService implements SocialService {
             user.updateRefreshToken(refreshToken);
 
             val isProfileCompleted = chkProfileCompleted(user);
-            return SocialLoginResponseDTO.of(true, isProfileCompleted, userId, accessToken);
+            return SocialLoginResponseDTO.of(true, isProfileCompleted, userId, accessToken, gamConfig.getAppVersion());
         }
 
         val user = userRepository.save(User.builder()
@@ -75,7 +77,7 @@ public class KakaoSocialService implements SocialService {
                         .providerType(request.providerType())
                         .build());
 
-        return SocialLoginResponseDTO.of(false, false, userId, accessToken);
+        return SocialLoginResponseDTO.of(false, false, userId, accessToken, gamConfig.getAppVersion());
     }
 
     @Override
