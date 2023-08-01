@@ -31,7 +31,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         val uri = request.getRequestURI();
 
         if ((uri.startsWith("/api/v1")) && !uri.contains("social")
-                && !uri.contains("s3") &&!uri.contains("/name/check")) {
+                && !uri.contains("s3") && !uri.contains("url")
+                && !uri.contains("/name/check")) {
             val token = resolveToken(request);
             val isTokenAvailable = checkJwtAvailable(token);
 

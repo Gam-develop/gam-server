@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface MagazineRepository extends JpaRepository<Magazine, Long> {
     Optional<Magazine> getMagazineById(Long magazineId);
-    List<Magazine> findTop4ByOrderByCreatedAtDesc();
+    List<Magazine> findMagazinesByOrderByViewCountDesc();
     List<Magazine> findTop3ByOrderByViewCountDesc();
     @Query("SELECT m FROM Magazine m WHERE LOWER(m.interviewPerson) LIKE %:interviewPersonKeyword% OR LOWER(m.magazineTitle) LIKE %:magazineTitleKeyword% ORDER BY m.createdAt DESC")
     List<Magazine> finAllByKeyword(
