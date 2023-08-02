@@ -18,4 +18,7 @@ public class GamConfig {
 
     @Value("${gam.url.policy}")
     private String policyUrl;
+
+    @Value("${gam.url.makers}")
+    private String makersUrl;
 }
