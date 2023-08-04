@@ -27,7 +27,10 @@ sudo iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 80 -j REDIRECT --to-po
 
 echo "> Forward ${TARGET_PORT} port"
 
-echo "> kill ${CURRENT_PID}"
-CURRENT_PID=$(lsof -Fp -i TCP:${CURRENT_PORT} | grep -Po 'p[0-9]+' | grep -Po '[0-9]+')
 
-sudo kill ${CURRENT_PID}
+CURRENT_PID=$(lsof -Fp -i TCP:${CURRENT_PORT} | grep -Po 'p[0-9]+' | grep -Po '[0-9]+')
+echo "> kill ${CURRENT_PID}"
+
+# sudo kill ${CURRENT_PID}
+echo "> lsof -i TCP:8080-8085"
+lsof -i TCP:8080-8085
