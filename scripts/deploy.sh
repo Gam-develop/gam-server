@@ -18,7 +18,7 @@ else
 fi
 echo "> Target port is  ${TARGET_PORT}."
 
-nohup java -jar -Duser.timezone=Asia/Seoul -Dserver.port=${TARGET_PORT} -Dspring.profiles.active=dev api-0.0.1-SNAPSHOT.jar >> /home/ubuntu/app/nohup.out 2>&1 &
+nohup java -jar -Duser.timezone=Asia/Seoul -Dserver.port=${TARGET_PORT} -Dspring.profiles.active=dev /home/ubuntu/app/api-0.0.1-SNAPSHOT.jar >> /home/ubuntu/app/nohup.out 2>&1 &
 echo "> Running port is  ${TARGET_PORT}."
 lsof -i TCP:${TARGET_PORT}
 
