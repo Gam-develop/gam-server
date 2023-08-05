@@ -16,14 +16,16 @@ elif [ ${CURRENT_PORT} -eq 8082 ]; then
 else
   echo "> No WAS is connected to nginx"
 fi
+echo "> Target port is  ${TARGET_PORT}."
 
 TARGET_PID=$(lsof -Fp -i TCP:${TARGET_PORT} | grep -Po 'p[0-9]+' | grep -Po '[0-9]+')
 
-if [ ! -z ${TARGET_PID} ]; then
-  echo "> Kill WAS running at ${TARGET_PORT}."
-  sudo kill ${TARGET_PID}
-fi
+# if [ ! -z ${TARGET_PID} ]; then
+#   echo "> Kill WAS running at ${TARGET_PORT}."
+#   sudo kill ${TARGET_PID}
+# fi
 
 nohup java -jar -Duser.timezone=Asia/Seoul -Dserver.port=${TARGET_PORT} -Dspring.profiles.active=dev $IDLE_APPLICATION_PATH >> /home/ubuntu/app/nohup.out 2>&1 &
 
 
+echo "> Now new WAS runs at ${TARGET_PORT}."
