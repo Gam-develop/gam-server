@@ -63,6 +63,7 @@ public class WorkServiceImpl implements WorkService {
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
 
         if (user.getWorks().size() == 1) {
+            user.deleteLinks();
             user.updateUserStatus(UserStatus.NOT_PERMITTED);
         }
 
