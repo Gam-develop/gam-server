@@ -70,7 +70,7 @@ public class KakaoSocialService implements SocialService {
             RedisUtil.saveRefreshToken(redisTemplate, refreshToken, userId);
 
             val isProfileCompleted = chkProfileCompleted(user);
-            return SocialLoginResponseDTO.of(true, isProfileCompleted, userId, accessToken, gamConfig.getAppVersion());
+            return SocialLoginResponseDTO.of(true, isProfileCompleted, userId, accessToken, refreshToken, gamConfig.getAppVersion());
         }
 
         val user = userRepository.save(User.builder()
@@ -90,7 +90,7 @@ public class KakaoSocialService implements SocialService {
                         .providerType(request.providerType())
                         .build());
 
-        return SocialLoginResponseDTO.of(false, false, userId, accessToken, gamConfig.getAppVersion());
+        return SocialLoginResponseDTO.of(false, false, userId, accessToken, refreshToken, gamConfig.getAppVersion());
     }
 
     @Override
