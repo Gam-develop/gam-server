@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "> lsof -i TCP:8080-8085"
+lsof -i TCP:8080-8085
+
 CURRENT_PORT=$(cat /etc/nginx/conf.d/service-url.inc | grep -Po '[0-9]+' | tail -1)
 TARGET_PORT=0
 
