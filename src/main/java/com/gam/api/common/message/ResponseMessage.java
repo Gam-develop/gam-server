@@ -9,7 +9,8 @@ public enum ResponseMessage {
 
     /** auth **/
     SUCCESS_SIGN_UP("회원 가입 성공"),
-    SUCCESS_LOGIN_UP("로그인 성공"),
+    SUCCESS_LOGIN("로그인 성공"),
+    SUCCESS_LOGOUT("로그아웃 성공"),
     SUCCESS_GET_REFRESH_TOKEN("토큰 재발급 성공"),
 
 
