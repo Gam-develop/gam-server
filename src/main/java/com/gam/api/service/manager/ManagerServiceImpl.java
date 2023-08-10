@@ -1,12 +1,15 @@
 package com.gam.api.service.manager;
 
 
+import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.manager.magazine.response.MagazineListResponseDTO;
 
 import com.gam.api.repository.MagazineRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,4 +25,14 @@ public class ManagerServiceImpl implements ManagerService {
                 .map(MagazineListResponseDTO::of)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void deleteMagazine(Long magazineId) {
+        magazineRepository.findById(magazineId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_MAGAZINE.getMessage()));
+
+        magazineRepository.deleteById(magazineId);
+    }
+
+
 }

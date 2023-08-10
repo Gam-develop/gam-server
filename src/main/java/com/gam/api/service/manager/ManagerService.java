@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ManagerService {
     List<MagazineListResponseDTO> getMagazines();
+    void deleteMagazine(Long magazineId);
 }
