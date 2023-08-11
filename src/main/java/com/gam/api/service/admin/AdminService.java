@@ -1,6 +1,6 @@
 package com.gam.api.service.admin;
 
-import com.gam.api.dto.manager.magazine.response.MagazineListResponseDTO;
+import com.gam.api.dto.admin.magazine.response.MagazineListResponseDTO;
 
 import java.util.List;
 

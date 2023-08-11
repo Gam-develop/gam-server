@@ -1,4 +1,4 @@
-package com.gam.api.dto.manager.magazine.response;
+package com.gam.api.dto.admin.magazine.response;
 
 import com.gam.api.entity.Magazine;
 import lombok.Builder;
