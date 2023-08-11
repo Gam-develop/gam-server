@@ -126,6 +126,12 @@ public class User extends TimeStamped {
         this.info = info;
         this.tags = tags;
     }
+
+    public void deleteLinks() {
+        this.behanceLink = null;
+        this.instagramLink = null;
+        this.notionLink = null;
+    }
 }
 
 
