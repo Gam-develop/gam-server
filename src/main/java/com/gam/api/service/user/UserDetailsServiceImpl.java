@@ -36,7 +36,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         val authUserId = String.valueOf(authUser.getId());
 
-        authorities.add(new SimpleGrantedAuthority(userRole.toString()));
+        authorities.add(new SimpleGrantedAuthority("ROLE_"+userRole.toString()));
         authorities.add(new SimpleGrantedAuthority(userStatus.toString()));
 
         return GamUserDetails.builder()
