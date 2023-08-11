@@ -26,8 +26,9 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
         if (httpServletRequest.getRequestURI().contains("manager")) {
             exceptionMessage = ExceptionMessage.NOT_ADMIN_USER.getMessage();
+        } else {
+            exceptionMessage = ExceptionMessage.PROFILE_UNCOMPLETED_USER.getMessage();
         }
-        else exceptionMessage = ExceptionMessage.PROFILE_UNCOMPLETED_USER.getMessage();
 
         val jsonResponse = objectMapper.writeValueAsString(
                     ApiResponse.fail(exceptionMessage)
