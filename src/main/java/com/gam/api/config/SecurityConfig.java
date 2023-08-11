@@ -35,7 +35,7 @@ public class SecurityConfig {
                     .antMatchers("/api/v1/s3/**", "/api/v1/work/**", "/api/v1/user/**", "/api/v1/magazine/**").hasAuthority("PERMITTED")
                 .and()
                     .authorizeHttpRequests()
-                    .antMatchers("/api/v1/manager/**").hasRole("ADMIN")
+                    .antMatchers("/api/v1/admin/**").hasRole("ADMIN")
                 .and()
                     .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
                 .and()

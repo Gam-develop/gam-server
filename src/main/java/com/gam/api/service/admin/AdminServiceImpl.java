@@ -1,4 +1,4 @@
-package com.gam.api.service.manager;
+package com.gam.api.service.admin;
 
 
 import com.gam.api.common.message.ExceptionMessage;
@@ -6,7 +6,6 @@ import com.gam.api.dto.manager.magazine.response.MagazineListResponseDTO;
 
 import com.gam.api.repository.MagazineRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -15,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ManagerServiceImpl implements ManagerService {
+public class AdminServiceImpl implements AdminService {
 
     private final MagazineRepository magazineRepository;
 
