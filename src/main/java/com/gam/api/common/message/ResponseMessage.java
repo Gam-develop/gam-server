@@ -9,7 +9,8 @@ public enum ResponseMessage {
 
     /** auth **/
     SUCCESS_SIGN_UP("회원 가입 성공"),
-    SUCCESS_LOGIN_UP("로그인 성공"),
+    SUCCESS_LOGIN("로그인 성공"),
+    SUCCESS_LOGOUT("로그아웃 성공"),
     SUCCESS_GET_REFRESH_TOKEN("토큰 재발급 성공"),
 
 
@@ -53,9 +54,7 @@ public enum ResponseMessage {
     SUCCESS_SEARCH_USE_WORKS("작업물, 유저 검색 성공"),
 
     /** url **/
-    SUCCESS_GET_INTRO_URL("서비스 소개 주소 가져오기 성공"),
-    SUCCESS_GET_AGREEMENT_URL("서비스 약관 가져오기 성공"),
-    SUCCESS_GET_POLICY_URL("서비스 개인정보 처리 방침 가져오기 성공");
+    SUCCESS_GET_URL("주소 가져오기 성공");
 
     private final String message;
 }

@@ -13,6 +13,9 @@ public enum ExceptionMessage {
     INVALID_SIGNATURE("유효하지 않은 서명입니다."),
     PROFILE_UNCOMPLETED_USER("마이페이지를 작성하지 않은 유저입니다."),
     NOT_ADMIN_USER("관리자 권한이 없습니다."),
+    INVALID_REFRESH_TOKEN("잘못된 리프레시 토큰입니다."),
+    KAKAO_CODE_ERROR("유효하지 않은 코드입니다"),
+    ALREADY_LOGOUT_TOKEN("이미 로그아웃된 토큰입니다"),
 
     /** exception **/
     EMPTY_METHOD_ARGUMENT("빈 요청값이 있습니다."),
