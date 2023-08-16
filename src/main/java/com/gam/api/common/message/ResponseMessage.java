@@ -54,7 +54,10 @@ public enum ResponseMessage {
     SUCCESS_SEARCH_USE_WORKS("작업물, 유저 검색 성공"),
 
     /** url **/
-    SUCCESS_GET_URL("주소 가져오기 성공");
+    SUCCESS_GET_URL("주소 가져오기 성공"),
+
+    /** admin **/
+    SUCCESS_CREATE_MAGAZINE("매거진 생성을 완료");
 
     private final String message;
 }
