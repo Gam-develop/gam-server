@@ -43,10 +43,10 @@ public class Magazine extends TimeStamped {
     @Column(name = "scrap_count")
     private int scrapCount;
 
-    @OneToMany(mappedBy = "magazine")
+    @OneToMany(mappedBy = "magazine", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MagazinePhoto> magazinePhotos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "magazine")
+    @OneToMany(mappedBy = "magazine", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions = new ArrayList<>();
 
     @OneToMany(mappedBy = "magazine")
