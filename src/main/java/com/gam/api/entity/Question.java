@@ -1,6 +1,7 @@
 package com.gam.api.entity;
 
 import com.gam.api.entity.superclass.TimeStamped;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -39,4 +40,21 @@ public class Question extends TimeStamped {
 
     @Column(name = "image_caption")
     private String imageCaption;
+
+    public void setMagazine(Magazine magazine) {
+        if(this.magazine != null) {
+            this.magazine.getQuestions().remove(this);
+        }
+        this.magazine = magazine;
+        magazine.getQuestions().add(this);
+    }
+
+    @Builder
+    public Question(int questionOrder, String question, String answer, String answerImage, String imageCaption) {
+        this.questionOrder = questionOrder;
+        this.question = question;
+        this.answer = answer;
+        this.answerImage = answerImage;
+        this.imageCaption = imageCaption;
+    }
 }

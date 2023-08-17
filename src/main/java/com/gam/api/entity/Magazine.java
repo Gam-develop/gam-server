@@ -1,6 +1,7 @@
 package com.gam.api.entity;
 
 import com.gam.api.entity.superclass.TimeStamped;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -54,4 +55,17 @@ public class Magazine extends TimeStamped {
     public void scrapCountUp(){ this.scrapCount += 1; }
 
     public void scrapCountDown(){ this.scrapCount -= 1; }
+
+    public void setMagazinePhotos(List<MagazinePhoto> magazinePhotos) { this.magazinePhotos = magazinePhotos; }
+    public void setQuestions(List<Question> questions) { this.questions = questions; }
+
+    @Builder
+    public Magazine(String thumbNail, String magazineTitle, String introduction, String interviewPerson) {
+        this.thumbNail = thumbNail;
+        this.magazineTitle = magazineTitle;
+        this.introduction = introduction;
+        this.interviewPerson = interviewPerson;
+        this.viewCount = 0L;
+        this.scrapCount = 0;
+    }
 }

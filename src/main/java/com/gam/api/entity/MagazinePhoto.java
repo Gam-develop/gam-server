@@ -1,10 +1,7 @@
 package com.gam.api.entity;
 
 import com.gam.api.entity.superclass.TimeStamped;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -28,4 +25,21 @@ public class MagazinePhoto extends TimeStamped {
 
     @Column(name = "url")
     private String url;
+
+    @Builder
+    public MagazinePhoto(String url){
+        this.url = url;
+    }
+
+    public void setMagazine(Magazine magazine) {
+        if(this.magazine != null) {
+            System.out.println("not null");
+            System.out.println(this.magazine.getMagazineTitle());
+            this.magazine.getMagazinePhotos().remove(this);
+        }
+        this.magazine = magazine;
+        magazine.getMagazinePhotos().add(this);
+    }
+
+
 }
