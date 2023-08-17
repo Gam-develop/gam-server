@@ -46,6 +46,11 @@ public class AdminServiceImpl implements AdminService {
     @Transactional
     @Override
     public void createMagazine(Long userId, MagazineCreateRequestDTO request) {
+        val mainPhotoCount = request.magazinePhotos().size();
+        if(mainPhotoCount >4) {
+            throw new IllegalArgumentException(ExceptionMessage.INVALID_MAIN_PHOTOS_COUNT.getMessage());
+        }
+
         val magazine = Magazine.builder()
                 .thumbNail(request.magazinePhotos().get(0))
                 .magazineTitle(request.title())
@@ -53,11 +58,6 @@ public class AdminServiceImpl implements AdminService {
                 .interviewPerson(request.interviewPerson())
                 .build();
         magazineRepository.save(magazine);
-
-        val mainPhotoCount = request.magazinePhotos().size();
-        if(mainPhotoCount >4) {
-            throw new IllegalArgumentException(ExceptionMessage.INVALID_MAIN_PHOTOS_COUNT.getMessage());
-        }
 
         val magazinePhotos = request.magazinePhotos().stream()
                 .map((photo)-> {
@@ -82,7 +82,7 @@ public class AdminServiceImpl implements AdminService {
                                 question.setImageCaption(null);
                             } else {
                                 question.setAnswerImage(questionVO.answerImage());
-                                question.setImageCaption(question.getImageCaption());
+                                question.setImageCaption(questionVO.imageCaption());
                             }
                             question.setMagazine(magazine);
                             questionRepository.save(question);
