@@ -54,6 +54,11 @@ public class AdminServiceImpl implements AdminService {
                 .build();
         magazineRepository.save(magazine);
 
+        val mainPhotoCount = request.magazinePhotos().size();
+        if(mainPhotoCount >4) {
+            throw new IllegalArgumentException(ExceptionMessage.INVALID_MAIN_PHOTOS_COUNT.getMessage());
+        }
+
         val magazinePhotos = request.magazinePhotos().stream()
                 .map((photo)-> {
                     val magazinePhoto = MagazinePhoto.builder()
