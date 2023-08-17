@@ -50,11 +50,9 @@ public class Question extends TimeStamped {
     }
 
     @Builder
-    public Question(int questionOrder, String question, String answer, String answerImage, String imageCaption) {
+    public Question(int questionOrder, String question, String answer) {
         this.questionOrder = questionOrder;
         this.question = question;
         this.answer = answer;
-        this.answerImage = answerImage;
-        this.imageCaption = imageCaption;
     }
 }

@@ -71,13 +71,19 @@ public class AdminServiceImpl implements AdminService {
 
         val questions = request.questions().stream()
                 .map((questionVO) -> {
-                            val question = Question.builder()
+                            Question question = Question.builder()
                                     .questionOrder(questionVO.questionOrder())
                                     .question(questionVO.question())
                                     .answer(questionVO.answer())
-                                    .answerImage(questionVO.answerImage())
-                                    .imageCaption(questionVO.imageCaption())
                                     .build();
+
+                            if (questionVO.answerImage() == "") {
+                                question.setAnswerImage(null);
+                                question.setImageCaption(null);
+                            } else {
+                                question.setAnswerImage(questionVO.answerImage());
+                                question.setImageCaption(question.getImageCaption());
+                            }
                             question.setMagazine(magazine);
                             questionRepository.save(question);
                             return question;
