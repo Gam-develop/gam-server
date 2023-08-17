@@ -2,10 +2,13 @@ package com.gam.api.controller;
 
 import com.gam.api.common.ApiResponse;
 import com.gam.api.common.message.ResponseMessage;
+import com.gam.api.dto.admin.magazine.request.MagazineCreateRequestDTO;
+import com.gam.api.entity.GamUserDetails;
 import com.gam.api.service.admin.AdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,5 +30,10 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_DELETE_MAGAZINE.getMessage()));
     }
 
-
+    @PostMapping("/magazine")
+    public ResponseEntity<ApiResponse> createMagazine(@AuthenticationPrincipal GamUserDetails userDetails,
+                                                      @RequestBody MagazineCreateRequestDTO request) {
+        adminService.createMagazine(userDetails.getId(), request);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_CREATE_MAGAZINE.getMessage()));
+    }
 }
