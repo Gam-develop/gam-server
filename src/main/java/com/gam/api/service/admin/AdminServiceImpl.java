@@ -65,9 +65,9 @@ public class AdminServiceImpl implements AdminService {
                             .url(photo)
                             .build();
                     magazinePhoto.setMagazine(magazine);
-                    magazinePhotoRepository.save(magazinePhoto);
                     return magazinePhoto;
                 }).collect(Collectors.toList());
+        magazinePhotoRepository.saveAll(magazinePhotos);
 
         val questions = request.questions().stream()
                 .map((questionVO) -> {
@@ -85,9 +85,9 @@ public class AdminServiceImpl implements AdminService {
                                 question.setImageCaption(questionVO.imageCaption());
                             }
                             question.setMagazine(magazine);
-                            questionRepository.save(question);
                             return question;
                 }).collect(Collectors.toList());
+        questionRepository.saveAll(questions);
 
         magazine.setMagazinePhotos(magazinePhotos);
         magazine.setQuestions(questions);
