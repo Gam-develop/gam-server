@@ -45,7 +45,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Transactional
     @Override
-    public void createMagazine(Long userId, MagazineCreateRequestDTO request) {
+    public void createMagazine(MagazineCreateRequestDTO request) {
         val mainPhotoCount = request.magazinePhotos().size();
         if(mainPhotoCount >4) {
             throw new IllegalArgumentException(ExceptionMessage.INVALID_MAIN_PHOTOS_COUNT.getMessage());

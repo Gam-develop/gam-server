@@ -9,5 +9,5 @@ import java.util.List;
 public interface AdminService {
     List<MagazineListResponseDTO> getMagazines();
     void deleteMagazine(Long magazineId);
-    void createMagazine(Long userId, MagazineCreateRequestDTO request);
+    void createMagazine(MagazineCreateRequestDTO request);
 }
