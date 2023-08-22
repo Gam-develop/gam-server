@@ -88,6 +88,12 @@ public class AdminServiceImpl implements AdminService {
         if (magazine.getMagazineTitle() != request.title()) {
             magazine.setMagazineTitle(request.title());
         }
+        if (magazine.getIntroduction() != request.magazineIntro()) {
+            magazine.setIntroduction(request.magazineIntro());
+        }
+        if(magazine.getInterviewPerson() != request.interviewPerson()) {
+            magazine.setInterviewPerson(request.interviewPerson());
+        }
 
         val magazinePhotos = request.magazinePhotos().toArray(new String[request.magazinePhotos().size()]);
         magazine.setMagazine_photos(magazinePhotos);
