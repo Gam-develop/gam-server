@@ -8,6 +8,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
+import java.util.Objects;
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Getter
@@ -54,5 +56,18 @@ public class Question extends TimeStamped {
         this.questionOrder = questionOrder;
         this.question = question;
         this.answer = answer;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Question question1 = (Question) o;
+        return getQuestionOrder() == question1.getQuestionOrder() && Objects.equals(getQuestion(), question1.getQuestion()) && Objects.equals(getAnswer(), question1.getAnswer()) && Objects.equals(getAnswerImage(), question1.getAnswerImage()) && Objects.equals(getImageCaption(), question1.getImageCaption());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getQuestionOrder(), getQuestion(), getAnswer(), getAnswerImage(), getImageCaption());
     }
 }

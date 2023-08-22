@@ -7,9 +7,7 @@ import com.gam.api.dto.admin.magazine.request.MagazineEditRequestDTO;
 import com.gam.api.dto.admin.magazine.response.MagazineListResponseDTO;
 
 import com.gam.api.entity.Magazine;
-import com.gam.api.entity.MagazinePhoto;
-import com.gam.api.entity.Question;
-import com.gam.api.repository.MagazinePhotoRepository;
+import com.gam.api.entity.Question;;
 import com.gam.api.repository.MagazineRepository;
 import com.gam.api.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +24,6 @@ import java.util.stream.Collectors;
 public class AdminServiceImpl implements AdminService {
 
     private final MagazineRepository magazineRepository;
-    private final MagazinePhotoRepository magazinePhotoRepository;
     private final QuestionRepository questionRepository;
 
     @Override
@@ -83,4 +80,92 @@ public class AdminServiceImpl implements AdminService {
                 }).collect(Collectors.toList());
     }
 
+    @Override
+    public void editMagazine(Long magazineId, MagazineEditRequestDTO request) {
+        val magazine = magazineRepository.findById(magazineId)
+                .orElseThrow(()-> new EntityNotFoundException());
+
+        if (magazine.getMagazineTitle() != request.title()) {
+            magazine.setMagazineTitle(request.title());
+        }
+
+        val magazinePhotos = request.magazinePhotos().toArray(new String[request.magazinePhotos().size()]);
+        magazine.setMagazine_photos(magazinePhotos);
+        magazineRepository.save(magazine);
+
+        val currentQuestions = magazine.getQuestions();
+        val requestQuestions = request.questions().stream()
+                .map((questionVO) -> {
+                    Question question = Question.builder()
+                            .questionOrder(questionVO.questionOrder())
+                            .question(questionVO.question())
+                            .answer(questionVO.answer())
+                            .build();
+
+                    if (questionVO.answerImage() == "") {
+                        question.setAnswerImage(null);
+                        question.setImageCaption(null);
+                    } else {
+                        question.setAnswerImage(questionVO.answerImage());
+                        question.setImageCaption(questionVO.imageCaption());
+                    }
+                    return question;
+                }).collect(Collectors.toList());
+
+        if (currentQuestions.size() > requestQuestions.size()) {
+            val requestQuestionSize = requestQuestions.size();
+            for(int i = 0 ; i<requestQuestionSize; i++) {
+                if (!currentQuestions.get(i).equals(requestQuestions.get(i))) {
+                    editChangeQuestion(currentQuestions.get(i), requestQuestions.get(i));
+                }
+            }
+
+            val deleteCount = currentQuestions.size() - requestQuestions.size();
+            for(int i = 0 ; i<deleteCount; i++) {
+                val deleteQuestion = currentQuestions.get(requestQuestionSize+i);
+                currentQuestions.remove(requestQuestionSize+i);
+                questionRepository.deleteById(deleteQuestion.getId());
+            }
+        } else if (currentQuestions.size() == requestQuestions.size()) {
+            val changeSize = currentQuestions.size();
+            for(int i = 0 ; i<changeSize; i++) {
+                if (!currentQuestions.get(i).equals(requestQuestions.get(i))) {
+                    editChangeQuestion(currentQuestions.get(i), requestQuestions.get(i));
+                }
+            }
+        } else if (currentQuestions.size() < requestQuestions.size()) {
+            val currentQuestionSize = currentQuestions.size();
+            for(int i = 0 ; i<currentQuestionSize; i++) {
+                if (!currentQuestions.get(i).equals(requestQuestions.get(i))) {
+                    editChangeQuestion(currentQuestions.get(i), requestQuestions.get(i));
+                }
+            }
+            val createCount = requestQuestions.size() - currentQuestions.size();
+            for(int i = 0 ; i<createCount; i++) {
+                val createQuestion = questionRepository.save(requestQuestions.get(currentQuestionSize+i));
+                createQuestion.setMagazine(magazine);
+            }
+        }
+
+        questionRepository.saveAll(currentQuestions);
+    }
+
+    private Question editChangeQuestion(Question currentEntity, Question requestEntity) {
+        if (currentEntity.getQuestionOrder() != requestEntity.getQuestionOrder()) {
+            currentEntity.setQuestionOrder(requestEntity.getQuestionOrder());
+        }
+        if (currentEntity.getQuestion() != requestEntity.getQuestion()) {
+            currentEntity.setQuestion(requestEntity.getQuestion());
+        }
+        if (currentEntity.getAnswer() != requestEntity.getAnswer()) {
+            currentEntity.setAnswer(requestEntity.getAnswer());
+        }
+        if (currentEntity.getAnswerImage() != requestEntity.getAnswerImage()) {
+            currentEntity.setAnswerImage(requestEntity.getAnswerImage());
+        }
+        if(currentEntity.getImageCaption() != requestEntity.getImageCaption()) {
+            currentEntity.setImageCaption(requestEntity.getImageCaption());
+        }
+        return currentEntity;
+    }
 }

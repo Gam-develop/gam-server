@@ -50,9 +50,6 @@ public class Magazine extends TimeStamped {
     private String[] magazine_photos;
 
     @OneToMany(mappedBy = "magazine", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MagazinePhoto> magazinePhotos = new ArrayList<>();
-
-    @OneToMany(mappedBy = "magazine", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions = new ArrayList<>();
 
     @OneToMany(mappedBy = "magazine")
@@ -62,7 +59,6 @@ public class Magazine extends TimeStamped {
 
     public void scrapCountDown(){ this.scrapCount -= 1; }
 
-    public void setMagazinePhotos(List<MagazinePhoto> magazinePhotos) { this.magazinePhotos = magazinePhotos; }
     public void setQuestions(List<Question> questions) { this.questions = questions; }
 
     @Builder
