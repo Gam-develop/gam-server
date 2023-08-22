@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -42,6 +43,11 @@ public class Magazine extends TimeStamped {
 
     @Column(name = "scrap_count")
     private int scrapCount;
+
+    @Type(type = "string-array")
+    @Column(name = "magazine_photos",
+            columnDefinition = "varchar(800)[]")
+    private String[] magazine_photos;
 
     @OneToMany(mappedBy = "magazine", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MagazinePhoto> magazinePhotos = new ArrayList<>();

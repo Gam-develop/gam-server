@@ -3,6 +3,7 @@ package com.gam.api.service.admin;
 
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.admin.magazine.request.MagazineCreateRequestDTO;
+import com.gam.api.dto.admin.magazine.request.MagazineEditRequestDTO;
 import com.gam.api.dto.admin.magazine.response.MagazineListResponseDTO;
 
 import com.gam.api.entity.Magazine;
@@ -59,17 +60,10 @@ public class AdminServiceImpl implements AdminService {
                 .build();
         magazineRepository.save(magazine);
 
-        val magazinePhotos = request.magazinePhotos().stream()
-                .map((photo)-> {
-                    val magazinePhoto = MagazinePhoto.builder()
-                            .url(photo)
-                            .build();
-                    magazinePhoto.setMagazine(magazine);
-                    return magazinePhoto;
-                }).collect(Collectors.toList());
-        magazinePhotoRepository.saveAll(magazinePhotos);
+        val magazinePhotos = request.magazinePhotos().toArray(new String[request.magazinePhotos().size()]);
+        magazine.setMagazine_photos(magazinePhotos);
 
-        val questions = request.questions().stream()
+         request.questions().stream()
                 .map((questionVO) -> {
                             Question question = Question.builder()
                                     .questionOrder(questionVO.questionOrder())
@@ -87,9 +81,6 @@ public class AdminServiceImpl implements AdminService {
                             question.setMagazine(magazine);
                             return question;
                 }).collect(Collectors.toList());
-        questionRepository.saveAll(questions);
-
-        magazine.setMagazinePhotos(magazinePhotos);
-        magazine.setQuestions(questions);
     }
+
 }
