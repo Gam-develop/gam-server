@@ -18,7 +18,7 @@ public record MagazineDetailResponseDTO(
     ) {
         return MagazineDetailResponseDTO.builder()
                 .magazineId(magazine.getId())
-                .magazinePhotos(magazine.getMagazinePhotos().stream().map(magazinePhoto -> magazinePhoto.getUrl()).toList())
+                .magazinePhotos(List.of(magazine.getMagazine_photos()))
                 .magazineIntro(magazine.getIntroduction())
                 .questions(magazine.getQuestions().stream().map(MagazineDetailResponseVO::of).toList())
                 .build();
