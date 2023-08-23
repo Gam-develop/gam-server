@@ -6,7 +6,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-public record MagazineCreateRequestDTO(
+public record MagazineRequestDTO(
         @NotNull
         @NotBlank
         String title,
@@ -24,7 +24,7 @@ public record MagazineCreateRequestDTO(
         List<QuestionVO> questions
 ) {
     @Builder
-    public record QuestionVO( int questionOrder, String question, String answer, String answerImage, String imageCaption) {}
+    public record QuestionVO(int questionOrder, String question, String answer, String answerImage, String imageCaption) {}
 }
 
 

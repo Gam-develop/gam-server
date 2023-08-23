@@ -2,8 +2,7 @@ package com.gam.api.service.admin;
 
 
 import com.gam.api.common.message.ExceptionMessage;
-import com.gam.api.dto.admin.magazine.request.MagazineCreateRequestDTO;
-import com.gam.api.dto.admin.magazine.request.MagazineEditRequestDTO;
+import com.gam.api.dto.admin.magazine.request.MagazineRequestDTO;
 import com.gam.api.dto.admin.magazine.response.MagazineListResponseDTO;
 
 import com.gam.api.entity.Magazine;
@@ -43,9 +42,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Transactional
     @Override
-    public void createMagazine(MagazineCreateRequestDTO request) {
+    public void createMagazine(MagazineRequestDTO request) {
         val mainPhotoCount = request.magazinePhotos().size();
-        if(mainPhotoCount >4) {
+        if (mainPhotoCount > 4) {
             throw new IllegalArgumentException(ExceptionMessage.INVALID_MAIN_PHOTOS_COUNT.getMessage());
         }
 
@@ -60,7 +59,7 @@ public class AdminServiceImpl implements AdminService {
         val magazinePhotos = request.magazinePhotos().toArray(new String[request.magazinePhotos().size()]);
         magazine.setMagazine_photos(magazinePhotos);
 
-         request.questions().stream()
+        request.questions().stream()
                 .map((questionVO) -> {
                             Question question = Question.builder()
                                     .questionOrder(questionVO.questionOrder())
@@ -81,7 +80,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void editMagazine(Long magazineId, MagazineEditRequestDTO request) {
+    public void editMagazine(Long magazineId, MagazineRequestDTO request) {
         val magazine = magazineRepository.findById(magazineId)
                 .orElseThrow(()-> new EntityNotFoundException());
 
@@ -91,7 +90,7 @@ public class AdminServiceImpl implements AdminService {
         if (magazine.getIntroduction() != request.magazineIntro()) {
             magazine.setIntroduction(request.magazineIntro());
         }
-        if(magazine.getInterviewPerson() != request.interviewPerson()) {
+        if (magazine.getInterviewPerson() != request.interviewPerson()) {
             magazine.setInterviewPerson(request.interviewPerson());
         }
 
@@ -118,42 +117,26 @@ public class AdminServiceImpl implements AdminService {
                     return question;
                 }).collect(Collectors.toList());
 
-        if (currentQuestions.size() > requestQuestions.size()) {
-            val requestQuestionSize = requestQuestions.size();
-            for(int i = 0 ; i<requestQuestionSize; i++) {
-                if (!currentQuestions.get(i).equals(requestQuestions.get(i))) {
-                    editChangeQuestion(currentQuestions.get(i), requestQuestions.get(i));
-                }
-            }
+        checkEntityDiff(currentQuestions, requestQuestions);
 
-            val deleteCount = currentQuestions.size() - requestQuestions.size();
-            for(int i = 0 ; i<deleteCount; i++) {
-                val deleteQuestion = currentQuestions.get(requestQuestionSize+i);
-                currentQuestions.remove(requestQuestionSize+i);
-                questionRepository.deleteById(deleteQuestion.getId());
-            }
-        } else if (currentQuestions.size() == requestQuestions.size()) {
-            val changeSize = currentQuestions.size();
-            for(int i = 0 ; i<changeSize; i++) {
-                if (!currentQuestions.get(i).equals(requestQuestions.get(i))) {
-                    editChangeQuestion(currentQuestions.get(i), requestQuestions.get(i));
-                }
-            }
-        } else if (currentQuestions.size() < requestQuestions.size()) {
-            val currentQuestionSize = currentQuestions.size();
-            for(int i = 0 ; i<currentQuestionSize; i++) {
-                if (!currentQuestions.get(i).equals(requestQuestions.get(i))) {
-                    editChangeQuestion(currentQuestions.get(i), requestQuestions.get(i));
-                }
-            }
+        if (currentQuestions.size() < requestQuestions.size()) {
             val createCount = requestQuestions.size() - currentQuestions.size();
-            for(int i = 0 ; i<createCount; i++) {
+            val currentQuestionSize = currentQuestions.size();
+            for (int i = 0 ; i<createCount; i++) {
                 val createQuestion = questionRepository.save(requestQuestions.get(currentQuestionSize+i));
                 createQuestion.setMagazine(magazine);
             }
         }
-
         questionRepository.saveAll(currentQuestions);
+    }
+    private List<Question> checkEntityDiff(List<Question> currentQuestions, List<Question> requestQuestions) {
+        val changeSize = currentQuestions.size();
+        for (int i = 0; i<changeSize; i++) {
+            if (!currentQuestions.get(i).equals(requestQuestions.get(i))) {
+                editChangeQuestion(currentQuestions.get(i), requestQuestions.get(i));
+            }
+        }
+        return currentQuestions;
     }
 
     private Question editChangeQuestion(Question currentEntity, Question requestEntity) {
@@ -169,7 +152,7 @@ public class AdminServiceImpl implements AdminService {
         if (currentEntity.getAnswerImage() != requestEntity.getAnswerImage()) {
             currentEntity.setAnswerImage(requestEntity.getAnswerImage());
         }
-        if(currentEntity.getImageCaption() != requestEntity.getImageCaption()) {
+        if (currentEntity.getImageCaption() != requestEntity.getImageCaption()) {
             currentEntity.setImageCaption(requestEntity.getImageCaption());
         }
         return currentEntity;
