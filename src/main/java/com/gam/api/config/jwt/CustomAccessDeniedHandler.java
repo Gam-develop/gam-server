@@ -18,9 +18,9 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
-    private final ObjectMapper objectMapper;
     @Override
     public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException accessDeniedException) throws IOException {
+        val objectMapper = new ObjectMapper();
         val exceptionMessage = determineExceptionMessage(httpServletRequest.getRequestURI());
         val jsonResponse = objectMapper.writeValueAsString(
                     ApiResponse.fail(exceptionMessage)
