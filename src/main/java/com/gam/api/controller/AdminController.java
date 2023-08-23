@@ -38,7 +38,7 @@ public class AdminController {
     }
 
     @PatchMapping("/magazine/{magazineId}")
-    public ResponseEntity<ApiResponse> createMagazine(@PathVariable Long magazineId, @RequestBody MagazineEditRequestDTO request) {
+    public ResponseEntity<ApiResponse> editMagazine(@PathVariable Long magazineId, @RequestBody MagazineEditRequestDTO request) {
         adminService.editMagazine(magazineId, request);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_EDIT_MAGAZINE.getMessage()));
     }
