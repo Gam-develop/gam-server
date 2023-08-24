@@ -18,12 +18,4 @@ public class TestController {
     public ResponseEntity<ApiResponse> test() {
         return ResponseEntity.ok(ApiResponse.success("Hello gam Server!"));
     }
-
-    @GetMapping("/profile")
-    public String getProfile() {
-        return Arrays.stream(env.getActiveProfiles())
-                .findFirst()
-                .orElse("");
-    }
-
 }
