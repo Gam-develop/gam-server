@@ -39,7 +39,10 @@ public enum ExceptionMessage {
 
     /** Magazine **/
     NOT_FOUND_MAGAZINE("해당하는 매거진을 찾을 수 없습니다."),
-    NOT_MATCH_MAGAZINE_SCARP_STATUS("보낸 매거진 스크랩 상태가 유효하지 않습니다.");
+    NOT_MATCH_MAGAZINE_SCARP_STATUS("보낸 매거진 스크랩 상태가 유효하지 않습니다."),
+
+    /** Admin **/
+    INVALID_MAIN_PHOTOS_COUNT("메거진의 메인 사진의 개수는 최대 4장입니다.");
 
     private final String message;
 }

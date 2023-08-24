@@ -1,9 +1,11 @@
 package com.gam.api.entity;
 
 import com.gam.api.entity.superclass.TimeStamped;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -42,10 +44,12 @@ public class Magazine extends TimeStamped {
     @Column(name = "scrap_count")
     private int scrapCount;
 
-    @OneToMany(mappedBy = "magazine")
-    private List<MagazinePhoto> magazinePhotos = new ArrayList<>();
+    @Type(type = "string-array")
+    @Column(name = "magazine_photos",
+            columnDefinition = "varchar(800)[]")
+    private String[] magazine_photos;
 
-    @OneToMany(mappedBy = "magazine")
+    @OneToMany(mappedBy = "magazine", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions = new ArrayList<>();
 
     @OneToMany(mappedBy = "magazine")
@@ -54,4 +58,16 @@ public class Magazine extends TimeStamped {
     public void scrapCountUp(){ this.scrapCount += 1; }
 
     public void scrapCountDown(){ this.scrapCount -= 1; }
+
+    public void setQuestions(List<Question> questions) { this.questions = questions; }
+
+    @Builder
+    public Magazine(String thumbNail, String magazineTitle, String introduction, String interviewPerson) {
+        this.thumbNail = thumbNail;
+        this.magazineTitle = magazineTitle;
+        this.introduction = introduction;
+        this.interviewPerson = interviewPerson;
+        this.viewCount = 0L;
+        this.scrapCount = 0;
+    }
 }

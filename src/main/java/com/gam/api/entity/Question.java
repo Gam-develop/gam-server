@@ -1,11 +1,14 @@
 package com.gam.api.entity;
 
 import com.gam.api.entity.superclass.TimeStamped;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+
+import java.util.Objects;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -39,4 +42,32 @@ public class Question extends TimeStamped {
 
     @Column(name = "image_caption")
     private String imageCaption;
+
+    public void setMagazine(Magazine magazine) {
+        if(this.magazine != null) {
+            this.magazine.getQuestions().remove(this);
+        }
+        this.magazine = magazine;
+        magazine.getQuestions().add(this);
+    }
+
+    @Builder
+    public Question(int questionOrder, String question, String answer) {
+        this.questionOrder = questionOrder;
+        this.question = question;
+        this.answer = answer;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Question question1 = (Question) o;
+        return getQuestionOrder() == question1.getQuestionOrder() && Objects.equals(getQuestion(), question1.getQuestion()) && Objects.equals(getAnswer(), question1.getAnswer()) && Objects.equals(getAnswerImage(), question1.getAnswerImage()) && Objects.equals(getImageCaption(), question1.getImageCaption());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getQuestionOrder(), getQuestion(), getAnswer(), getAnswerImage(), getImageCaption());
+    }
 }

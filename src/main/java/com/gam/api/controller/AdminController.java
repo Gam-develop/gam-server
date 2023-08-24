@@ -2,6 +2,7 @@ package com.gam.api.controller;
 
 import com.gam.api.common.ApiResponse;
 import com.gam.api.common.message.ResponseMessage;
+import com.gam.api.dto.admin.magazine.request.MagazineRequestDTO;
 import com.gam.api.service.admin.AdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -27,5 +28,15 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_DELETE_MAGAZINE.getMessage()));
     }
 
+    @PostMapping("/magazine")
+    public ResponseEntity<ApiResponse> createMagazine(@RequestBody MagazineRequestDTO request) {
+        adminService.createMagazine(request);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_CREATE_MAGAZINE.getMessage()));
+    }
 
+    @PatchMapping("/magazine/{magazineId}")
+    public ResponseEntity<ApiResponse> editMagazine(@PathVariable Long magazineId, @RequestBody MagazineRequestDTO request) {
+        adminService.editMagazine(magazineId, request);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_EDIT_MAGAZINE.getMessage()));
+    }
 }
