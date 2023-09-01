@@ -3,6 +3,8 @@ package com.gam.api.dto.user.response;
 import com.gam.api.entity.User;
 import lombok.Builder;
 
+import java.util.Objects;
+
 @Builder
 public record UserResponseDTO(
         Long userId,
@@ -16,7 +18,7 @@ public record UserResponseDTO(
         return UserResponseDTO.builder()
                 .userId(user.getId())
                 .userName(user.getUserName())
-                .userWorkThumbNail(user.getWorkThumbNail())
+                .userWorkThumbNail(Objects.isNull(user.getWorkThumbNail()) ? "" : user.getWorkThumbNail())
                 .viewCount(user.getViewCount())
                 .userTag(user.getTags())
                 .designerScrap(designerScrap)
