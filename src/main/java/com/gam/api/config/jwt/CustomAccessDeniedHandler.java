@@ -20,16 +20,8 @@ import java.io.IOException;
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException accessDeniedException) throws IOException {
-
         val objectMapper = new ObjectMapper();
-        String exceptionMessage;
-
-        if (httpServletRequest.getRequestURI().contains("admin")) {
-            exceptionMessage = ExceptionMessage.NOT_ADMIN_USER.getMessage();
-        } else {
-            exceptionMessage = ExceptionMessage.PROFILE_UNCOMPLETED_USER.getMessage();
-        }
-
+        val exceptionMessage = determineExceptionMessage(httpServletRequest.getRequestURI());
         val jsonResponse = objectMapper.writeValueAsString(
                     ApiResponse.fail(exceptionMessage)
                 );
@@ -38,5 +30,13 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         httpServletResponse.setCharacterEncoding("UTF-8");
         httpServletResponse.getWriter().write(jsonResponse);
+    }
+
+    private String determineExceptionMessage(String requestUri) {
+        if (requestUri.contains("admin")) {
+            return ExceptionMessage.NOT_ADMIN_USER.getMessage();
+        } else {
+            return ExceptionMessage.PROFILE_UNCOMPLETED_USER.getMessage();
+        }
     }
 }
