@@ -7,7 +7,7 @@ on:
     branches: [ develop ] 
 
 env:
-  S3_BUCKET_NAME: gam-image-test
+  S3_BUCKET_NAME: gam-dev-deploy
 
 jobs:
   build:
@@ -92,5 +92,5 @@ jobs:
         --application-name gam-dev-codedeploy
         --deployment-group-name gam-dev-server-codedeploy-group
         --file-exists-behavior OVERWRITE 
-        --s3-location bucket=gam-image-test,bundleType=zip,key=gam-dev-server.zip
+        --s3-location bucket=gam-dev-deploy,bundleType=zip,key=gam-dev-server.zip
         --region ap-northeast-2
