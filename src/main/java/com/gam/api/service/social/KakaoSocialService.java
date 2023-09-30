@@ -37,7 +37,7 @@ public class KakaoSocialService implements SocialService {
     @Override
     @Transactional
     public SocialLoginResponseDTO login(SocialLoginRequestDTO request) {
-        val userResponse = kakaoApiClient.getUserInformation("Bearer " + request.accessToken());
+        val userResponse = kakaoApiClient.getUserInformation("Bearer " + request.token());
 
         val authProvider = authProviderRepository.searchAuthProviderById(userResponse.id());
 
