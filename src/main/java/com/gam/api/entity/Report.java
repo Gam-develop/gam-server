@@ -30,9 +30,9 @@ public class Report extends TimeStamped {
     @Column(name = "content")
     private String content;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "target_user_id")
-    private User targetUser;
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "target_user_id")
+//    private User targetUser;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "work_id")
@@ -41,12 +41,12 @@ public class Report extends TimeStamped {
     @Builder
     public Report(User targetUser, String content, Work work){
         this.status = ReportStatus.PROCEEDING;
-        setUser(targetUser);
+//        setUser(targetUser);
         this.content = content;
         this.work = work;
     }
-    private void setUser(User targetUser) {
-        this.targetUser = targetUser;
-        targetUser.setReported(this);
-    }
+//    private void setUser(User targetUser) {
+//        this.targetUser = targetUser;
+//        targetUser.setReported(this);
+//    }
 }

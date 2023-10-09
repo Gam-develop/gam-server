@@ -228,13 +228,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId) {
+        System.out.println("here");
         val users = userRepository.findAllByIdNotOrderBySelectedFirstAtDesc(userId);
+//        val users = userRepository.findAllByIdNotAndUserStatusNotOrderBySelectedFirstAtDesc(userId, UserStatus.REPORTED);
 
         return users.stream().map((user) -> {
             val targetUserId = user.getId();
+            System.out.println(targetUserId);
             val firstWorkId = user.getFirstWorkId();
+            System.out.println(firstWorkId==null);
             val firstWork = findWork(firstWorkId);
-
+            System.out.println(firstWorkId==null);
             val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, targetUserId);
             if (Objects.isNull(userScrap)) {
                 return UserDiscoveryResponseDTO.of(user, false, firstWork);

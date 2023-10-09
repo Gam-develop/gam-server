@@ -88,8 +88,8 @@ public class User extends TimeStamped {
     @OneToMany(mappedBy = "user")
     List<Work> works = new ArrayList<>();
 
-    @OneToOne(mappedBy = "targetUser")
-    private Report reported;
+//    @OneToOne(mappedBy = "targetUser")
+//    private Report reported;
 
     @Type(type = "int-array")
     @Column(name = "tag",
