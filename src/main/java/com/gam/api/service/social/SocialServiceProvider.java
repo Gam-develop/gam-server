@@ -15,10 +15,12 @@ public class SocialServiceProvider {
     private static final Map<ProviderType, SocialService> socialServiceMap = new HashMap<>();
 
     private final KakaoSocialService kakaoSocialService;
+    private final AppleSocialService appleSocialService;
 
     @PostConstruct
     void initializeSocialServiceMap() {
         socialServiceMap.put(ProviderType.KAKAO, kakaoSocialService);
+        socialServiceMap.put(ProviderType.APPLE, appleSocialService);
     }
 
     public SocialService getSocialService(ProviderType providerType) {

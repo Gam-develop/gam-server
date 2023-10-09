@@ -31,7 +31,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         val userRole = user.getRole();
         val userStatus = user.getUserStatus();
 
-        val authUser = authProviderRepository.searchAuthProviderByUser_Id(user.getId())
+        val authUser = authProviderRepository.searchAuthProviderByUser(user)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
 
         val authUserId = String.valueOf(authUser.getId());

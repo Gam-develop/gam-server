@@ -20,7 +20,7 @@ public class AuthProvider extends TimeStamped {
 
     @Id
     @Column(name = "auth_provider_id")
-    private Long id;
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
