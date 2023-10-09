@@ -39,7 +39,7 @@ public class AppleSocialService implements SocialService {
     @Transactional
     public SocialLoginResponseDTO login(SocialLoginRequestDTO request) {
         val appleUserId = getUserInfo(request.token());
-        val parsedAppleUserId = Long.parseLong(appleUserId);
+        val parsedAppleUserId = appleUserId;
 
         val authProvider = authProviderRepository.searchAuthProviderById(parsedAppleUserId);
 
