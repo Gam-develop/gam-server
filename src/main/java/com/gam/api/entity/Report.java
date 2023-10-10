@@ -30,23 +30,26 @@ public class Report extends TimeStamped {
     @Column(name = "content")
     private String content;
 
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "target_user_id")
-//    private User targetUser;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "target_user_id")
+    private User targetUser;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "work_id")
-    private Work work;
+    @Column(name = "work_Id")
+    private Long workId;
 
     @Builder
-    public Report(User targetUser, String content, Work work){
+    public Report(User targetUser, String content, Long workId){
         this.status = ReportStatus.PROCEEDING;
-//        setUser(targetUser);
+        setUser(targetUser);
         this.content = content;
-        this.work = work;
+        this.workId = workId;
     }
-//    private void setUser(User targetUser) {
-//        this.targetUser = targetUser;
-//        targetUser.setReported(this);
-//    }
+
+    private void setUser(User targetUser) {
+        if (Objects.nonNull(this.targetUser)) {
+            this.targetUser.getReported().remove(this);
+        }
+        this.targetUser = targetUser;
+        targetUser.getReported().add(this);
+    }
 }

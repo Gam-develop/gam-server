@@ -40,9 +40,6 @@ public class Work extends TimeStamped {
     @Column(name = "view_count")
     private int viewCount;
 
-    @OneToOne(mappedBy = "work")
-    private Report report;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
