@@ -35,6 +35,7 @@ public class UserServiceImpl implements UserService {
     private final TagRepository tagRepository;
     private final UserTagRepository userTagRepository;
     private final WorkRepository workRepository;
+    private final ReportRepository reportRepository;
 
     @Transactional
     @Override
@@ -85,26 +86,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<SearchUserWorkDTO> searchUserAndWork(String keyword) {
+    public List<SearchUserWorkDTO> searchUserAndWork(Long myId, String keyword) {
         Set<Work> workSet = new HashSet<>();
-        val userList = userRepository.findByUserName(keyword);
 
-        if (userList.size() != 0 ) {
+        // 키워드에 일치하는 user찾기 : '자신'과,'신고된 유저' 제외 하고 모든 게시글 갖고오기
+        val userList = userRepository.findByKeyWord(myId, keyword);
+
+        if (!userList.isEmpty()) {
             userList.stream()
-                    .map((user) -> workSet.addAll(workRepository.findByUserId(user.getId())))
-                    .collect(Collectors.toList());
+                    .map((user) -> workSet.addAll(workRepository.findByUserId(user.getId())));
         }
 
+        // 키워드에 맞는 work모두 갖고와서 hashSet에 추가 (중복 제거를 위함)
         workSet.addAll(workRepository.findByKeyword(keyword));
-        val workList = new ArrayList<>(workSet);
 
-        if (workList.size() == 0) {
+        // 신고 된 유저의 작업물들 모두 갖고 오기, fetch-join 이용
+        val reportedWorksSet = userRepository.findAllByUserStatusWithWorks(UserStatus.REPORTED)
+                                        .stream()
+                                        .flatMap(user -> user.getWorks().stream())
+                                        .collect(Collectors.toSet());
+        workSet.removeAll(reportedWorksSet);
+
+       val workList = new ArrayList<>(workSet);
+        if (workList.isEmpty()) {
            return null;
         }
-
         workList.sort(comparing(Work::getCreatedAt).reversed());
         return workList.stream()
-                .map((work) -> SearchUserWorkDTO.of(work))
+                .map(SearchUserWorkDTO::of)
                 .collect(Collectors.toList());
     }
 

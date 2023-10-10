@@ -26,5 +26,5 @@ public interface UserService {
     void updateInstagramLink(Long userId, UserUpdateLinkRequestDTO request);
     void updateBehanceLink(Long userId, UserUpdateLinkRequestDTO request);
     void updateNotionLink(Long userId, UserUpdateLinkRequestDTO request);
-    List<SearchUserWorkDTO> searchUserAndWork(String keyword);
+    List<SearchUserWorkDTO> searchUserAndWork(Long userId, String keyword);
     }
