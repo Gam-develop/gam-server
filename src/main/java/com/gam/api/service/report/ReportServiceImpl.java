@@ -21,11 +21,13 @@ import javax.persistence.EntityNotFoundException;
 public class ReportServiceImpl implements ReportService{
     private final UserRepository userRepository;
     private final ReportRepository reportRepository;
+    private final WorkRepository workRepository;
 
     @Transactional
     @Override
     public void createReport(ReportCreateRequestDTO request) {
         val targetUser = findUser(request.targetUserId());
+        findWork(request.workId());
 
         val report = Report.builder()
                                     .targetUser(targetUser)
@@ -39,5 +41,10 @@ public class ReportServiceImpl implements ReportService{
     private User findUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
+    }
+
+    private Work findWork(Long workId) {
+        return workRepository.findById(workId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
     }
 }
