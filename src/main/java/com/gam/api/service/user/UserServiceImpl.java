@@ -164,18 +164,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserScrapsResponseDTO> getUserScraps(Long userId) {
-        val scraps = userScrapRepository.getAllByUser_idAndStatus(userId, true);
+        val scraps = userScrapRepository.getAllByUser_idAndStatusOrderByCreatedAtDesc(userId, true);
 
-        val scrapUsers = scraps.stream()
-                .map((scrap) -> {
+        // 신고된 유저들에 대한 스크랩은 거르기
+        return scraps.stream()
+                .filter(scrap -> {
+                    val targetId = scrap.getTargetId();
+                    User targetUser = userRepository.findById(targetId)
+                            .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
+                    return !checkReportedUser(targetUser); // 신고 처리된 유저가 아닌 경우
+                })
+                .map(scrap -> {
                     val scrapId = scrap.getId();
                     val targetId = scrap.getTargetId();
-                    val targetUser =  userRepository.findById(targetId)
+                    User targetUser = userRepository.findById(targetId)
                             .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
                     return UserScrapsResponseDTO.of(scrapId, targetUser);
-                    })
+                })
                 .collect(Collectors.toList());
-            return scrapUsers;
     }
 
     @Override
@@ -297,5 +303,9 @@ public class UserServiceImpl implements UserService {
                     .build());
         }
         user.setTags(newTags);
+    }
+
+    private boolean checkReportedUser(User targetUser) {
+        return targetUser.getUserStatus() == UserStatus.REPORTED;
     }
 }
