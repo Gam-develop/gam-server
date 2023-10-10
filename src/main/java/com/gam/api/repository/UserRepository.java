@@ -13,8 +13,8 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> getUserById(Long userId);
     boolean existsByUserName(String userName);
-    List<User> findTop5ByUserStatusNotOrderByScrapCountDesc(UserStatus userStatus);
-    List<User> findAllByIdNotOrderBySelectedFirstAtDesc(Long id);
+    List<User> findTop5ByUserStatusOrderByScrapCountDesc(UserStatus userStatus);
+    List<User>findAllByIdNotAndUserStatusOrderBySelectedFirstAtDesc(Long userId, UserStatus userStatus);
     @Query(value = "SELECT u FROM User u WHERE LOWER(u.userName) LIKE %:keyword% ORDER BY u.createdAt DESC")
     List<User> findByUserName(@Param("keyword") String keyword);
 }

@@ -191,11 +191,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserResponseDTO> getPopularDesigners(Long userId) {
-        val users = userRepository.findTop5ByUserStatusNotOrderByScrapCountDesc(UserStatus.REPORTED);
+        val users = userRepository.findTop5ByUserStatusOrderByScrapCountDesc(UserStatus.PERMITTED);
         return users.stream().map((user) -> {
             val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, user.getId());
             if (Objects.nonNull(userScrap)){
-                return UserResponseDTO.of(user,true);
+                return UserResponseDTO.of(user,userScrap.isStatus());
             }
             return UserResponseDTO.of(user, false);
          }).collect(Collectors.toList());
@@ -228,21 +228,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId) {
-        System.out.println("here");
-        val users = userRepository.findAllByIdNotOrderBySelectedFirstAtDesc(userId);
-//        val users = userRepository.findAllByIdNotAndUserStatusNotOrderBySelectedFirstAtDesc(userId, UserStatus.REPORTED);
+        val users = userRepository.findAllByIdNotAndUserStatusOrderBySelectedFirstAtDesc(userId, UserStatus.PERMITTED);
 
         return users.stream().map((user) -> {
             val targetUserId = user.getId();
-            System.out.println(targetUserId);
             val firstWorkId = user.getFirstWorkId();
-            System.out.println(firstWorkId==null);
-            val firstWork = findWork(firstWorkId);
-            System.out.println(firstWorkId==null);
+            Work firstWork;
+
+            if (firstWorkId == null && !user.getWorks().isEmpty()) { // firstWork가 설정이 제대로 안된 경우
+                firstWork = workRepository.findByUserIdOrderByCreatedAtDesc(targetUserId);
+            } else {
+                firstWork = findWork(firstWorkId);
+            }
+
             val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, targetUserId);
             if (Objects.isNull(userScrap)) {
                 return UserDiscoveryResponseDTO.of(user, false, firstWork);
-                }
+            }
             return UserDiscoveryResponseDTO.of(user, userScrap.isStatus(), firstWork);
         }).collect(Collectors.toList());
     }
