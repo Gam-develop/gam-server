@@ -4,6 +4,7 @@ import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.report.request.ReportCreateRequestDTO;
 import com.gam.api.entity.Report;
 import com.gam.api.entity.User;
+import com.gam.api.entity.UserStatus;
 import com.gam.api.entity.Work;
 import com.gam.api.repository.ReportRepository;
 import com.gam.api.repository.UserRepository;
@@ -19,19 +20,17 @@ import javax.persistence.EntityNotFoundException;
 @RequiredArgsConstructor
 public class ReportServiceImpl implements ReportService{
     private final UserRepository userRepository;
-    private final WorkRepository workRepository;
     private final ReportRepository reportRepository;
 
     @Transactional
     @Override
     public void createReport(ReportCreateRequestDTO request) {
         val targetUser = findUser(request.targetUserId());
-        val reportedWork = findWork(request.workId());
 
         val report = Report.builder()
                                     .targetUser(targetUser)
                                     .content(request.content())
-                                    .work(reportedWork)
+                                    .workId(request.workId())
                                     .build();
 
         reportRepository.save(report);
@@ -40,10 +39,5 @@ public class ReportServiceImpl implements ReportService{
     private User findUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
-    }
-
-    private Work findWork(Long workId) {
-        return workRepository.findById(workId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
     }
 }
