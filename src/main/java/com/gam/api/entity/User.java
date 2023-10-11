@@ -91,10 +91,15 @@ public class User extends TimeStamped {
     @OneToMany(mappedBy = "user")
     private List<Report> reports;
 
+    @OneToMany(mappedBy = "user")
+    private List<Block> blocks;
+
+
     @Type(type = "int-array")
     @Column(name = "tag",
             columnDefinition = "integer[]")
     private int[] tags;
+
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:SS")
     @Column(name = "selected_first_at")
