@@ -2,7 +2,6 @@ package com.gam.api.service.user;
 
 import com.gam.api.common.exception.WorkException;
 import com.gam.api.common.message.ExceptionMessage;
-import com.gam.api.dto.magazine.response.MagazineSearchResponseDTO;
 import com.gam.api.dto.search.response.SearchUserWorkDTO;
 import com.gam.api.dto.user.request.UserOnboardRequestDTO;
 import com.gam.api.dto.user.request.UserProfileUpdateRequestDTO;
@@ -15,8 +14,6 @@ import com.gam.api.entity.*;
 import com.gam.api.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -162,20 +159,40 @@ public class UserServiceImpl implements UserService {
         return UserNameCheckResponseDTO.of(isDuplicated);
     }
 
-    @Override //TODO
+    @Override
     public List<UserScrapsResponseDTO> getUserScraps(Long userId) {
-        val scraps = userScrapRepository.getAllByUser_idAndStatus(userId, true);
+        val scraps = userScrapRepository.getAllByUser_idAndStatusOrderByCreatedAtDesc(userId, true);
 
-        val scrapUsers = scraps.stream()
-                .map((scrap) -> {
+        // 차단 유저들에 대한 스크랩을 거르기
+        val me = findUser(userId);
+        val validBlocks = getValidBlocks(me);
+
+        val blockUserScraps = validBlocks.stream()
+                                    .map(block -> {
+                                        val targetId = block.getTargetId();
+                                        return userScrapRepository.getByUserIdAndTargetIdAndStatus(userId, targetId, true);
+                                    })
+                                    .filter(Optional::isPresent)
+                                    .map(Optional::get)
+                                    .toList();
+        scraps.removeAll(blockUserScraps);
+
+        // 신고된 유저들에 대한 스크랩도 거르고 return
+        return scraps.stream()
+                .filter(scrap -> {
+                    val targetId = scrap.getTargetId();
+                    User targetUser = userRepository.findById(targetId)
+                            .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
+                    return !checkReportedUser(targetUser); // 신고 처리된 유저가 아닌 경우
+                })
+                .map(scrap -> {
                     val scrapId = scrap.getId();
                     val targetId = scrap.getTargetId();
-                    val targetUser =  userRepository.findById(targetId)
+                    User targetUser = userRepository.findById(targetId)
                             .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
                     return UserScrapsResponseDTO.of(scrapId, targetUser);
-                    })
+                })
                 .collect(Collectors.toList());
-            return scrapUsers;
     }
 
     @Override
@@ -315,6 +332,16 @@ public class UserServiceImpl implements UserService {
                 .map(userRepository::findById) // User를 Optional<User>로 변환
                 .filter(Optional::isPresent)   // 삭제되지 않은 사용자만 필터링
                 .map(Optional::get)           // Optional에서 User로 변환
+                .collect(Collectors.toList());
+    }
+
+    private boolean checkReportedUser(User targetUser) {
+        return targetUser.getUserStatus() == UserStatus.REPORTED;
+    }
+
+    private List<Block> getValidBlocks(User user) {
+        return user.getBlocks().stream()
+                .filter(Block::isStatus)
                 .collect(Collectors.toList());
     }
 }

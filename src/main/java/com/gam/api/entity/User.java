@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 
@@ -75,6 +76,9 @@ public class User extends TimeStamped {
     private Long firstWorkId;
 
     @OneToMany(mappedBy = "user")
+    private List<Block> blocks;
+
+    @OneToMany(mappedBy = "user")
     private List<UserTag> userTag;
 
     @Where(clause = "status = true")
@@ -88,18 +92,13 @@ public class User extends TimeStamped {
     @OneToMany(mappedBy = "user")
     List<Work> works = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
-    private List<Report> reports;
-
-    @OneToMany(mappedBy = "user")
-    private List<Block> blocks;
-
+    @OneToMany(mappedBy = "targetUser")
+    private List<Report> reported;
 
     @Type(type = "int-array")
     @Column(name = "tag",
             columnDefinition = "integer[]")
     private int[] tags;
-
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:SS")
     @Column(name = "selected_first_at")
@@ -108,7 +107,6 @@ public class User extends TimeStamped {
     public void updateSelectedFirstAt() {
         this.selectedFirstAt = LocalDateTime.now();
     }
-
 
     @Builder
     public User(Role role, UserStatus userStatus) {
@@ -137,6 +135,6 @@ public class User extends TimeStamped {
         this.instagramLink = null;
         this.notionLink = null;
     }
-}
 
+}
 
