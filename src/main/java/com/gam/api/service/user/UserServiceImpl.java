@@ -191,9 +191,15 @@ public class UserServiceImpl implements UserService {
 
     @Override //TODO
     public List<UserResponseDTO> getPopularDesigners(Long userId) {
-        val users = userRepository.findTop5ByOrderByScrapCountDesc();
-        val me = userRepository.findById(userId);
-        return users.stream().map((user) -> {
+        val users = userRepository.findTop20ByUserStatusOrderByScrapCountDesc(UserStatus.PERMITTED);
+
+        val me = findUser(userId);
+        removeBlockUsers(users, me);
+
+        int count = 5; // Top 5만 갖고옴
+        val first5Users = users.subList(0, Math.min(count, users.size()));
+
+        return first5Users.stream().map((user) -> {
             val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, user.getId());
             if (Objects.nonNull(userScrap)){
                 return UserResponseDTO.of(user,true);
@@ -230,8 +236,8 @@ public class UserServiceImpl implements UserService {
     @Override //TODO
     public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId) {
         val users = userRepository.findAllByIdNotOrderBySelectedFirstAtDesc(userId);
-        val me = findUser(userId);
 
+        val me = findUser(userId);
         removeBlockUsers(users, me);
 
         return users.stream().map((user) -> {
