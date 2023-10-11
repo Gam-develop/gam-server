@@ -58,7 +58,11 @@ public enum ResponseMessage {
 
     /** admin **/
     SUCCESS_CREATE_MAGAZINE("매거진 생성 완료"),
-    SUCCESS_EDIT_MAGAZINE("매거진 수정 완료");
+    SUCCESS_EDIT_MAGAZINE("매거진 수정 완료"),
+
+    /** report **/
+    SUCCESS_CREATE_BLOCK("유저 차단을 성공 했습니다."),
+    SUCCESS_CANCEL_BLOCK("유저 차단 취소를 성공 했습니다");
 
     private final String message;
 }
