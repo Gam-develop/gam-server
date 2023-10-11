@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
         user.setNotionLink(request.link());
     }
 
-    @Override
+    @Override //TODO
     public List<SearchUserWorkDTO> searchUserAndWork(String keyword) {
         Set<Work> workSet = new HashSet<>();
         val userList = userRepository.findByUserName(keyword);
@@ -162,7 +162,7 @@ public class UserServiceImpl implements UserService {
         return UserNameCheckResponseDTO.of(isDuplicated);
     }
 
-    @Override
+    @Override //TODO
     public List<UserScrapsResponseDTO> getUserScraps(Long userId) {
         val scraps = userScrapRepository.getAllByUser_idAndStatus(userId, true);
 
@@ -189,9 +189,10 @@ public class UserServiceImpl implements UserService {
         return UserProfileResponseDTO.of(false, user);
     }
 
-    @Override
+    @Override //TODO
     public List<UserResponseDTO> getPopularDesigners(Long userId) {
         val users = userRepository.findTop5ByOrderByScrapCountDesc();
+        val me = userRepository.findById(userId);
         return users.stream().map((user) -> {
             val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, user.getId());
             if (Objects.nonNull(userScrap)){
@@ -226,9 +227,12 @@ public class UserServiceImpl implements UserService {
         return WorkPortfolioGetResponseDTO.of(isScraped, works);
     }
 
-    @Override
+    @Override //TODO
     public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId) {
         val users = userRepository.findAllByIdNotOrderBySelectedFirstAtDesc(userId);
+        val me = findUser(userId);
+
+        removeBlockUsers(users, me);
 
         return users.stream().map((user) -> {
             val targetUserId = user.getId();
@@ -291,5 +295,20 @@ public class UserServiceImpl implements UserService {
                     .build());
         }
         user.setTags(newTags);
+    }
+
+    private void removeBlockUsers(List<User> users, User me) {
+        val myBlockUserList = getBlockUsers(me);
+        users.removeAll(myBlockUserList);
+    }
+
+    private List<User> getBlockUsers(User user) {
+        return user.getBlocks()
+                .stream()
+                .map(block -> block.getTargetId())
+                .map(userRepository::findById) // User를 Optional<User>로 변환
+                .filter(Optional::isPresent)   // 삭제되지 않은 사용자만 필터링
+                .map(Optional::get)           // Optional에서 User로 변환
+                .collect(Collectors.toList());
     }
 }
