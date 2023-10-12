@@ -81,31 +81,38 @@ public class UserServiceImpl implements UserService {
         user.setNotionLink(request.link());
     }
 
-    @Override //TODO
+    @Override
     public List<SearchUserWorkDTO> searchUserAndWork(Long myId, String keyword) {
-        Set<Work> workSet = new HashSet<>();
+        Set<Work> workSet = new HashSet<>(); //hashSet : 중복 제거를 위함
 
-        // 키워드에 일치하는 user찾기 : '신고된 유저' 제외 하고 모든 게시글 갖고오기
+        // 키워드에 일치하는 user찾기
         val userList = userRepository.findByKeyWord(keyword);
-
         if (!userList.isEmpty()) {
             userList.forEach(user -> workSet.addAll(workRepository.findAllByUserId(user.getId())));
         }
 
-        // 키워드에 맞는 work모두 갖고와서 hashSet에 추가 (중복 제거를 위함)
+        // 키워드에 맞는 work모두 갖고와서 hashSet에 추가 - 중복 제거됨,
         workSet.addAll(workRepository.findByKeyword(keyword));
 
-        // 신고 된 유저 작업물들 모두 갖고 오기, fetch-join 이용
+        // 내 작업물 제외
+        val myWorkList = workRepository.findAllByUserId(myId);
+        Set<Work> myWorkSet = new HashSet<>(myWorkList);
+        workSet.removeAll(myWorkSet);
+
+        // 신고 된 유저 작업물 제외, fetch-join 이용
         val reportedWorksSet = userRepository.findAllByUserStatusWithWorks(UserStatus.REPORTED)
                 .stream()
                 .flatMap(user -> user.getWorks().stream())
                 .collect(Collectors.toSet());
         workSet.removeAll(reportedWorksSet);
 
-        // 내 작업물 제외하기
-        val myWorkList = workRepository.findAllByUserId(myId);
-        Set<Work> myWorkSet = new HashSet<>(myWorkList);
-        workSet.removeAll(myWorkSet);
+        // 내가 차단한 유저들 작업물 제외
+        val me = findUser(myId);
+        List<User> blockUsers = getBlockUsers(me);
+        val blockedWorksSet = blockUsers.stream() //TODO[성능] - 성능저하 가능성 있음
+                                        .flatMap(user -> user.getWorks().stream())
+                                        .collect(Collectors.toSet());
+        workSet.removeAll(blockedWorksSet);
 
         val workList = new ArrayList<>(workSet);
         if (workList.isEmpty()) {
@@ -219,12 +226,13 @@ public class UserServiceImpl implements UserService {
         return UserProfileResponseDTO.of(false, user);
     }
 
-    @Override //TODO
+    @Override
     public List<UserResponseDTO> getPopularDesigners(Long userId) {
         val users = userRepository.findTop20ByUserStatusOrderByScrapCountDesc(UserStatus.PERMITTED);
 
         val me = findUser(userId);
         removeBlockUsers(users, me);
+
 
         int count = 5; // Top 5만 갖고옴
         val first5Users = users.subList(0, Math.min(count, users.size()));
@@ -263,7 +271,7 @@ public class UserServiceImpl implements UserService {
         return WorkPortfolioGetResponseDTO.of(isScraped, works);
     }
 
-    @Override //TODO
+    @Override
     public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId) {
         val users = userRepository.findAllByIdNotOrderBySelectedFirstAtDesc(userId);
 
@@ -338,10 +346,11 @@ public class UserServiceImpl implements UserService {
         users.removeAll(myBlockUserList);
     }
 
-    private List<User> getBlockUsers(User user) {
+    private List<User> getBlockUsers(User user) { // TODO[성능] - 성능 저하 가능성 있음
         return user.getBlocks()
                 .stream()
-                .map(block -> block.getTargetId())
+                .filter(Block::isStatus)
+                .map(Block::getTargetId)
                 .map(userRepository::findById) // User를 Optional<User>로 변환
                 .filter(Optional::isPresent)   // 삭제되지 않은 사용자만 필터링
                 .map(Optional::get)           // Optional에서 User로 변환
@@ -357,4 +366,5 @@ public class UserServiceImpl implements UserService {
                 .filter(Block::isStatus)
                 .collect(Collectors.toList());
     }
+
 }

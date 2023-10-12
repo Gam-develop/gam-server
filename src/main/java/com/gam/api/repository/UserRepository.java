@@ -18,7 +18,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findAllByIdNotOrderBySelectedFirstAtDesc(Long id);
     @Query(value = "SELECT u FROM User u WHERE LOWER(u.userName) LIKE %:keyword% ORDER BY u.createdAt DESC")
     List<User> findByUserName(@Param("keyword") String keyword);
-    @Query(value = "SELECT u FROM User u WHERE LOWER(u.userName) LIKE %:keyword% and u.userStatus!='REPORTED' ORDER BY u.createdAt DESC")
+    @Query(value = "SELECT u FROM User u WHERE LOWER(u.userName) LIKE %:keyword% ORDER BY u.createdAt DESC")
     List<User> findByKeyWord(@Param("keyword") String keyword);
     @Query("SELECT u FROM User u JOIN FETCH u.works WHERE u.userStatus = :userStatus")
     List<User> findAllByUserStatusWithWorks( @Param("userStatus") UserStatus userStatus);
