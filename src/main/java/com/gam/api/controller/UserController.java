@@ -141,8 +141,9 @@ public class UserController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse> searchUserAndWork(@RequestParam String keyword) {
-        val response = userService.searchUserAndWork(keyword);
+    public ResponseEntity<ApiResponse> searchUserAndWork(@AuthenticationPrincipal GamUserDetails userDetails, @RequestParam String keyword) {
+        val userId = userDetails.getId();
+        val response = userService.searchUserAndWork(userId, keyword);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_SEARCH_USE_WORKS.getMessage(),response));
     }
 }
