@@ -15,6 +15,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Controller
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
@@ -72,7 +74,7 @@ public class UserController {
     @PostMapping("/onboard")
     ResponseEntity<ApiResponse> onboardUser(
             @AuthenticationPrincipal GamUserDetails userDetails,
-            @RequestBody UserOnboardRequestDTO request)
+            @Valid @RequestBody UserOnboardRequestDTO request)
     {
         userService.onboardUser(userDetails.getId(), request);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_USER_ONBOARD.getMessage()));
