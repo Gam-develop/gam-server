@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService {
 
         if (!userList.isEmpty()) {
             userList.stream()
-                    .map((user) -> workSet.addAll(workRepository.findByUserId(user.getId())));
+                    .map((user) -> workSet.addAll(user.getWorks()));
         }
 
         // 키워드에 맞는 work모두 갖고와서 hashSet에 추가 (중복 제거를 위함)
@@ -179,14 +179,14 @@ public class UserServiceImpl implements UserService {
         return scraps.stream()
                 .filter(scrap -> {
                     val targetId = scrap.getTargetId();
-                    User targetUser = userRepository.findById(targetId)
+                    val targetUser = userRepository.findById(targetId)
                             .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
                     return !checkReportedUser(targetUser); // 신고 처리된 유저가 아닌 경우
                 })
                 .map(scrap -> {
                     val scrapId = scrap.getId();
                     val targetId = scrap.getTargetId();
-                    User targetUser = userRepository.findById(targetId)
+                    val targetUser = userRepository.findById(targetId)
                             .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
                     return UserScrapsResponseDTO.of(scrapId, targetUser);
                 })
