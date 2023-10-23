@@ -15,4 +15,5 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
     List<Work> findByUserId(Long userId);
     @Query(value = "SELECT w FROM Work w WHERE LOWER(w.title) LIKE %:keyword% ORDER BY w.createdAt DESC")
     List<Work> findByKeyword(String keyword);
+    Work findByUserIdOrderByCreatedAtDesc(Long userId);
 }

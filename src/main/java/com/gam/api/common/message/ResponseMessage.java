@@ -58,7 +58,10 @@ public enum ResponseMessage {
 
     /** admin **/
     SUCCESS_CREATE_MAGAZINE("매거진 생성 완료"),
-    SUCCESS_EDIT_MAGAZINE("매거진 수정 완료");
+    SUCCESS_EDIT_MAGAZINE("매거진 수정 완료"),
+
+    /** report **/
+    SUCCESS_REPORT_USER("유저 신고를 성공했습니다.");
 
     private final String message;
 }
