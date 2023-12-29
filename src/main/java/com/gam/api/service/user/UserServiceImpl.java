@@ -182,6 +182,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserScrapsResponseDTO> getUserScraps(Long userId) {
         val scraps = userScrapRepository.getAllByUser_idAndStatusOrderByCreatedAtDesc(userId, true);
+    }
 
     @Override
     public List<UserScrapsResponseDTO> getUserScraps(Long userId) {
