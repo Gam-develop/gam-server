@@ -32,6 +32,7 @@ public class UserServiceImpl implements UserService {
     private final TagRepository tagRepository;
     private final UserTagRepository userTagRepository;
     private final WorkRepository workRepository;
+    private final ReportRepository reportRepository;
 
     @Transactional
     @Override
@@ -118,7 +119,6 @@ public class UserServiceImpl implements UserService {
         if (workList.isEmpty()) {
             return null;
         }
-
         workList.sort(comparing(Work::getCreatedAt).reversed());
         return workList.stream()
                 .map(SearchUserWorkDTO::of)
@@ -183,6 +183,10 @@ public class UserServiceImpl implements UserService {
     public List<UserScrapsResponseDTO> getUserScraps(Long userId) {
         val scraps = userScrapRepository.getAllByUser_idAndStatusOrderByCreatedAtDesc(userId, true);
 
+    @Override
+    public List<UserScrapsResponseDTO> getUserScraps(Long userId) {
+        val scraps = userScrapRepository.getAllByUser_idAndStatusOrderByCreatedAtDesc(userId, true);
+
         // 차단 유저들에 대한 스크랩을 거르기
         val me = findUser(userId);
         val validBlocks = getValidBlocks(me);
@@ -214,6 +218,7 @@ public class UserServiceImpl implements UserService {
                 })
                 .collect(Collectors.toList());
     }
+      
 
     @Override
     public UserProfileResponseDTO getUserProfile(Long myId, Long userId) {
@@ -273,7 +278,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId) {
-        val users = userRepository.findAllByIdNotOrderBySelectedFirstAtDesc(userId);
+        val users = userRepository.findAllByIdNotAndUserStatusOrderBySelectedFirstAtDesc(userId, UserStatus.PERMITTED);
 
         val me = findUser(userId);
         removeBlockUsers(users, me);
@@ -281,12 +286,18 @@ public class UserServiceImpl implements UserService {
         return users.stream().map((user) -> {
             val targetUserId = user.getId();
             val firstWorkId = user.getFirstWorkId();
-            val firstWork = findWork(firstWorkId);
+            Work firstWork;
+
+            if (firstWorkId == null && !user.getWorks().isEmpty()) { // firstWork가 설정이 제대로 안된 경우
+                firstWork = workRepository.findByUserIdOrderByCreatedAtDesc(targetUserId);
+            } else {
+                firstWork = findWork(firstWorkId);
+            }
 
             val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, targetUserId);
             if (Objects.isNull(userScrap)) {
                 return UserDiscoveryResponseDTO.of(user, false, firstWork);
-                }
+            }
             return UserDiscoveryResponseDTO.of(user, userScrap.isStatus(), firstWork);
         }).collect(Collectors.toList());
     }
@@ -367,4 +378,7 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+    private boolean checkReportedUser(User targetUser) {
+        return targetUser.getUserStatus() == UserStatus.REPORTED;
+    }
 }

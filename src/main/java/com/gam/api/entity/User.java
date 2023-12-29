@@ -13,6 +13,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,6 +97,7 @@ public class User extends TimeStamped {
     @OneToMany(mappedBy = "targetUser")
     private List<Report> reported;
 
+    @NotNull
     @Type(type = "int-array")
     @Column(name = "tag",
             columnDefinition = "integer[]")
