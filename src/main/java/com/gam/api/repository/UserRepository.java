@@ -34,7 +34,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
   
     @Query(value = "SELECT u FROM User u WHERE LOWER(u.userName) LIKE %:keyword% and u.userStatus!='REPORTED' and u.id!=:userId ORDER BY u.createdAt DESC")
     List<User> findByKeyWord(@Param("userId")Long userId, @Param("keyword") String keyword);
-
-    @Query("SELECT u FROM User u JOIN FETCH u.works WHERE u.userStatus = :userStatus")
-    List<User> findAllByUserStatusWithWorks( @Param("userStatus") UserStatus userStatus);
 }
