@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import static javax.persistence.GenerationType.IDENTITY;
 
 
@@ -77,6 +78,9 @@ public class User extends TimeStamped {
     private Long firstWorkId;
 
     @OneToMany(mappedBy = "user")
+    private List<Block> blocks;
+
+    @OneToMany(mappedBy = "user")
     private List<UserTag> userTag;
 
     @Where(clause = "status = true")
@@ -107,7 +111,6 @@ public class User extends TimeStamped {
         this.selectedFirstAt = LocalDateTime.now();
     }
 
-
     @Builder
     public User(Role role, UserStatus userStatus) {
         this.role = role;
@@ -135,6 +138,6 @@ public class User extends TimeStamped {
         this.instagramLink = null;
         this.notionLink = null;
     }
-}
 
+}
 

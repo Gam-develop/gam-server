@@ -42,7 +42,10 @@ public enum ExceptionMessage {
     NOT_MATCH_MAGAZINE_SCARP_STATUS("보낸 매거진 스크랩 상태가 유효하지 않습니다."),
 
     /** Admin **/
-    INVALID_MAIN_PHOTOS_COUNT("메거진의 메인 사진의 개수는 최대 4장입니다.");
+    INVALID_MAIN_PHOTOS_COUNT("메거진의 메인 사진의 개수는 최대 4장입니다."),
+
+    /** Report **/
+    NOT_MATCH_DB_BLOCK_STATUS("DB의 userScrap 상태와, 보낸 userScrap 상태가 같지 않습니다.");
 
     private final String message;
 }
