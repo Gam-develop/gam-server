@@ -364,10 +364,6 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
-    private boolean checkReportedUser(User targetUser) {
-        return targetUser.getUserStatus() == UserStatus.REPORTED;
-    }
-
     private List<Block> getValidBlocks(User user) {
         return user.getBlocks().stream()
                 .filter(Block::isStatus)
