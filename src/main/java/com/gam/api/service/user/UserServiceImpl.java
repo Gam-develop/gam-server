@@ -182,11 +182,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserScrapsResponseDTO> getUserScraps(Long userId) {
         val scraps = userScrapRepository.getAllByUser_idAndStatusOrderByCreatedAtDesc(userId, true);
-    }
-
-    @Override
-    public List<UserScrapsResponseDTO> getUserScraps(Long userId) {
-        val scraps = userScrapRepository.getAllByUser_idAndStatusOrderByCreatedAtDesc(userId, true);
 
         // 차단 유저들에 대한 스크랩을 거르기
         val me = findUser(userId);
