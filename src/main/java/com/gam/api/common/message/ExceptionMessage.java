@@ -9,6 +9,7 @@ public enum ExceptionMessage {
     /** auth **/
     EMPTY_TOKEN("빈 토큰입니다."),
     INVALID_TOKEN("유효하지 않은 토큰입니다."),
+    INVALID_KAKAO_TOKEN("유효하지 않은 카카오 토큰입니다."),
     EXPIRED_TOKEN("만료된 토큰입니다."),
     INVALID_SIGNATURE("유효하지 않은 서명입니다."),
     PROFILE_UNCOMPLETED_USER("마이페이지를 작성하지 않은 유저입니다."),
