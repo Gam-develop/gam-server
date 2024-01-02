@@ -30,8 +30,40 @@ public class SocialCommonServiceImpl implements SocialCommonService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final GamConfig gamConfig;
 
-    public boolean chkProfileCompleted(User user) {
+    private boolean chkProfileCompleted(User user) {
         return !Objects.isNull(user.getInfo()) && !Objects.isNull(user.getUserTag());
+    }
+
+    private SocialLoginResponseDTO reLogin(User user) {
+        val userId = user.getId();
+        val accessToken = jwtTokenManager.createAccessToken(userId);
+        val refreshToken = jwtTokenManager.createRefreshToken(userId);
+
+        RedisUtil.saveRefreshToken(redisTemplate, refreshToken, userId);
+
+        val isProfileCompleted = chkProfileCompleted(user);
+        return SocialLoginResponseDTO.of(true, isProfileCompleted, userId, accessToken, refreshToken, gamConfig.getAppVersion());
+    }
+
+    private SocialLoginResponseDTO SignUpAndLogin(String thirdPartyUserId, ProviderType providerType) {
+        val user = userRepository.save(User.builder()
+                .role(Role.USER)
+                .userStatus(UserStatus.NOT_PERMITTED)
+                .build());
+
+        val userId = user.getId();
+        val accessToken = jwtTokenManager.createAccessToken(userId);
+        val refreshToken = jwtTokenManager.createRefreshToken(userId);
+
+        RedisUtil.saveRefreshToken(redisTemplate, refreshToken, userId);
+
+        authProviderRepository.save(AuthProvider.builder()
+                .id(thirdPartyUserId)
+                .user(user)
+                .providerType(providerType)
+                .build());
+
+        return SocialLoginResponseDTO.of(false, false, userId, accessToken, refreshToken, gamConfig.getAppVersion());
     }
 
     @Override
@@ -96,35 +128,10 @@ public class SocialCommonServiceImpl implements SocialCommonService {
     public SocialLoginResponseDTO gamLogin(String thirdPartyUserId, ProviderType providerType) {
         val authProvider = authProviderRepository.searchAuthProviderById(thirdPartyUserId);
 
-        if(Objects.nonNull(authProvider)) {
-            val user = authProvider.getUser();
-            val userId = user.getId();
-            val accessToken = jwtTokenManager.createAccessToken(userId);
-            val refreshToken = jwtTokenManager.createRefreshToken(userId);
-
-            RedisUtil.saveRefreshToken(redisTemplate, refreshToken, userId);
-
-            val isProfileCompleted = chkProfileCompleted(user);
-            return SocialLoginResponseDTO.of(true, isProfileCompleted, userId, accessToken, refreshToken, gamConfig.getAppVersion());
+        if (Objects.nonNull(authProvider)) {
+            return reLogin(authProvider.getUser());
         }
 
-        val user = userRepository.save(User.builder()
-                .role(Role.USER)
-                .userStatus(UserStatus.NOT_PERMITTED)
-                .build());
-
-        val userId = user.getId();
-        val accessToken = jwtTokenManager.createAccessToken(userId);
-        val refreshToken = jwtTokenManager.createRefreshToken(userId);
-
-        RedisUtil.saveRefreshToken(redisTemplate, refreshToken, userId);
-
-        authProviderRepository.save(AuthProvider.builder()
-                .id(thirdPartyUserId)
-                .user(user)
-                .providerType(providerType)
-                .build());
-
-        return SocialLoginResponseDTO.of(false, false, userId, accessToken, refreshToken, gamConfig.getAppVersion());
+        return SignUpAndLogin(thirdPartyUserId, providerType);
     }
 }
