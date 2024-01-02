@@ -6,5 +6,4 @@ import com.gam.api.entity.User;
 
 public interface SocialService {
     SocialLoginResponseDTO login(SocialLoginRequestDTO request);
-    boolean chkProfileCompleted(User user);
 }
