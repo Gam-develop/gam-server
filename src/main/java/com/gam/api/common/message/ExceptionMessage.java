@@ -36,6 +36,7 @@ public enum ExceptionMessage {
     ALREADY_FIRST_WORK("이미 대표 작업물 입니다."),
     NOT_FOUND_FIRST_WORK("대표 작업을 찾을 수 없습니다."),
     NOT_WORK_OWNER("작업물의 주인이 아닙니다."),
+    WORK_NO_THUMBNAIL("작업물의 썸네일이 없습니다."),
 
     /** Magazine **/
     NOT_FOUND_MAGAZINE("해당하는 매거진을 찾을 수 없습니다."),
