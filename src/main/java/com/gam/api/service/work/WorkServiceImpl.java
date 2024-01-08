@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Objects;
 
 
 @RequiredArgsConstructor
@@ -42,6 +43,10 @@ public class WorkServiceImpl implements WorkService {
 
         if (user.getUserStatus().equals(UserStatus.NOT_PERMITTED)) {
             user.updateUserStatus(UserStatus.PERMITTED);
+        }
+
+        if (Objects.equals(request.image(), "")) {
+            throw new WorkException(ExceptionMessage.WORK_NO_THUMBNAIL.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
         val work = workRepository.save(Work.builder()
@@ -75,6 +80,10 @@ public class WorkServiceImpl implements WorkService {
         }
 
         val photoUrl = work.getPhotoUrl();
+
+        if (Objects.equals(photoUrl, "")) {
+            throw new WorkException(ExceptionMessage.WORK_NO_THUMBNAIL.getMessage(), HttpStatus.BAD_REQUEST);
+        }
 
         s3Service.deleteS3Image(photoUrl);
 
