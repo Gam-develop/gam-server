@@ -32,7 +32,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         httpServletResponse.getWriter().write(jsonResponse);
     }
 
-    private String determineExceptionMessage(String requestUri) {
+    private String determineExceptionMessage(String requestUri) { // TODO - code review 해봐야할 예정 관련 이슈 -#111
         if (requestUri.contains("admin")) {
             return ExceptionMessage.NOT_ADMIN_USER.getMessage();
         } else {
