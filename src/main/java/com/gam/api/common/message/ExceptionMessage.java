@@ -12,7 +12,7 @@ public enum ExceptionMessage {
     INVALID_KAKAO_TOKEN("유효하지 않은 카카오 토큰입니다."),
     EXPIRED_TOKEN("만료된 토큰입니다."),
     INVALID_SIGNATURE("유효하지 않은 서명입니다."),
-    PROFILE_UNCOMPLETED_USER("마이페이지를 작성하지 않은 유저입니다."),
+    PORTFOLIO_UNCOMPLETED_USER("포트폴리오를 추가하지 않은 유저입니다."),
     NOT_ADMIN_USER("관리자 권한이 없습니다."),
     INVALID_REFRESH_TOKEN("잘못된 리프레시 토큰입니다."),
     KAKAO_CODE_ERROR("유효하지 않은 코드입니다"),
