@@ -38,7 +38,7 @@ public class SecurityConfig {
                     .antMatchers("/v3/api-docs/**", "/swagger-ui.html", "/webjars/swagger-ui/**", "/swagger-ui/**", "/api/v1/social/**",
                             "/api/v1/work","/api/v1/user/name/check","/api/v1/user/onboard").permitAll()
                 .and()
-//                .authorizeHttpRequests() // TODO - code review 해봐야할 예정 관련 이슈 -
+//                .authorizeHttpRequests() // TODO - code review 해봐야할 예정 관련 이슈 -#111
 //                .antMatchers("/api/v1/user/onboard").hasRole("USER")
 //                .and()
                     .authorizeHttpRequests()
