@@ -97,7 +97,6 @@ public class User extends TimeStamped {
     @OneToMany(mappedBy = "targetUser")
     private List<Report> reported;
 
-    @NotNull
     @Type(type = "int-array")
     @Column(name = "tag",
             columnDefinition = "integer[]")
