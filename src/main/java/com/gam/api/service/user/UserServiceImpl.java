@@ -250,8 +250,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public WorkPortfolioListResponseDTO getMyPortfolio(Long userId) {
         val user = findUser(userId);
-        val works = getUserPortfolio(userId);
+        val works = getMineFolio(userId); //TODO - 메소드 네이밍..
         return WorkPortfolioListResponseDTO.of(user, works);
+    }
+
+
+    private List<Work> getMineFolio(Long userId) { //TODO - 메소드 네이밍..
+        val works = workRepository.findByUserIdAndIsFirstOrderByCreatedAtDesc(userId, false);
+
+        val representiveWork = workRepository.getWorkByUserIdAndIsFirst(userId, true);
+        if (representiveWork.isPresent()){
+            works.add(0, representiveWork.get());
+            return works;
+        }
+        return works;
     }
 
 
