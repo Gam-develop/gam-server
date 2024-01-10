@@ -13,7 +13,7 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
     Optional<Work> getWorkByUserIdAndIsFirst(Long userId, Boolean status);
     List<Work> findByUserIdAndIsFirstOrderByCreatedAtDesc(Long userId, boolean isFirst);
     List<Work> findAllByUserId(Long userId);
-    @Query(value = "SELECT w FROM Work w WHERE LOWER(w.title) LIKE %:keyword% ORDER BY w.createdAt DESC")
+    @Query(value = "SELECT w FROM Work w WHERE LOWER(w.title) LIKE LOWER(CONCAT('%', :keyword, '%')) ORDER BY w.createdAt DESC")
     List<Work> findByKeyword(String keyword);
     Work findByUserIdOrderByCreatedAtDesc(Long userId);
 }
