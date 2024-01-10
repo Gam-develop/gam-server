@@ -222,7 +222,7 @@ public class UserServiceImpl implements UserService {
         val userScrap = userScrapRepository.findByUser_idAndTargetId(myId, userId);
 
         if(Objects.nonNull(userScrap)){
-            return UserProfileResponseDTO.of(true, user);
+            return UserProfileResponseDTO.of(userScrap.isStatus(), user);
         }
         return UserProfileResponseDTO.of(false, user);
     }
@@ -241,7 +241,7 @@ public class UserServiceImpl implements UserService {
         return first5Users.stream().map((user) -> {
             val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, user.getId());
             if (Objects.nonNull(userScrap)){
-                return UserResponseDTO.of(user,true);
+                return UserResponseDTO.of(user, userScrap.isStatus());
             }
             return UserResponseDTO.of(user, false);
          }).collect(Collectors.toList());
