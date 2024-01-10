@@ -13,7 +13,7 @@ public interface MagazineRepository extends JpaRepository<Magazine, Long> {
     List<Magazine> findMagazinesByOrderByViewCountDesc();
     List<Magazine> findTop3ByOrderByViewCountDesc();
     List<Magazine> findAllByOrderByModifiedAtDescCreatedAtDesc();
-    @Query("SELECT m FROM Magazine m WHERE LOWER(m.interviewPerson) LIKE %:interviewPersonKeyword% OR LOWER(m.magazineTitle) LIKE %:magazineTitleKeyword% ORDER BY m.createdAt DESC")
+    @Query("SELECT m FROM Magazine m WHERE LOWER(m.interviewPerson) LIKE LOWER(CONCAT('%', :interviewPersonKeyword, '%')) OR LOWER(m.magazineTitle) LIKE LOWER(CONCAT('%', :magazineTitleKeyword, '%')) ORDER BY m.createdAt DESC")
     List<Magazine> finAllByKeyword(
             @Param("interviewPersonKeyword") String userNameKeyWord,
             @Param("magazineTitleKeyword") String titleNameKeyWord
