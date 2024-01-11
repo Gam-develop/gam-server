@@ -1,8 +1,8 @@
 package com.gam.api.dto.magazine.response;
 
+import com.gam.api.config.UrlConfig;
 import com.gam.api.entity.Magazine;
 import lombok.Builder;
-
 
 @Builder
 public record MagazineSearchResponseDTO (
@@ -12,14 +12,12 @@ public record MagazineSearchResponseDTO (
         String magazineUrl,
         Long viewCount
 ){
-    static String baseUrl = "https://flourishing-cocada-40a6ce.netlify.app/magazine/";
-
-    public static MagazineSearchResponseDTO of(Magazine magazine) {
+    public static MagazineSearchResponseDTO of(Magazine magazine, UrlConfig urlConfig) {
         return MagazineSearchResponseDTO.builder()
                 .thumbNail(magazine.getThumbNail())
                 .title(magazine.getMagazineTitle())
                 .interviewPerson(magazine.getInterviewPerson())
-                .magazineUrl(baseUrl+magazine.getId())
+                .magazineUrl(urlConfig.getBaseUrl() + magazine.getId())
                 .viewCount(magazine.getViewCount())
                 .build();
     }
