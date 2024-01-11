@@ -110,7 +110,7 @@ public class MagazineServiceImpl implements MagazineService {
     public List<MagazineSearchResponseDTO> searchMagazine(String keyword) {
         val magazines = magazineRepository.finAllByKeyword(keyword, keyword);
         return magazines.stream()
-                .map((magazine) -> MagazineSearchResponseDTO.of(magazine, urlConfig))
+                .map((magazine) -> MagazineSearchResponseDTO.of(magazine, urlConfig.getMagazineBaseUrl()))
                 .collect(Collectors.toList());
     }
 

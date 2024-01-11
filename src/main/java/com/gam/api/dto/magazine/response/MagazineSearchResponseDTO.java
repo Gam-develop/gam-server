@@ -12,12 +12,12 @@ public record MagazineSearchResponseDTO (
         String magazineUrl,
         Long viewCount
 ){
-    public static MagazineSearchResponseDTO of(Magazine magazine, UrlConfig urlConfig) {
+    public static MagazineSearchResponseDTO of(Magazine magazine, String magazineBaseUrl) {
         return MagazineSearchResponseDTO.builder()
                 .thumbNail(magazine.getThumbNail())
                 .title(magazine.getMagazineTitle())
                 .interviewPerson(magazine.getInterviewPerson())
-                .magazineUrl(urlConfig.getBaseUrl() + magazine.getId())
+                .magazineUrl(magazineBaseUrl + magazine.getId())
                 .viewCount(magazine.getViewCount())
                 .build();
     }

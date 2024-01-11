@@ -9,5 +9,5 @@ import org.springframework.context.annotation.Configuration;
 public class UrlConfig {
 
     @Value("${magazine.baseUrl}")
-    private String baseUrl;
+    private String magazineBaseUrl;
 }
