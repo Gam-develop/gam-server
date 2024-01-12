@@ -4,13 +4,19 @@ import lombok.Builder;
 
 @Builder
 public record SocialRefreshResponseDTO(
+        Boolean isProfileCompleted,
+        Long id,
         String accessToken,
-        String refreshToken
+        String refreshToken,
+        String appVersion
 ) {
-    public static SocialRefreshResponseDTO of(String accessToken, String refreshToken) {
+    public static SocialRefreshResponseDTO of(Boolean isProfileCompleted, Long id, String accessToken, String refreshToken, String appVersion) {
         return SocialRefreshResponseDTO.builder()
+                .isProfileCompleted(isProfileCompleted)
+                .id(id)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .appVersion(appVersion)
                 .build();
     }
 }

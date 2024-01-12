@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Objects;
 
 @RequiredArgsConstructor
@@ -42,7 +43,7 @@ public class SocialCommonServiceImpl implements SocialCommonService {
         RedisUtil.saveRefreshToken(redisTemplate, refreshToken, userId);
 
         val isProfileCompleted = chkProfileCompleted(user);
-        return SocialLoginResponseDTO.of(true, isProfileCompleted, userId, accessToken, refreshToken, gamConfig.getAppVersion());
+        return SocialLoginResponseDTO.of(isProfileCompleted, userId, accessToken, refreshToken, gamConfig.getAppVersion());
     }
 
     private SocialLoginResponseDTO SignUpAndLogin(String thirdPartyUserId, ProviderType providerType) {
@@ -63,7 +64,7 @@ public class SocialCommonServiceImpl implements SocialCommonService {
                 .providerType(providerType)
                 .build());
 
-        return SocialLoginResponseDTO.of(false, false, userId, accessToken, refreshToken, gamConfig.getAppVersion());
+        return SocialLoginResponseDTO.of( false, userId, accessToken, refreshToken, gamConfig.getAppVersion());
     }
 
     @Override
@@ -99,6 +100,15 @@ public class SocialCommonServiceImpl implements SocialCommonService {
 
         val userId = Long.parseLong(tokenUserId);
 
+        val user = userRepository.getUserById(userId)
+                .orElseThrow(EntityNotFoundException::new);
+
+        val isProfileCompleted = chkProfileCompleted(user);
+
+        if (jwtTokenManager.verifyAuthToken(socialRefreshRequestDTO.accessToken())) {
+            return SocialRefreshResponseDTO.of(isProfileCompleted, userId, socialRefreshRequestDTO.accessToken(), socialRefreshRequestDTO.refreshToken(), gamConfig.getAppVersion());
+        }
+
         if (!jwtTokenManager.verifyAuthToken(socialRefreshRequestDTO.refreshToken())) {
            throw new AuthException(ExceptionMessage.EXPIRED_TOKEN.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -120,7 +130,7 @@ public class SocialCommonServiceImpl implements SocialCommonService {
 
         RedisUtil.saveRefreshToken(redisTemplate, refreshToken, userId);
 
-        return SocialRefreshResponseDTO.of(accessToken, refreshToken);
+        return SocialRefreshResponseDTO.of(isProfileCompleted, userId, accessToken, refreshToken, gamConfig.getAppVersion());
     }
 
     @Override
