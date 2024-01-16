@@ -3,10 +3,7 @@ package com.gam.api.service.user;
 import com.gam.api.common.exception.WorkException;
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.search.response.SearchUserWorkDTO;
-import com.gam.api.dto.user.request.UserOnboardRequestDTO;
-import com.gam.api.dto.user.request.UserProfileUpdateRequestDTO;
-import com.gam.api.dto.user.request.UserScrapRequestDTO;
-import com.gam.api.dto.user.request.UserUpdateLinkRequestDTO;
+import com.gam.api.dto.user.request.*;
 import com.gam.api.dto.user.response.*;
 import com.gam.api.dto.work.response.WorkPortfolioGetResponseDTO;
 import com.gam.api.dto.work.response.WorkPortfolioListResponseDTO;
@@ -273,7 +270,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId) {
+    public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId, UserDiscoveryRequestDTO request) {
         val users = userRepository.findAllByIdNotAndUserStatusOrderBySelectedFirstAtDesc(userId, UserStatus.PERMITTED);
 
         val me = findUser(userId);

@@ -1,10 +1,7 @@
 package com.gam.api.service.user;
 
 import com.gam.api.dto.search.response.SearchUserWorkDTO;
-import com.gam.api.dto.user.request.UserOnboardRequestDTO;
-import com.gam.api.dto.user.request.UserProfileUpdateRequestDTO;
-import com.gam.api.dto.user.request.UserScrapRequestDTO;
-import com.gam.api.dto.user.request.UserUpdateLinkRequestDTO;
+import com.gam.api.dto.user.request.*;
 import com.gam.api.dto.user.response.*;
 import com.gam.api.dto.work.response.*;
 
@@ -22,7 +19,7 @@ public interface UserService {
     List<UserResponseDTO> getPopularDesigners(Long userId);
     WorkPortfolioListResponseDTO getMyPortfolio(Long userId);
     WorkPortfolioGetResponseDTO getPortfolio(Long requestUserId, Long userId);
-    List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId);
+    List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId, UserDiscoveryRequestDTO request);
     void updateInstagramLink(Long userId, UserUpdateLinkRequestDTO request);
     void updateBehanceLink(Long userId, UserUpdateLinkRequestDTO request);
     void updateNotionLink(Long userId, UserUpdateLinkRequestDTO request);

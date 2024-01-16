@@ -32,7 +32,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
   
     List<User>findAllByIdNotAndUserStatusOrderBySelectedFirstAtDesc(Long userId, UserStatus userStatus);
 
-
     @Query(value = "SELECT u FROM User u WHERE LOWER(u.userName) LIKE LOWER(CONCAT('%', :keyword, '%')) and u.userStatus!='REPORTED' and u.id!=:userId ORDER BY u.createdAt DESC")
     List<User> findByKeyWord(@Param("userId")Long userId, @Param("keyword") String keyword);
 }

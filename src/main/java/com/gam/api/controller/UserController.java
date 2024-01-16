@@ -2,12 +2,9 @@ package com.gam.api.controller;
 
 import com.gam.api.common.message.*;
 import com.gam.api.common.ApiResponse;
-import com.gam.api.dto.user.request.UserOnboardRequestDTO;
-import com.gam.api.dto.user.request.UserProfileUpdateRequestDTO;
-import com.gam.api.dto.user.request.UserUpdateLinkRequestDTO;
+import com.gam.api.dto.user.request.*;
 import com.gam.api.entity.GamUserDetails;
 import com.gam.api.service.user.UserService;
-import com.gam.api.dto.user.request.UserScrapRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.ResponseEntity;
@@ -109,8 +106,11 @@ public class UserController {
 
 
     @GetMapping("")
-    ResponseEntity<ApiResponse> getDiscoveryUsers(@AuthenticationPrincipal GamUserDetails userDetails) {
-        val response = userService.getDiscoveryUsers(userDetails.getId());
+    ResponseEntity<ApiResponse> getDiscoveryUsers(
+            @AuthenticationPrincipal GamUserDetails userDetails,
+            @RequestBody UserDiscoveryRequestDTO request
+    ) {
+        val response = userService.getDiscoveryUsers(userDetails.getId(), request);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_DISCOVERY_GET_USERS.getMessage(), response));
     }
 
