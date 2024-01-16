@@ -29,6 +29,6 @@ public class KakaoSocialService implements SocialService {
             throw new AuthException(ExceptionMessage.INVALID_KAKAO_TOKEN.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
-        return socialCommonService.gamLogin(userResponse.id(), request.providerType());
+        return socialCommonService.gamLogin(userResponse.id(), request.providerType(), request.deviceToken());
     }
 }

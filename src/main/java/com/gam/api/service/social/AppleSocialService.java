@@ -22,7 +22,7 @@ public class AppleSocialService implements SocialService {
     @Transactional
     public SocialLoginResponseDTO login(SocialLoginRequestDTO request) {
         val appleUserId = getUserInfo(request.token());
-        return socialCommonService.gamLogin(appleUserId, request.providerType());
+        return socialCommonService.gamLogin(appleUserId, request.providerType(), request.deviceToken());
     }
 
     private String getUserInfo (String idToken) {

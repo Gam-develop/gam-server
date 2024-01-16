@@ -35,18 +35,28 @@ public class SocialCommonServiceImpl implements SocialCommonService {
         return !Objects.isNull(user.getInfo()) && !Objects.isNull(user.getUserTag());
     }
 
-    private SocialLoginResponseDTO reLogin(User user) {
+    private void saveDeviceToken(User user, String deviceToken) {
+        user.updateDeviceToken(deviceToken);
+    }
+
+    private SocialLoginResponseDTO reLogin(User user, String deviceToken) {
         val userId = user.getId();
         val accessToken = jwtTokenManager.createAccessToken(userId);
         val refreshToken = jwtTokenManager.createRefreshToken(userId);
 
         RedisUtil.saveRefreshToken(redisTemplate, refreshToken, userId);
 
+        saveDeviceToken(user, deviceToken);
+
         val isProfileCompleted = chkProfileCompleted(user);
         return SocialLoginResponseDTO.of(isProfileCompleted, userId, accessToken, refreshToken, gamConfig.getAppVersion());
     }
 
-    private SocialLoginResponseDTO SignUpAndLogin(String thirdPartyUserId, ProviderType providerType) {
+    private SocialLoginResponseDTO SignUpAndLogin(
+            String thirdPartyUserId,
+            ProviderType providerType,
+            String deviceToken
+    ) {
         val user = userRepository.save(User.builder()
                 .role(Role.USER)
                 .userStatus(UserStatus.NOT_PERMITTED)
@@ -63,6 +73,8 @@ public class SocialCommonServiceImpl implements SocialCommonService {
                 .user(user)
                 .providerType(providerType)
                 .build());
+
+        saveDeviceToken(user, deviceToken);
 
         return SocialLoginResponseDTO.of( false, userId, accessToken, refreshToken, gamConfig.getAppVersion());
     }
@@ -135,13 +147,13 @@ public class SocialCommonServiceImpl implements SocialCommonService {
 
     @Override
     @Transactional
-    public SocialLoginResponseDTO gamLogin(String thirdPartyUserId, ProviderType providerType) {
+    public SocialLoginResponseDTO gamLogin(String thirdPartyUserId, ProviderType providerType, String deviceToken) {
         val authProvider = authProviderRepository.searchAuthProviderById(thirdPartyUserId);
 
         if (Objects.nonNull(authProvider)) {
-            return reLogin(authProvider.getUser());
+            return reLogin(authProvider.getUser(), deviceToken);
         }
 
-        return SignUpAndLogin(thirdPartyUserId, providerType);
+        return SignUpAndLogin(thirdPartyUserId, providerType, deviceToken);
     }
 }

@@ -11,5 +11,5 @@ public interface SocialCommonService {
 
     SocialRefreshResponseDTO refresh(SocialRefreshRequestDTO request);
 
-    SocialLoginResponseDTO gamLogin(String thirdPartyUserId, ProviderType providerType);
+    SocialLoginResponseDTO gamLogin(String thirdPartyUserId, ProviderType providerType, String deviceToken);
 }

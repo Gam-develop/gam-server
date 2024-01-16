@@ -77,6 +77,9 @@ public class User extends TimeStamped {
     @Column(name = "first_work_id")
     private Long firstWorkId;
 
+    @Column(name = "device_token")
+    private String deviceToken;
+
     @OneToMany(mappedBy = "user")
     private List<Block> blocks;
 
@@ -120,6 +123,10 @@ public class User extends TimeStamped {
 
     public void updateUserStatus(UserStatus userStatus) {
         this.userStatus = userStatus;
+    }
+
+    public void updateDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
     }
 
     public void scrapCountUp(){ this.scrapCount += 1; }
