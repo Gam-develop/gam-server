@@ -1,6 +1,5 @@
 package com.gam.api.dto.magazine.response;
 
-import com.gam.api.config.UrlConfig;
 import com.gam.api.entity.Magazine;
 import lombok.Builder;
 

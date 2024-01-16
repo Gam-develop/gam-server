@@ -1,7 +1,7 @@
 package com.gam.api.service.magazine;
 
 import com.gam.api.common.message.ExceptionMessage;
-import com.gam.api.config.UrlConfig;
+import com.gam.api.config.GamConfig;
 import com.gam.api.dto.magazine.request.MagazineScrapRequestDTO;
 import com.gam.api.dto.magazine.response.*;
 import com.gam.api.entity.Magazine;
@@ -29,7 +29,7 @@ public class MagazineServiceImpl implements MagazineService {
     private final UserRepository userRepository;
     private final MagazineScrapRepository magazineScrapRepository;
 
-    private final UrlConfig urlConfig;
+    private final GamConfig gamConfig;
 
     @Override
     public MagazineResponseDTO getMagazines(Long userId) {
@@ -110,7 +110,7 @@ public class MagazineServiceImpl implements MagazineService {
     public List<MagazineSearchResponseDTO> searchMagazine(String keyword) {
         val magazines = magazineRepository.finAllByKeyword(keyword, keyword);
         return magazines.stream()
-                .map((magazine) -> MagazineSearchResponseDTO.of(magazine, urlConfig.getMagazineBaseUrl()))
+                .map((magazine) -> MagazineSearchResponseDTO.of(magazine, gamConfig.getMagaineBaseUrl()))
                 .collect(Collectors.toList());
     }
 
