@@ -108,7 +108,7 @@ public class SocialCommonServiceImpl implements SocialCommonService {
     @Override
     @Transactional
     public SocialRefreshResponseDTO refresh(SocialRefreshRequestDTO socialRefreshRequestDTO) {
-        val tokenUserId = jwtTokenManager.getUserIdFromAuthToken(socialRefreshRequestDTO.accessToken());
+        val tokenUserId = jwtTokenManager.getUserIdFromAuthToken(socialRefreshRequestDTO.refreshToken());
 
         val userId = Long.parseLong(tokenUserId);
 

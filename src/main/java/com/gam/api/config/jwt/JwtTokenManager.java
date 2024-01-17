@@ -74,7 +74,7 @@ public class JwtTokenManager {
 
             return claims.getSubject();
         } catch (SignatureException | ExpiredJwtException e) {
-            throw new AuthException(ExceptionMessage.INVALID_SIGNATURE.getMessage(),HttpStatus.BAD_REQUEST);
+            throw new AuthException(ExceptionMessage.INVALID_TOKEN.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -82,7 +82,7 @@ public class JwtTokenManager {
         val userId = getUserIdFromAuthToken(token);
 
         if (RedisUtil.checkBlackListExist(redisTemplate, Long.parseLong(userId), token)) {
-            throw new AuthException(ExceptionMessage.INVALID_TOKEN.getMessage(),HttpStatus.BAD_REQUEST);
+            throw new AuthException(ExceptionMessage.INVALID_TOKEN.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
         val userDetails = userDetailsService.loadUserByUsername(userId);
