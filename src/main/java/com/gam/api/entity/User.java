@@ -80,6 +80,9 @@ public class User extends TimeStamped {
     @Column(name = "device_token")
     private String deviceToken;
 
+    @Column(name = "magazine_view_count")
+    private int magazineViewCount;
+
     @OneToMany(mappedBy = "user")
     private List<Block> blocks;
 
@@ -119,6 +122,7 @@ public class User extends TimeStamped {
         this.userStatus = userStatus;
         this.scrapCount = 0;
         this.viewCount = 0;
+        this.magazineViewCount = 0;
     }
 
     public void updateUserStatus(UserStatus userStatus) {
@@ -129,9 +133,17 @@ public class User extends TimeStamped {
         this.deviceToken = deviceToken;
     }
 
-    public void scrapCountUp(){ this.scrapCount += 1; }
+    public void scrapCountUp() {
+        this.scrapCount += 1;
+    }
 
-    public void scrapCountDown(){ this.scrapCount -= 1; }
+    public void magazineViewCountUp() {
+        this.magazineViewCount += 1;
+    }
+
+    public void scrapCountDown() {
+        this.scrapCount -= 1;
+    }
 
     public void onboardUser(String userName, String info, int[] tags) {
         this.userName = userName;
