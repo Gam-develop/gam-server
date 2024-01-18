@@ -113,9 +113,7 @@ public class UserServiceImpl implements UserService {
         workSet.removeAll(blockedWorksSet);
 
         val workList = new ArrayList<>(workSet);
-        if (workList.isEmpty()) {
-            return null;
-        }
+
         workList.sort(comparing(Work::getCreatedAt).reversed());
         return workList.stream()
                 .map(SearchUserWorkDTO::of)
