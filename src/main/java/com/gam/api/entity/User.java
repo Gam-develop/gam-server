@@ -13,7 +13,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
