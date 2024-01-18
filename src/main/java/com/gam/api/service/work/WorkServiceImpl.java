@@ -79,6 +79,8 @@ public class WorkServiceImpl implements WorkService {
             throw new WorkException(ExceptionMessage.NOT_WORK_OWNER.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
+        val isFirstWork = work.isFirst();
+
         val photoUrl = work.getPhotoUrl();
 
         if (Objects.equals(photoUrl, "")) {
@@ -89,8 +91,16 @@ public class WorkServiceImpl implements WorkService {
 
         workRepository.deleteById(workId);
 
+        if (isFirstWork) {
+            val works = workRepository.findByUserIdOrderByCreatedAtDesc(userId);
+            user.setWorkThumbNail(works.getPhotoUrl());
+            user.updateSelectedFirstAt();
+            user.setFirstWorkId(workId);
+        }
+
         return WorkResponseDTO.of(workId);
     }
+
 
     @Override
     @Transactional
