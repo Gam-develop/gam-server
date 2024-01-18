@@ -47,7 +47,7 @@ public class MagazineServiceImpl implements MagazineService {
         val magazine = getMagazine(magazineId);
         val user = findUser(userId);
 
-        if (user.getMagazineViewCount() == 2) {
+        if (user.getMagazineViewCount() >= 2 && user.getWorks().size() == 0) {
             user.updateUserStatus(UserStatus.NOT_PERMITTED);
         }
 
