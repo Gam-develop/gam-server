@@ -3,6 +3,7 @@ package com.gam.api.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gam.api.entity.superclass.TimeStamped;
 import io.hypersistence.utils.hibernate.type.array.IntArrayType;
+import java.util.stream.Collectors;
 import lombok.*;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.Where;
@@ -119,6 +120,13 @@ public class User extends TimeStamped {
         this.userStatus = userStatus;
         this.scrapCount = 0;
         this.viewCount = 0;
+    }
+
+    public List<Work> getActiveWorks() {
+        List<Work> activeWorks = this.getWorks()
+                .stream()
+                .filter(Work::isActive)  // isActive가 true인 Work 객체만 필터링
+                .collect(Collectors.toList());
     }
 
     public void updateUserStatus(UserStatus userStatus) {

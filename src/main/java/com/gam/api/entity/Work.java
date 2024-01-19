@@ -41,7 +41,7 @@ public class Work extends TimeStamped {
     private boolean isFirst;
 
     @Column(name = "is_active")
-    private boolean isAcitve;
+    private boolean isActive;
 
 
     @Builder
@@ -52,7 +52,7 @@ public class Work extends TimeStamped {
         this.photoUrl = photoUrl;
         this.viewCount = 0;
         this.isFirst = false;
-        this.isAcitve = true;
+        this.isActive = true;
     }
 
     public boolean isOwner(Long userId) {
