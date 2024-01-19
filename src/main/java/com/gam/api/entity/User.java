@@ -123,9 +123,9 @@ public class User extends TimeStamped {
     }
 
     public List<Work> getActiveWorks() {
-        List<Work> activeWorks = this.getWorks()
+        return this.getWorks()
                 .stream()
-                .filter(Work::isActive)  // isActive가 true인 Work 객체만 필터링
+                .filter(Work::isActive)
                 .collect(Collectors.toList());
     }
 
