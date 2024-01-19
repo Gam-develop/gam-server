@@ -8,6 +8,7 @@ import com.gam.api.dto.work.request.WorkEditRequestDTO;
 import com.gam.api.dto.work.request.WorkFirstAssignRequestDto;
 import com.gam.api.dto.work.response.WorkEditResponseDTO;
 import com.gam.api.dto.work.response.WorkResponseDTO;
+import com.gam.api.entity.User;
 import com.gam.api.entity.UserStatus;
 import com.gam.api.entity.Work;
 import com.gam.api.repository.UserRepository;
@@ -29,6 +30,7 @@ public class WorkServiceImpl implements WorkService {
     private final WorkRepository workRepository;
     private final UserRepository userRepository;
     private final S3ServiceImpl s3Service;
+    private final int MAX_WORK_COUNT = 3;
 
     @Override
     @Transactional
@@ -37,25 +39,26 @@ public class WorkServiceImpl implements WorkService {
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
 
         val userWorkCount = user.getWorks().size();
-        if (userWorkCount >= 4) {
+        if (userWorkCount >= MAX_WORK_COUNT) {
             throw new WorkException(ExceptionMessage.WORK_COUNT_EXCEED.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
-        if (user.getUserStatus().equals(UserStatus.NOT_PERMITTED)) {
-            user.updateUserStatus(UserStatus.PERMITTED);
-        }
-
-        if (Objects.equals(request.image(), "")) {
+        if (request.image().isEmpty()) {
             throw new WorkException(ExceptionMessage.WORK_NO_THUMBNAIL.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
-        val work = workRepository.save(Work.builder()
+        val work = Work.builder()
                 .title(request.title())
                 .detail(request.detail())
                 .photoUrl(request.image())
                 .user(user)
-                .build());
+                .build();
 
+        workRepository.save(work);
+        if (userWorkCount == 0) { // 첫 게시글은 자동으로 대표 작업물이 됨
+            val workId = setFirstWork(user, work);
+            return WorkResponseDTO.of(workId);
+        }
         return WorkResponseDTO.of(work.getId());
     }
 
@@ -67,11 +70,6 @@ public class WorkServiceImpl implements WorkService {
         val user = userRepository.getUserById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
 
-        if (user.getWorks().size() == 1) {
-            user.deleteLinks();
-            user.updateUserStatus(UserStatus.NOT_PERMITTED);
-        }
-
         val work = workRepository.getWorkById(workId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
 
@@ -80,15 +78,10 @@ public class WorkServiceImpl implements WorkService {
         }
 
         val isFirstWork = work.isFirst();
+        val workCount = user.getWorks().size();
 
-        val photoUrl = work.getPhotoUrl();
-
-        if (Objects.equals(photoUrl, "")) {
-            throw new WorkException(ExceptionMessage.WORK_NO_THUMBNAIL.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-
-        s3Service.deleteS3Image(photoUrl);
-
+        // 대표 작업물 삭제 시, 작업물이 2개이상이면 최근의 게시물이 대표작업물로,
+        // 대표 작업물 삭제 시, 작업물이 0개면 first_work_id null -> selectFirstAt -> null
         workRepository.deleteById(workId);
 
         if (isFirstWork) {
@@ -165,5 +158,13 @@ public class WorkServiceImpl implements WorkService {
             return false;
         }
         return true;
+    }
+
+    private Long setFirstWork(User user, Work work) {
+        work.setIsFirst(true);
+        user.setFirstWorkId(work.getId());
+        user.updateSelectedFirstAt();
+        user.setWorkThumbNail(work.getPhotoUrl());
+        return work.getId();
     }
 }

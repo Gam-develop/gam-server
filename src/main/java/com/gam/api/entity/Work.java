@@ -51,6 +51,7 @@ public class Work extends TimeStamped {
         this.detail = detail;
         this.photoUrl = photoUrl;
         this.viewCount = 0;
+        this.isFirst = false;
         this.isAcitve = true;
     }
 
