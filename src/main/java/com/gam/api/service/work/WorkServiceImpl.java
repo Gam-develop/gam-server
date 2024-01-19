@@ -43,6 +43,10 @@ public class WorkServiceImpl implements WorkService {
             throw new WorkException(ExceptionMessage.WORK_COUNT_EXCEED.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
+        if (user.getUserStatus().equals(UserStatus.NOT_PERMITTED)) {
+            user.updateUserStatus(UserStatus.PERMITTED);
+        }
+
         if (request.image().isEmpty()) {
             throw new WorkException(ExceptionMessage.WORK_NO_THUMBNAIL.getMessage(), HttpStatus.BAD_REQUEST);
         }
