@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService {
         // 신고 된 유저 작업물 제외, fetch-join 이용
         val reportedWorksSet = userRepository.findAllByUserStatusWithWorks(UserStatus.REPORTED)
                 .stream()
-                .flatMap(user -> user.getWorks().stream())
+                .flatMap(user -> user.getActiveWorks().stream())
                 .collect(Collectors.toSet());
         workSet.removeAll(reportedWorksSet);
 
@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserService {
         val me = findUser(myId);
         List<User> blockUsers = getBlockUsers(me);
         val blockedWorksSet = blockUsers.stream() //TODO[성능] - 성능저하 가능성 있음
-                                        .flatMap(user -> user.getWorks().stream())
+                                        .flatMap(user -> user.getActiveWorks().stream())
                                         .collect(Collectors.toSet());
         workSet.removeAll(blockedWorksSet);
 
@@ -279,7 +279,7 @@ public class UserServiceImpl implements UserService {
             val firstWorkId = user.getFirstWorkId();
             Work firstWork;
 
-            if (firstWorkId == null && !user.getWorks().isEmpty()) { // firstWork가 설정이 제대로 안된 경우
+            if (firstWorkId == null && !user.getActiveWorks().isEmpty()) { // firstWork가 설정이 제대로 안된 경우
                 firstWork = workRepository.findFirstByUserIdAndIsActiveOrderByCreatedAtDesc(userId, true)
                                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
             } else {
