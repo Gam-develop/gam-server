@@ -136,12 +136,12 @@ public class User extends TimeStamped {
         this.scrapCount += 1;
     }
 
-    public void magazineViewCountUp() {
-        this.magazineViewCount += 1;
-    }
-
     public void scrapCountDown() {
         this.scrapCount -= 1;
+    }
+
+    public void magazineViewCountUp() {
+        this.magazineViewCount += 1;
     }
 
     public void onboardUser(String userName, String info, int[] tags) {
