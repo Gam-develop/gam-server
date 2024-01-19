@@ -76,8 +76,9 @@ public class WorkServiceImpl implements WorkService {
         }
 
         val wasFirst = work.isFirst();
-        val workCount = user.getWorks().size();
-        workRepository.deleteById(workId);
+        val workCount = user.getActiveWorks().size();
+        work.setActive(false);
+        work.setIsFirst(false);
 
         if (workCount == 1) { // 작업물이 한개 였을 때
             user.setSelectedFirstAt(null);
@@ -86,8 +87,8 @@ public class WorkServiceImpl implements WorkService {
             return WorkResponseDTO.of(workId);
         }
 
-        if (wasFirst) {
-            val recentWork = workRepository.findFirstByUserIdOrderByCreatedAtDesc(userId)
+        if (wasFirst) { // 작업물이 두개 이상이었을 때
+            val recentWork = workRepository.findFirstByUserIdAndIsActiveOrderByCreatedAtDesc(userId, true)
                                                  .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
             setFirstWork(user, recentWork);
         }
