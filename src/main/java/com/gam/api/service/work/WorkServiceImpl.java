@@ -38,7 +38,7 @@ public class WorkServiceImpl implements WorkService {
     public WorkResponseDTO createWork(Long userId, WorkCreateRequestDTO request) {
         val user = findUser(userId);
 
-        val userWorkCount = user.getWorks().size();
+        val userWorkCount = user.getActiveWorks().size();
         if (userWorkCount >= MAX_WORK_COUNT) {
             throw new WorkException(ExceptionMessage.WORK_COUNT_EXCEED.getMessage(), HttpStatus.BAD_REQUEST);
         }
