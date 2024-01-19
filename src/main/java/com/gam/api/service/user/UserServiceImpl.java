@@ -280,7 +280,8 @@ public class UserServiceImpl implements UserService {
             Work firstWork;
 
             if (firstWorkId == null && !user.getWorks().isEmpty()) { // firstWork가 설정이 제대로 안된 경우
-                firstWork = workRepository.findByUserIdOrderByCreatedAtDesc(targetUserId);
+                firstWork = workRepository.findFirstByUserIdOrderByCreatedAtDesc(userId)
+                                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
             } else {
                 firstWork = findWork(firstWorkId);
             }

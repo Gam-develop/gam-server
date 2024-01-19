@@ -14,6 +14,7 @@ import com.gam.api.entity.Work;
 import com.gam.api.repository.UserRepository;
 import com.gam.api.repository.WorkRepository;
 import com.gam.api.service.s3.S3ServiceImpl;
+import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.HttpStatus;
@@ -35,8 +36,7 @@ public class WorkServiceImpl implements WorkService {
     @Override
     @Transactional
     public WorkResponseDTO createWork(Long userId, WorkCreateRequestDTO request) {
-        val user = userRepository.getUserById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
+        val user = findUser(userId);
 
         val userWorkCount = user.getWorks().size();
         if (userWorkCount >= MAX_WORK_COUNT) {
@@ -67,30 +67,30 @@ public class WorkServiceImpl implements WorkService {
     public WorkResponseDTO deleteWork(Long userId, WorkDeleteRequestDTO request) {
         val workId = request.workId();
 
-        val user = userRepository.getUserById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
+        val user = findUser(userId);
 
-        val work = workRepository.getWorkById(workId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
+        val work = findWork(request.workId());
 
         if (!isOwner(work, userId)) {
             throw new WorkException(ExceptionMessage.NOT_WORK_OWNER.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
-        val isFirstWork = work.isFirst();
+        val wasFirst = work.isFirst();
         val workCount = user.getWorks().size();
-
-        // 대표 작업물 삭제 시, 작업물이 2개이상이면 최근의 게시물이 대표작업물로,
-        // 대표 작업물 삭제 시, 작업물이 0개면 first_work_id null -> selectFirstAt -> null
         workRepository.deleteById(workId);
 
-        if (isFirstWork) {
-            val works = workRepository.findByUserIdOrderByCreatedAtDesc(userId);
-            user.setWorkThumbNail(works.getPhotoUrl());
-            user.updateSelectedFirstAt();
-            user.setFirstWorkId(workId);
+        if (workCount == 1) { // 작업물이 한개 였을 때
+            user.setSelectedFirstAt(null);
+            user.setWorkThumbNail(null);
+            user.setFirstWorkId(null);
+            return WorkResponseDTO.of(workId);
         }
 
+        if (wasFirst) {
+            val recentWork = workRepository.findFirstByUserIdOrderByCreatedAtDesc(userId)
+                                                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
+            setFirstWork(user, recentWork);
+        }
         return WorkResponseDTO.of(workId);
     }
 
@@ -100,8 +100,7 @@ public class WorkServiceImpl implements WorkService {
     public void updateFirstWork(Long userId, WorkFirstAssignRequestDto request){
         val workId = request.workId();
 
-        val currentWork = workRepository.getWorkById(workId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
+        val currentWork = findWork(request.workId());
 
         if (currentWork.isFirst()){
             throw new IllegalArgumentException(ExceptionMessage.ALREADY_FIRST_WORK.getMessage());
@@ -127,22 +126,21 @@ public class WorkServiceImpl implements WorkService {
     public WorkEditResponseDTO updateWork(Long userId, WorkEditRequestDTO request) {
         val workId = request.workId();
 
-        val work = workRepository.getWorkById(workId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
+        val work = findWork(workId);
 
         if(!isOwner(work, userId)) {
             throw new WorkException(ExceptionMessage.NOT_WORK_OWNER.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
-        if (request.title() != null) {
+        if (request.title() != null && !request.title().isBlank()){
             work.setTitle(request.title());
         }
 
-        if (request.detail() != null) {
+        if (request.detail() != null && !request.detail().isBlank()) {
             work.setDetail(request.detail());
         }
 
-        if (request.image() != null) {
+        if (request.image() != null && !request.image().isBlank()) {
             val deletePhotoUrl = work.getPhotoUrl();
             s3Service.deleteS3Image(deletePhotoUrl);
 
@@ -158,6 +156,16 @@ public class WorkServiceImpl implements WorkService {
             return false;
         }
         return true;
+    }
+
+    private User findUser(Long userId) {
+        return userRepository.getUserById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
+    }
+
+    private Work findWork(Long workId) {
+        return workRepository.getWorkById(workId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
     }
 
     private Long setFirstWork(User user, Work work) {
