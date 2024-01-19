@@ -5,6 +5,7 @@ import com.gam.api.dto.social.request.SocialLogoutRequestDTO;
 import com.gam.api.dto.social.request.SocialRefreshRequestDTO;
 import com.gam.api.service.social.SocialCommonService;
 import com.gam.api.service.social.SocialServiceProvider;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ public class SocialController {
     private final SocialServiceProvider socialServiceProvider;
     private final SocialCommonService socialCommonService;
 
+    @ApiOperation(value = "소셜로그인")
     @PostMapping("/login")
     public ResponseEntity<ApiResponse> login(@RequestBody SocialLoginRequestDTO request) {
         val socialService = socialServiceProvider.getSocialService(request.providerType());
@@ -26,12 +28,14 @@ public class SocialController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_LOGIN.getMessage(), response));
     }
 
+    @ApiOperation(value = "로그아웃")
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse> login(@RequestBody SocialLogoutRequestDTO request) {
         socialCommonService.logout(request);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_LOGOUT.getMessage()));
     }
 
+    @ApiOperation(value = "토큰 리프레시")
     @PostMapping("/refresh")
     public ResponseEntity<ApiResponse> login(@RequestBody SocialRefreshRequestDTO request) {
         val response = socialCommonService.refresh(request);
