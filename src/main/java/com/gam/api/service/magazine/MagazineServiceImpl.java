@@ -46,12 +46,14 @@ public class MagazineServiceImpl implements MagazineService {
     public MagazineDetailResponseDTO getMagazineDetail(Long magazineId, Long userId) {
         val magazine = getMagazine(magazineId);
         val user = findUser(userId);
+        val magazineCount = user.getMagazineViewCount();
+        val isWorkEmpty = user.getWorks().size() == 0;
 
-        if (user.getMagazineViewCount() == 2 && user.getWorks().size() == 0) {
+        if (magazineCount == 2 && isWorkEmpty) {
             user.updateUserStatus(UserStatus.NOT_PERMITTED);
         }
 
-        if (user.getMagazineViewCount() < 3) {
+        if (magazineCount < 3 && isWorkEmpty) {
             user.magazineViewCountUp();
         }
 
