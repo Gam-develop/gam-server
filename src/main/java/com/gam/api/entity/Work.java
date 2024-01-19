@@ -40,6 +40,9 @@ public class Work extends TimeStamped {
     @Column(name = "is_first")
     private boolean isFirst;
 
+    @Column(name = "is_active")
+    private boolean isAcitve;
+
 
     @Builder
     public Work(User user, String title, String detail, String photoUrl) {
@@ -48,6 +51,7 @@ public class Work extends TimeStamped {
         this.detail = detail;
         this.photoUrl = photoUrl;
         this.viewCount = 0;
+        this.isAcitve = true;
     }
 
     public boolean isOwner(Long userId) {
