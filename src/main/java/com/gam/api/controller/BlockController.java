@@ -5,6 +5,7 @@ import com.gam.api.common.message.ResponseMessage;
 import com.gam.api.dto.block.request.BlockRequestDTO;
 import com.gam.api.entity.GamUserDetails;
 import com.gam.api.service.block.BlockService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class BlockController {
     private final BlockService blockService;
 
+    @ApiOperation(value = "유저를 차단합니다.")
     @PostMapping("")
     public ResponseEntity<ApiResponse> createBlock(@AuthenticationPrincipal GamUserDetails userDetails, @RequestBody BlockRequestDTO request) {
         val userId = userDetails.getId();
