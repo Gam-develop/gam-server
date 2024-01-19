@@ -5,6 +5,7 @@ import com.gam.api.common.message.ResponseMessage;
 import com.gam.api.dto.report.request.ReportCreateRequestDTO;
 import com.gam.api.entity.GamUserDetails;
 import com.gam.api.service.report.ReportService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import javax.validation.Valid;
 public class ReportController {
     private final ReportService reportService;
 
+    @ApiOperation(value = "유저 신고")
     @PostMapping("")
     public ResponseEntity<ApiResponse> createReport(@Valid @RequestBody ReportCreateRequestDTO request){
      reportService.createReport(request);
