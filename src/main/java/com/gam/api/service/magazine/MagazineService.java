@@ -3,7 +3,9 @@ package com.gam.api.service.magazine;
 import com.gam.api.dto.magazine.request.MagazineScrapRequestDTO;
 import com.gam.api.dto.magazine.response.*;
 
+import com.gam.api.entity.GamUserDetails;
 import java.util.List;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 public interface MagazineService {
     MagazineResponseDTO getMagazines(Long userId);

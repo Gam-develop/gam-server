@@ -8,6 +8,7 @@ import com.gam.api.dto.work.request.WorkFirstAssignRequestDto;
 import com.gam.api.entity.GamUserDetails;
 import com.gam.api.service.work.WorkService;
 import io.swagger.annotations.ApiOperation;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.ResponseEntity;
@@ -56,7 +57,7 @@ public class WorkController {
     @PatchMapping("/edit")
     public ResponseEntity<ApiResponse> updateWork(
             @AuthenticationPrincipal GamUserDetails userDetails,
-            @RequestBody WorkEditRequestDTO request)
+            @Valid @RequestBody WorkEditRequestDTO request)
     {
         val response = workService.updateWork(userDetails.getId(), request);
 

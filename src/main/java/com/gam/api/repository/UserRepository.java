@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> getUserById(Long userId);
     boolean existsByUserName(String userName);
 
-    List<User> findTop20ByUserStatusOrderByScrapCountDesc(UserStatus userStatus); // TODO - 기획
+    List<User> findByUserStatusOrderByScrapCountDesc(UserStatus userStatus); // TODO - 기획
 
     List<User> findAllByIdNotOrderBySelectedFirstAtDesc(Long id);
   

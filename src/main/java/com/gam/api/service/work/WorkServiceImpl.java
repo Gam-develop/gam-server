@@ -110,6 +110,10 @@ public class WorkServiceImpl implements WorkService {
         val currentWork = workRepository.getWorkById(workId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
 
+        if(!isOwner(currentWork, userId)) {
+            throw new WorkException(ExceptionMessage.NOT_WORK_OWNER.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
         if (currentWork.isFirst()){
             throw new IllegalArgumentException(ExceptionMessage.ALREADY_FIRST_WORK.getMessage());
         }
@@ -124,7 +128,7 @@ public class WorkServiceImpl implements WorkService {
         val user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
 
-        user.setWorkThumbNail(currentWork.getPhotoUrl());
+        user.setWorkThumbNail(currentWork.getPhotoUrl()); // TODO - 코드리뷰 반영 - setFirstWork
         user.updateSelectedFirstAt();
         user.setFirstWorkId(workId);
     }
@@ -141,21 +145,14 @@ public class WorkServiceImpl implements WorkService {
             throw new WorkException(ExceptionMessage.NOT_WORK_OWNER.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
-        if (request.title() != null) {
-            work.setTitle(request.title());
-        }
+        work.setTitle(request.title());
+        work.setDetail(request.detail());
 
-        if (request.detail() != null) {
-            work.setDetail(request.detail());
-        }
+        val deletePhotoUrl = work.getPhotoUrl();
+        s3Service.deleteS3Image(deletePhotoUrl);
 
-        if (request.image() != null) {
-            val deletePhotoUrl = work.getPhotoUrl();
-            s3Service.deleteS3Image(deletePhotoUrl);
-
-            val newPhotoUrl = request.image();
-            work.setPhotoUrl(newPhotoUrl);
-        }
+        val newPhotoUrl = request.image();
+        work.setPhotoUrl(newPhotoUrl);
 
         return WorkEditResponseDTO.of(workId);
     }

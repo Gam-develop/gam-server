@@ -108,7 +108,7 @@ public class UserController {
     }
 
 
-    @ApiOperation(value = "메인 홈 - 감잡은 디자이너")
+    @ApiOperation(value = "메인 홈 - 감잡은 디자이너", notes = "메인 홈의 스크랩순이 가장 많은 5개의 디자이너의 정보를 갖고 옵니다.")
     @GetMapping("/popular")
     ResponseEntity<ApiResponse> getPopularDesigners(@AuthenticationPrincipal GamUserDetails userDetails) {
         val response = userService.getPopularDesigners(userDetails.getId());

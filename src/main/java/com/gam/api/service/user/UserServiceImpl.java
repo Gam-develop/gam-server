@@ -30,6 +30,7 @@ public class UserServiceImpl implements UserService {
     private final UserTagRepository userTagRepository;
     private final WorkRepository workRepository;
     private final ReportRepository reportRepository;
+    private static final int MAIN_GET_DESIGNER_COUNT = 5;
 
     @Transactional
     @Override
@@ -223,14 +224,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponseDTO> getPopularDesigners(Long userId) {
-        val users = userRepository.findTop20ByUserStatusOrderByScrapCountDesc(UserStatus.PERMITTED);
+    public List<UserResponseDTO> getPopularDesigners(Long userId) { //TODO - 쿼리 지연
+        val users = userRepository.findByUserStatusOrderByScrapCountDesc(UserStatus.PERMITTED);
 
         val me = findUser(userId);
         removeBlockUsers(users, me);
 
-
-        int count = 5; // Top 5만 갖고옴
+        int count = MAIN_GET_DESIGNER_COUNT; // Top 5만 갖고옴
         val first5Users = users.subList(0, Math.min(count, users.size()));
 
         return first5Users.stream().map((user) -> {
@@ -268,7 +268,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId, UserDiscoveryRequestDTO request) {
+    public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId, UserDiscoveryRequestDTO request) { //TODO - 쿼리 지연
         val users = userRepository.findAllByIdNotAndUserStatusOrderBySelectedFirstAtDesc(userId, UserStatus.PERMITTED);
 
         val me = findUser(userId);
