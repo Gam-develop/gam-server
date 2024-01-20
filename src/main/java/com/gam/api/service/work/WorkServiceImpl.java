@@ -16,8 +16,10 @@ import com.gam.api.repository.WorkRepository;
 import com.gam.api.service.s3.S3ServiceImpl;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,7 @@ import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class WorkServiceImpl implements WorkService {
     private final WorkRepository workRepository;
     private final UserRepository userRepository;
@@ -61,7 +64,6 @@ public class WorkServiceImpl implements WorkService {
         workRepository.save(work);
         if (userWorkCount == 0) {
             val workId = setFirstWork(user, work);
-            return WorkResponseDTO.of(workId);
         }
         return WorkResponseDTO.of(work.getId());
     }
@@ -70,10 +72,12 @@ public class WorkServiceImpl implements WorkService {
     @Transactional
     public WorkResponseDTO deleteWork(Long userId, WorkDeleteRequestDTO request) {
         val workId = request.workId();
-
         val user = findUser(userId);
-
         val work = findWork(request.workId());
+
+        if(!work.isActive()) {
+            throw new WorkException(ExceptionMessage.ALREADY_NOT_ACTIVE_WORK.getMessage(), HttpStatus.BAD_REQUEST);
+        }
 
         if (!isOwner(work, userId)) {
             throw new WorkException(ExceptionMessage.NOT_WORK_OWNER.getMessage(), HttpStatus.BAD_REQUEST);
@@ -82,7 +86,6 @@ public class WorkServiceImpl implements WorkService {
         val wasFirst = work.isFirst();
         val workCount = user.getActiveWorks().size();
         work.setActive(false);
-        work.setIsFirst(false);
 
         if (workCount == 1) { // 작업물이 한개 였을 때
             user.setSelectedFirstAt(null);
@@ -93,10 +96,12 @@ public class WorkServiceImpl implements WorkService {
         }
 
         if (wasFirst) { // 작업물이 두개 이상이었을 때
+            work.setIsFirst(false);
             val recentWork = workRepository.findFirstByUserIdAndIsActiveOrderByCreatedAtDesc(userId, true)
                                                  .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
             setFirstWork(user, recentWork);
         }
+
         return WorkResponseDTO.of(workId);
     }
 
