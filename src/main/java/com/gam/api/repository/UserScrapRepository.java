@@ -13,9 +13,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface UserScrapRepository extends JpaRepository<UserScrap, Long> {
     UserScrap findByUser_idAndTargetId(Long userId, Long targetId);
-    List<UserScrap> getAllByUser_idAndStatusOrderByCreatedAtDesc(Long userId, boolean status);
-    Optional<UserScrap> getByUserIdAndTargetIdAndStatus(Long userId, Long targetId, boolean status);
-
     @Query("SELECT DISTINCT NEW com.gam.api.repository.queryDto.user.UserScrapQueryDto(us.id, tu) "+
             "FROM UserScrap us " +
             "LEFT JOIN FETCH User tu ON us.targetId = tu.id " +
