@@ -30,6 +30,7 @@ public enum ExceptionMessage {
 
     /** scarp **/
     NOT_MATCH_DB_SCRAP_STATUS("DB의 userScrap 상태와, 보낸 userScrap 상태가 같지 않습니다."),
+    INVALID_SCRAP_ID("자신을 스크랩 할 수 없습니다."),
 
     /** Work **/
     WORK_COUNT_EXCEED("올릴 수 있는 작업물 개수를 초과했습니다."),

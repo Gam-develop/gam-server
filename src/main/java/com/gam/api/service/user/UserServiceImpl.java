@@ -1,5 +1,7 @@
 package com.gam.api.service.user;
 
+import com.gam.api.common.exception.GamException;
+import com.gam.api.common.exception.ScrapException;
 import com.gam.api.common.exception.WorkException;
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.search.response.SearchUserWorkDTO;
@@ -38,25 +40,28 @@ public class UserServiceImpl implements UserService {
         val targetUser = findUser(request.targetUserId());
         val user = findUser(userId);
 
+        if (targetUser.getId() == userId) {
+            throw new ScrapException(ExceptionMessage.INVALID_SCRAP_ID.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
         val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, targetUser.getId());
 
-        if (Objects.nonNull(userScrap)) {
-            val status = userScrap.isStatus();
-            validateStatusRequest(status, request.currentScrapStatus());
-
-            if (status) {
-                targetUser.scrapCountDown();
-            } else {
-                targetUser.scrapCountUp();
-            }
-
-            userScrap.setScrapStatus(!status);
-
-            return UserScrapResponseDTO.of(targetUser.getId(), targetUser.getUserName(), userScrap.isStatus());
+        if (Objects.isNull(userScrap)) {
+            createUserScrap(user, targetUser.getId(), targetUser);
+            return UserScrapResponseDTO.of(targetUser.getId(), targetUser.getUserName(), true);
         }
-        createUserScrap(user, targetUser.getId(), targetUser);
 
-        return UserScrapResponseDTO.of(targetUser.getId(), targetUser.getUserName(), true);
+        val status = userScrap.isStatus();
+        validateStatusRequest(status, request.currentScrapStatus());
+
+        if (status) {
+            targetUser.scrapCountDown();
+        } else {
+            targetUser.scrapCountUp();
+        }
+        userScrap.setScrapStatus(!status);
+
+        return UserScrapResponseDTO.of(targetUser.getId(), targetUser.getUserName(), userScrap.isStatus());
     }
 
     @Transactional
