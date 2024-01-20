@@ -182,38 +182,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserScrapsResponseDTO> getUserScraps(Long userId) {
-        val scraps = userScrapRepository.getAllByUser_idAndStatusOrderByCreatedAtDesc(userId, true);
-
-        // 차단 유저들에 대한 스크랩을 거르기
         val me = findUser(userId);
-        val validBlocks = getValidBlocks(me);
 
-        val blockUserScraps = validBlocks.stream()
-                                    .map(block -> {
-                                        val targetId = block.getTargetId();
-                                        return userScrapRepository.getByUserIdAndTargetIdAndStatus(userId, targetId, true);
-                                    })
-                                    .filter(Optional::isPresent)
-                                    .map(Optional::get)
-                                    .toList();
-        scraps.removeAll(blockUserScraps);
-
-        // 신고된 유저들에 대한 스크랩도 거르고 return
-        return scraps.stream()
-                .filter(scrap -> {
-                    val targetId = scrap.getTargetId();
-                    User targetUser = userRepository.findById(targetId)
-                            .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
-                    return !checkReportedUser(targetUser); // 신고 처리된 유저가 아닌 경우
-                })
-                .map(scrap -> {
-                    val scrapId = scrap.getId();
-                    val targetId = scrap.getTargetId();
-                    User targetUser = userRepository.findById(targetId)
-                            .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
-                    return UserScrapsResponseDTO.of(scrapId, targetUser);
-                })
-                .collect(Collectors.toList());
+        val scraps = userScrapRepository.findUserScrapsExceptBlockUser(userId);
+        return scraps.stream().
+                map((scrap) -> UserScrapsResponseDTO.of(scrap.scrapId(), scrap.user())).toList();
     }
       
 
@@ -372,12 +345,6 @@ public class UserServiceImpl implements UserService {
                 .map(userRepository::findById) // User를 Optional<User>로 변환
                 .filter(Optional::isPresent)   // 삭제되지 않은 사용자만 필터링
                 .map(Optional::get)           // Optional에서 User로 변환
-                .collect(Collectors.toList());
-    }
-
-    private List<Block> getValidBlocks(User user) {
-        return user.getBlocks().stream()
-                .filter(Block::isStatus)
                 .collect(Collectors.toList());
     }
 
