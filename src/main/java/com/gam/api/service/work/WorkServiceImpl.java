@@ -59,7 +59,7 @@ public class WorkServiceImpl implements WorkService {
                 .build();
 
         workRepository.save(work);
-        if (userWorkCount == 0) { // 첫 게시글은 자동으로 대표 작업물이 됨
+        if (userWorkCount == 0) {
             val workId = setFirstWork(user, work);
             return WorkResponseDTO.of(workId);
         }
@@ -88,6 +88,7 @@ public class WorkServiceImpl implements WorkService {
             user.setSelectedFirstAt(null);
             user.setWorkThumbNail(null);
             user.setFirstWorkId(null);
+            user.updateUserStatus(UserStatus.NOT_PERMITTED);
             return WorkResponseDTO.of(workId);
         }
 
@@ -107,13 +108,13 @@ public class WorkServiceImpl implements WorkService {
 
         val currentWork = findWork(request.workId());
 
-        if (currentWork.isFirst()){
+        if (currentWork.isFirst()) {
             throw new IllegalArgumentException(ExceptionMessage.ALREADY_FIRST_WORK.getMessage());
         }
 
         val pastFirstWork = workRepository.getWorkByUserIdAndIsFirst(userId, true);
 
-        if (pastFirstWork.isPresent()){
+        if (pastFirstWork.isPresent()) {
             pastFirstWork.get().setIsFirst(false);
         }
         currentWork.setIsFirst(true);
@@ -133,24 +134,17 @@ public class WorkServiceImpl implements WorkService {
 
         val work = findWork(workId);
 
-        if(!isOwner(work, userId)) {
+        if (!isOwner(work, userId)) {
             throw new WorkException(ExceptionMessage.NOT_WORK_OWNER.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
-        if (request.title() != null && !request.title().isBlank()){
-            work.setTitle(request.title());
-        }
+        work.setTitle(request.title());
+        work.setDetail(request.detail());
 
-        if (request.detail() != null && !request.detail().isBlank()) {
-            work.setDetail(request.detail());
-        }
-
-        if (request.image() != null && !request.image().isBlank()) {
+        if (!work.getPhotoUrl().equals(request.image())) {
             val deletePhotoUrl = work.getPhotoUrl();
             s3Service.deleteS3Image(deletePhotoUrl);
-
-            val newPhotoUrl = request.image();
-            work.setPhotoUrl(newPhotoUrl);
+            work.setPhotoUrl(request.image());
         }
 
         return WorkEditResponseDTO.of(workId);

@@ -108,8 +108,8 @@ public class UserServiceImpl implements UserService {
         val me = findUser(myId);
         List<User> blockUsers = getBlockUsers(me);
         val blockedWorksSet = blockUsers.stream() //TODO[성능] - 성능저하 가능성 있음
-                                        .flatMap(user -> user.getActiveWorks().stream())
-                                        .collect(Collectors.toSet());
+                .flatMap(user -> user.getActiveWorks().stream())
+                .collect(Collectors.toSet());
         workSet.removeAll(blockedWorksSet);
 
         val workList = new ArrayList<>(workSet);
