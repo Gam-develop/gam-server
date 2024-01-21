@@ -245,18 +245,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public WorkPortfolioListResponseDTO getMyPortfolio(Long userId) {
         val user = findUser(userId);
-        val works = getMineFolio(userId); //TODO - 메소드 네이밍..
+        val works = getUserPortfolios(userId);
         return WorkPortfolioListResponseDTO.of(user, works);
     }
-
 
     @Transactional
     @Override
     public WorkPortfolioGetResponseDTO getPortfolio(Long requestUserId, Long userId) {
         val requestUser = findUser(requestUserId);
         val user = findUser(userId);
-        user.setViewCount(user.getViewCount() +1);
-        val works = getUserPortfolio(userId);
+        user.setViewCount(user.getViewCount() + 1);
+        val works = getUserPortfolios(userId);
 
         val scrapList = requestUser.getUserScraps().stream()
                 .map(UserScrap::getTargetId)
@@ -264,7 +263,7 @@ public class UserServiceImpl implements UserService {
 
         val isScraped = scrapList.contains(user.getId());
 
-        return WorkPortfolioGetResponseDTO.of(isScraped, works);
+        return WorkPortfolioGetResponseDTO.of(isScraped, user, works);
     }
 
     @Override
@@ -294,25 +293,12 @@ public class UserServiceImpl implements UserService {
         }).collect(Collectors.toList());
     }
 
-    private List<Work> getMineFolio(Long userId) { //TODO - 메소드 네이밍..
+    private List<Work> getUserPortfolios(Long userId) {
         val works = workRepository.findByUserIdAndIsFirstOrderByCreatedAtDesc(userId, false);
 
-        val representiveWork = workRepository.getWorkByUserIdAndIsFirst(userId, true);
-        if (representiveWork.isPresent()){
-            works.add(0, representiveWork.get());
-            return works;
-        }
-        return works;
-    }
+        val representativeWork = workRepository.getWorkByUserIdAndIsFirst(userId, true);
 
-    private List<Work> getUserPortfolio(Long userId) {
-        val works = workRepository.findByUserIdAndIsFirstOrderByCreatedAtDesc(userId, false);
-
-        val representiveWork = workRepository.getWorkByUserIdAndIsFirst(userId, true)
-                .orElseThrow(() -> new WorkException(ExceptionMessage.NOT_FOUND_FIRST_WORK.getMessage(), HttpStatus.BAD_REQUEST));
-
-        works.add(0, representiveWork);
-
+        representativeWork.ifPresent(work -> works.add(0, work));
         return works;
     }
 
