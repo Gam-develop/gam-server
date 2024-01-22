@@ -30,6 +30,8 @@ public class UserServiceImpl implements UserService {
     private final UserTagRepository userTagRepository;
     private final WorkRepository workRepository;
     private final ReportRepository reportRepository;
+    private final DeleteAccountRepository deleteAccountRepository;
+    private final UserDeleteAccountReasonRepository userDeleteAccountReasonRepository;
 
     @Transactional
     @Override
@@ -293,6 +295,17 @@ public class UserServiceImpl implements UserService {
         }).collect(Collectors.toList());
     }
 
+    @Transactional
+    @Override
+    public void deleteUserAccount(Long userId, UserDeleteAccountRequestDTO userDeleteAccountRequestDTO) {
+        val directInput = userDeleteAccountRequestDTO.directInput();
+        val deleteAccountReason = userDeleteAccountRequestDTO.deleteAccountReasons();
+
+        val user = findUser(userId);
+
+        createUserDeleteAccountReasons(deleteAccountReason, directInput, user);
+    }
+
     private List<Work> getMineFolio(Long userId) { //TODO - 메소드 네이밍..
         val works = workRepository.findByUserIdAndIsFirstOrderByCreatedAtDesc(userId, false);
 
@@ -378,5 +391,17 @@ public class UserServiceImpl implements UserService {
 
     private boolean checkReportedUser(User targetUser) {
         return targetUser.getUserStatus() == UserStatus.REPORTED;
+    }
+
+    private void createUserDeleteAccountReasons(int[] DeleteAccountReasons, String directInput, User user){
+        val deleteAccountReasonList = deleteAccountRepository.findAll();
+
+        for (Integer deleteAccountReason : DeleteAccountReasons){
+            userDeleteAccountReasonRepository.save(UserDeleteAccountReason.builder()
+                            .user(user)
+                            .deleteAccountReason(deleteAccountReasonList.get(deleteAccountReason-1))
+                            .directInput(directInput)
+                            .build());
+        }
     }
 }

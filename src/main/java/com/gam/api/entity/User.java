@@ -109,6 +109,8 @@ public class User extends TimeStamped {
     @Column(name = "selected_first_at")
     private LocalDateTime selectedFirstAt;
 
+
+
     public void updateSelectedFirstAt() {
         this.selectedFirstAt = LocalDateTime.now();
     }
