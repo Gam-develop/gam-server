@@ -2,7 +2,6 @@ package com.gam.api.repository;
 
 import com.gam.api.entity.User;
 import com.gam.api.entity.UserStatus;
-import com.gam.api.entity.Work;
 import com.gam.api.repository.queryDto.user.UserScrapUserQueryDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

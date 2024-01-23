@@ -1,7 +1,6 @@
 package com.gam.api.service.user;
 
 import com.gam.api.common.exception.ScrapException;
-import com.gam.api.common.exception.WorkException;
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.search.response.SearchUserWorkDTO;
 import com.gam.api.dto.user.request.*;
@@ -10,7 +9,6 @@ import com.gam.api.dto.work.response.WorkPortfolioGetResponseDTO;
 import com.gam.api.dto.work.response.WorkPortfolioListResponseDTO;
 import com.gam.api.entity.*;
 import com.gam.api.repository.*;
-import com.gam.api.repository.queryDto.user.UserScrapUserQueryDto;
 import com.gam.api.repository.queryDto.userScrap.UserScrapQueryDto;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
