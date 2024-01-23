@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gam.api.entity.superclass.TimeStamped;
 import io.hypersistence.utils.hibernate.type.array.IntArrayType;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.Where;
 import org.hibernate.annotations.Type;
@@ -13,7 +14,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,7 +21,6 @@ import java.util.List;
 
 
 import static javax.persistence.GenerationType.IDENTITY;
-
 
 @Getter
 @Setter

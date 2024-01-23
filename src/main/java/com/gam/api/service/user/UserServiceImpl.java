@@ -1,6 +1,5 @@
 package com.gam.api.service.user;
 
-import com.gam.api.common.exception.GamException;
 import com.gam.api.common.exception.ScrapException;
 import com.gam.api.common.exception.WorkException;
 import com.gam.api.common.message.ExceptionMessage;
@@ -11,6 +10,8 @@ import com.gam.api.dto.work.response.WorkPortfolioGetResponseDTO;
 import com.gam.api.dto.work.response.WorkPortfolioListResponseDTO;
 import com.gam.api.entity.*;
 import com.gam.api.repository.*;
+import com.gam.api.repository.queryDto.userScrap.UserScrapQueryDto;
+import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,6 @@ public class UserServiceImpl implements UserService {
     private final TagRepository tagRepository;
     private final UserTagRepository userTagRepository;
     private final WorkRepository workRepository;
-    private final ReportRepository reportRepository;
     private static final int MAIN_GET_DESIGNER_COUNT = 5;
 
     @Transactional
@@ -182,13 +182,29 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserScrapsResponseDTO> getUserScraps(Long userId) {
-        val me = findUser(userId);
+        findUser(userId);
 
-        val scraps = userScrapRepository.findUserScrapsExceptBlockUser(userId);
-        return scraps.stream().
-                map((scrap) -> UserScrapsResponseDTO.of(scrap.scrapId(), scrap.user())).toList();
+        val userScraps = userScrapRepository.findUserScrapsExceptBlockUser(userId);
+        val sortedScraps = userScraps.stream()
+                .sorted(Comparator.comparing(UserScrapQueryDto::modifiedAt).reversed())
+                .collect(Collectors.toList());
+
+        val targetUserId = sortedScraps.stream().map((scrap) -> (scrap.targetId())).toList();
+        val users = userRepository.getByUserIdList(targetUserId);
+
+        val resultList = new ArrayList<UserScrapsResponseDTO>();
+        Map<Long, User> userMap = users.stream().collect(Collectors.toMap(User::getId, Function.identity()));
+        for(UserScrapQueryDto dto : sortedScraps) {
+            val targetId = dto.targetId();
+            val user = userMap.get(targetId);
+            if(!Objects.isNull(user)) {
+                resultList.add(UserScrapsResponseDTO.of(dto.scrapId(), user));
+            }
+        }
+        return resultList;
     }
-      
+
+
 
     @Override
     public UserProfileResponseDTO getUserProfile(Long myId, Long userId) {

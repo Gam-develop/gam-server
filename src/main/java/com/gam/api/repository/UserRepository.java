@@ -1,6 +1,5 @@
 package com.gam.api.repository;
 
-import com.gam.api.entity.Magazine;
 import com.gam.api.entity.User;
 import com.gam.api.entity.UserStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,8 +16,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByUserStatusOrderByScrapCountDesc(UserStatus userStatus); // TODO - 기획
 
-    List<User> findAllByIdNotOrderBySelectedFirstAtDesc(Long id);
-  
     @Query(value = "SELECT u FROM User u WHERE LOWER(u.userName) LIKE %:keyword% ORDER BY u.createdAt DESC")
     List<User> findByUserName(@Param("keyword") String keyword);
   
@@ -27,11 +24,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
   
     @Query("SELECT u FROM User u JOIN FETCH u.works WHERE u.userStatus = :userStatus")
     List<User> findAllByUserStatusWithWorks( @Param("userStatus") UserStatus userStatus);
-
-    List<User> findTop5ByUserStatusOrderByScrapCountDesc(UserStatus userStatus);
   
     List<User>findAllByIdNotAndUserStatusOrderBySelectedFirstAtDesc(Long userId, UserStatus userStatus);
 
     @Query(value = "SELECT u FROM User u WHERE LOWER(u.userName) LIKE LOWER(CONCAT('%', :keyword, '%')) and u.userStatus!='REPORTED' and u.id!=:userId ORDER BY u.createdAt DESC")
     List<User> findByKeyWord(@Param("userId")Long userId, @Param("keyword") String keyword);
+
+    @Query("select u "+
+            " from User u "+
+            " where u.id in :userId")
+    List<User> getByUserIdList(@Param("userId") List<Long> userId);
 }
