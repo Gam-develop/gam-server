@@ -7,6 +7,7 @@ import com.gam.api.dto.magazine.response.*;
 import com.gam.api.entity.Magazine;
 import com.gam.api.entity.MagazineScrap;
 import com.gam.api.entity.User;
+import com.gam.api.entity.UserStatus;
 import com.gam.api.entity.superclass.TimeStamped;
 import com.gam.api.repository.MagazineRepository;
 import com.gam.api.repository.MagazineScrapRepository;
@@ -42,8 +43,20 @@ public class MagazineServiceImpl implements MagazineService {
 
     @Transactional
     @Override
-    public MagazineDetailResponseDTO getMagazineDetail(Long magazineId) {
+    public MagazineDetailResponseDTO getMagazineDetail(Long magazineId, Long userId) {
         val magazine = getMagazine(magazineId);
+        val user = findUser(userId);
+        val magazineCount = user.getMagazineViewCount();
+        val isWorkEmpty = user.getWorks().size() == 0;
+
+        if (magazineCount == 2 && isWorkEmpty) {
+            user.updateUserStatus(UserStatus.NOT_PERMITTED);
+        }
+
+        if (magazineCount < 3 && isWorkEmpty) {
+            user.magazineViewCountUp();
+        }
+
         magazine.setViewCount(magazine.getViewCount() + 1);
         return MagazineDetailResponseDTO.of(magazine);
     }

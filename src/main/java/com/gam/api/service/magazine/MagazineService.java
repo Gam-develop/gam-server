@@ -9,7 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 public interface MagazineService {
     MagazineResponseDTO getMagazines(Long userId);
-    MagazineDetailResponseDTO getMagazineDetail(Long magazineID);
+    MagazineDetailResponseDTO getMagazineDetail(Long magazineID, Long userId);
     MagazineScrapsResponseDTO getMagazineScraps(Long userId);
     MagazineResponseDTO getPopularMagazines(Long userId);
     MagazineScrapResponseDTO scrapMagazine(Long userId, MagazineScrapRequestDTO magazineScrapRequestDTO);

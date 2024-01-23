@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserService {
         // 신고 된 유저 작업물 제외, fetch-join 이용
         val reportedWorksSet = userRepository.findAllByUserStatusWithWorks(UserStatus.REPORTED)
                 .stream()
-                .flatMap(user -> user.getWorks().stream())
+                .flatMap(user -> user.getActiveWorks().stream())
                 .collect(Collectors.toSet());
         workSet.removeAll(reportedWorksSet);
 
@@ -114,8 +114,8 @@ public class UserServiceImpl implements UserService {
         val me = findUser(myId);
         List<User> blockUsers = getBlockUsers(me);
         val blockedWorksSet = blockUsers.stream() //TODO[성능] - 성능저하 가능성 있음
-                                        .flatMap(user -> user.getWorks().stream())
-                                        .collect(Collectors.toSet());
+                .flatMap(user -> user.getActiveWorks().stream())
+                .collect(Collectors.toSet());
         workSet.removeAll(blockedWorksSet);
 
         val workList = new ArrayList<>(workSet);
@@ -239,18 +239,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public WorkPortfolioListResponseDTO getMyPortfolio(Long userId) {
         val user = findUser(userId);
-        val works = getMineFolio(userId); //TODO - 메소드 네이밍..
+        val works = getUserPortfolios(userId);
         return WorkPortfolioListResponseDTO.of(user, works);
     }
-
 
     @Transactional
     @Override
     public WorkPortfolioGetResponseDTO getPortfolio(Long requestUserId, Long userId) {
         val requestUser = findUser(requestUserId);
         val user = findUser(userId);
-        user.setViewCount(user.getViewCount() +1);
-        val works = getUserPortfolio(userId);
+        user.setViewCount(user.getViewCount() + 1);
+        val works = getUserPortfolios(userId);
 
         val scrapList = requestUser.getUserScraps().stream()
                 .map(UserScrap::getTargetId)
@@ -258,7 +257,7 @@ public class UserServiceImpl implements UserService {
 
         val isScraped = scrapList.contains(user.getId());
 
-        return WorkPortfolioGetResponseDTO.of(isScraped, works);
+        return WorkPortfolioGetResponseDTO.of(isScraped, user, works);
     }
 
     @Override
@@ -273,8 +272,9 @@ public class UserServiceImpl implements UserService {
             val firstWorkId = user.getFirstWorkId();
             Work firstWork;
 
-            if (firstWorkId == null && !user.getWorks().isEmpty()) { // firstWork가 설정이 제대로 안된 경우
-                firstWork = workRepository.findByUserIdOrderByCreatedAtDesc(targetUserId);
+            if (firstWorkId == null && !user.getActiveWorks().isEmpty()) { // firstWork가 설정이 제대로 안된 경우
+                firstWork = workRepository.findFirstByUserIdAndIsActiveOrderByCreatedAtDesc(userId, true)
+                                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
             } else {
                 firstWork = findWork(firstWorkId);
             }
@@ -287,25 +287,12 @@ public class UserServiceImpl implements UserService {
         }).collect(Collectors.toList());
     }
 
-    private List<Work> getMineFolio(Long userId) { //TODO - 메소드 네이밍..
+    private List<Work> getUserPortfolios(Long userId) {
         val works = workRepository.findByUserIdAndIsFirstOrderByCreatedAtDesc(userId, false);
 
-        val representiveWork = workRepository.getWorkByUserIdAndIsFirst(userId, true);
-        if (representiveWork.isPresent()){
-            works.add(0, representiveWork.get());
-            return works;
-        }
-        return works;
-    }
+        val representativeWork = workRepository.getWorkByUserIdAndIsFirst(userId, true);
 
-    private List<Work> getUserPortfolio(Long userId) {
-        val works = workRepository.findByUserIdAndIsFirstOrderByCreatedAtDesc(userId, false);
-
-        val representiveWork = workRepository.getWorkByUserIdAndIsFirst(userId, true)
-                .orElseThrow(() -> new WorkException(ExceptionMessage.NOT_FOUND_FIRST_WORK.getMessage(), HttpStatus.BAD_REQUEST));
-
-        works.add(0, representiveWork);
-
+        representativeWork.ifPresent(work -> works.add(0, work));
         return works;
     }
 

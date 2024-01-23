@@ -27,8 +27,8 @@ public class MagazineController {
 
     @ApiOperation(value = "매거진 - 세부")
     @GetMapping("/detail")
-    public ResponseEntity<ApiResponse> getMagazineDetail(@RequestParam Long magazineId) {
-        val response = magazineService.getMagazineDetail(magazineId);
+    public ResponseEntity<ApiResponse> getMagazineDetail(@RequestParam Long magazineId, @AuthenticationPrincipal GamUserDetails userDetails) {
+        val response = magazineService.getMagazineDetail(magazineId, userDetails.getId());
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_MAGAZINE_DETAIL.getMessage(), response));
     }
 
