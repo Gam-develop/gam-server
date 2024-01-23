@@ -10,6 +10,7 @@ import com.gam.api.dto.work.response.WorkPortfolioGetResponseDTO;
 import com.gam.api.dto.work.response.WorkPortfolioListResponseDTO;
 import com.gam.api.entity.*;
 import com.gam.api.repository.*;
+import com.gam.api.repository.queryDto.user.UserScrapUserQueryDto;
 import com.gam.api.repository.queryDto.userScrap.UserScrapQueryDto;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
@@ -261,29 +262,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId, UserDiscoveryRequestDTO request) { //TODO - 쿼리 지연
-        val users = userRepository.findAllByIdNotAndUserStatusOrderBySelectedFirstAtDesc(userId, UserStatus.PERMITTED);
+    public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId, UserDiscoveryRequestDTO request) {
+        val users = userRepository.findAllPermittedWithNotBlocked(userId);
 
-        val me = findUser(userId);
-        removeBlockUsers(users, me);
-
-        return users.stream().map((user) -> {
-            val targetUserId = user.getId();
-            val firstWorkId = user.getFirstWorkId();
+        return users.stream().map((dto) -> {
+            val firstWorkId = dto.user().getFirstWorkId();
             Work firstWork;
 
-            if (firstWorkId == null && !user.getActiveWorks().isEmpty()) { // firstWork가 설정이 제대로 안된 경우
+            if (firstWorkId == null && !dto.user().getActiveWorks().isEmpty()) { // firstWork가 설정이 제대로 안된 경우
                 firstWork = workRepository.findFirstByUserIdAndIsActiveOrderByCreatedAtDesc(userId, true)
                                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
             } else {
-                firstWork = findWork(firstWorkId);
+                firstWork = dto.user().getActiveWorks().stream()
+                        .filter(work -> dto.user().getFirstWorkId().equals(work.getId()))
+                        .findFirst().get();
             }
 
-            val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, targetUserId);
+            val userScrap = dto.scrapStatus();
             if (Objects.isNull(userScrap)) {
-                return UserDiscoveryResponseDTO.of(user, false, firstWork);
+                return UserDiscoveryResponseDTO.of(dto.user(), false, firstWork);
             }
-            return UserDiscoveryResponseDTO.of(user, userScrap.isStatus(), firstWork);
+            return UserDiscoveryResponseDTO.of(dto.user(), userScrap, firstWork);
         }).collect(Collectors.toList());
     }
 
