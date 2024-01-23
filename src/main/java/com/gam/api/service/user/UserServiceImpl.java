@@ -263,7 +263,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId, UserDiscoveryRequestDTO request) {
-        val users = userRepository.findAllPermittedWithNotBlocked(userId);
+        val users = userRepository.findAllPermittedWithNotBlocked(userId); //TODO - user 관련 쿼리 잡기
 
         return users.stream().map((dto) -> {
             val firstWorkId = dto.user().getFirstWorkId();
