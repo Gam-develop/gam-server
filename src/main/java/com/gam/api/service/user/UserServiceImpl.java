@@ -1,5 +1,6 @@
 package com.gam.api.service.user;
 
+import com.gam.api.common.exception.ScrapException;
 import com.gam.api.common.exception.WorkException;
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.search.response.SearchUserWorkDTO;
@@ -9,6 +10,8 @@ import com.gam.api.dto.work.response.WorkPortfolioGetResponseDTO;
 import com.gam.api.dto.work.response.WorkPortfolioListResponseDTO;
 import com.gam.api.entity.*;
 import com.gam.api.repository.*;
+import com.gam.api.repository.queryDto.userScrap.UserScrapQueryDto;
+import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.HttpStatus;
@@ -29,7 +32,7 @@ public class UserServiceImpl implements UserService {
     private final TagRepository tagRepository;
     private final UserTagRepository userTagRepository;
     private final WorkRepository workRepository;
-    private final ReportRepository reportRepository;
+    private static final int MAIN_GET_DESIGNER_COUNT = 5;
 
     @Transactional
     @Override
@@ -37,25 +40,28 @@ public class UserServiceImpl implements UserService {
         val targetUser = findUser(request.targetUserId());
         val user = findUser(userId);
 
+        if (targetUser.getId() == userId) {
+            throw new ScrapException(ExceptionMessage.INVALID_SCRAP_ID.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
         val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, targetUser.getId());
 
-        if (Objects.nonNull(userScrap)) {
-            val status = userScrap.isStatus();
-            validateStatusRequest(status, request.currentScrapStatus());
-
-            if (status) {
-                targetUser.scrapCountDown();
-            } else {
-                targetUser.scrapCountUp();
-            }
-
-            userScrap.setScrapStatus(!status);
-
-            return UserScrapResponseDTO.of(targetUser.getId(), targetUser.getUserName(), userScrap.isStatus());
+        if (Objects.isNull(userScrap)) {
+            createUserScrap(user, targetUser.getId(), targetUser);
+            return UserScrapResponseDTO.of(targetUser.getId(), targetUser.getUserName(), true);
         }
-        createUserScrap(user, targetUser.getId(), targetUser);
 
-        return UserScrapResponseDTO.of(targetUser.getId(), targetUser.getUserName(), true);
+        val status = userScrap.isStatus();
+        validateStatusRequest(status, request.currentScrapStatus());
+
+        if (status) {
+            targetUser.scrapCountDown();
+        } else {
+            targetUser.scrapCountUp();
+        }
+        userScrap.setScrapStatus(!status);
+
+        return UserScrapResponseDTO.of(targetUser.getId(), targetUser.getUserName(), userScrap.isStatus());
     }
 
     @Transactional
@@ -176,40 +182,29 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserScrapsResponseDTO> getUserScraps(Long userId) {
-        val scraps = userScrapRepository.getAllByUser_idAndStatusOrderByCreatedAtDesc(userId, true);
+        findUser(userId);
 
-        // 차단 유저들에 대한 스크랩을 거르기
-        val me = findUser(userId);
-        val validBlocks = getValidBlocks(me);
-
-        val blockUserScraps = validBlocks.stream()
-                                    .map(block -> {
-                                        val targetId = block.getTargetId();
-                                        return userScrapRepository.getByUserIdAndTargetIdAndStatus(userId, targetId, true);
-                                    })
-                                    .filter(Optional::isPresent)
-                                    .map(Optional::get)
-                                    .toList();
-        scraps.removeAll(blockUserScraps);
-
-        // 신고된 유저들에 대한 스크랩도 거르고 return
-        return scraps.stream()
-                .filter(scrap -> {
-                    val targetId = scrap.getTargetId();
-                    User targetUser = userRepository.findById(targetId)
-                            .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
-                    return !checkReportedUser(targetUser); // 신고 처리된 유저가 아닌 경우
-                })
-                .map(scrap -> {
-                    val scrapId = scrap.getId();
-                    val targetId = scrap.getTargetId();
-                    User targetUser = userRepository.findById(targetId)
-                            .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
-                    return UserScrapsResponseDTO.of(scrapId, targetUser);
-                })
+        val userScraps = userScrapRepository.findUserScrapsExceptBlockUser(userId);
+        val sortedScraps = userScraps.stream()
+                .sorted(Comparator.comparing(UserScrapQueryDto::modifiedAt).reversed())
                 .collect(Collectors.toList());
+
+        val targetUserId = sortedScraps.stream().map((scrap) -> (scrap.targetId())).toList();
+        val users = userRepository.getByUserIdList(targetUserId);
+
+        val resultList = new ArrayList<UserScrapsResponseDTO>();
+        Map<Long, User> userMap = users.stream().collect(Collectors.toMap(User::getId, Function.identity()));
+        for(UserScrapQueryDto dto : sortedScraps) {
+            val targetId = dto.targetId();
+            val user = userMap.get(targetId);
+            if(!Objects.isNull(user)) {
+                resultList.add(UserScrapsResponseDTO.of(dto.scrapId(), user));
+            }
+        }
+        return resultList;
     }
-      
+
+
 
     @Override
     public UserProfileResponseDTO getUserProfile(Long myId, Long userId) {
@@ -223,14 +218,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponseDTO> getPopularDesigners(Long userId) {
-        val users = userRepository.findTop20ByUserStatusOrderByScrapCountDesc(UserStatus.PERMITTED);
+    public List<UserResponseDTO> getPopularDesigners(Long userId) { //TODO - 쿼리 지연
+        val users = userRepository.findByUserStatusOrderByScrapCountDesc(UserStatus.PERMITTED);
 
         val me = findUser(userId);
         removeBlockUsers(users, me);
 
-
-        int count = 5; // Top 5만 갖고옴
+        int count = MAIN_GET_DESIGNER_COUNT; // Top 5만 갖고옴
         val first5Users = users.subList(0, Math.min(count, users.size()));
 
         return first5Users.stream().map((user) -> {
@@ -267,7 +261,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId, UserDiscoveryRequestDTO request) {
+    public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId, UserDiscoveryRequestDTO request) { //TODO - 쿼리 지연
         val users = userRepository.findAllByIdNotAndUserStatusOrderBySelectedFirstAtDesc(userId, UserStatus.PERMITTED);
 
         val me = findUser(userId);
@@ -354,12 +348,6 @@ public class UserServiceImpl implements UserService {
                 .map(userRepository::findById) // User를 Optional<User>로 변환
                 .filter(Optional::isPresent)   // 삭제되지 않은 사용자만 필터링
                 .map(Optional::get)           // Optional에서 User로 변환
-                .collect(Collectors.toList());
-    }
-
-    private List<Block> getValidBlocks(User user) {
-        return user.getBlocks().stream()
-                .filter(Block::isStatus)
                 .collect(Collectors.toList());
     }
 

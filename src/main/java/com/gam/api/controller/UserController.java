@@ -5,6 +5,7 @@ import com.gam.api.common.ApiResponse;
 import com.gam.api.dto.user.request.*;
 import com.gam.api.entity.GamUserDetails;
 import com.gam.api.service.user.UserService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.ResponseEntity;
@@ -14,13 +15,14 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@Controller
+@RestController
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
+    @ApiOperation(value = "유저 스크랩")
     @PostMapping("/scrap")
     ResponseEntity<ApiResponse> scrapUser(
             @AuthenticationPrincipal GamUserDetails userDetails,
@@ -32,6 +34,7 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_USER_DELETE_SCRAP.getMessage(),response));
     }
 
+    @ApiOperation(value = "마이페이지 - 유저 프로필 보기")
     @GetMapping("/my/profile")
     ResponseEntity<ApiResponse> getMyProfile(
             @AuthenticationPrincipal GamUserDetails userDetails)
@@ -40,7 +43,7 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_MY_PROFILE.getMessage(), response));
     }
 
-
+    @ApiOperation(value = "마이페이지 - 유저 포토폴리오 보기")
     @GetMapping("/my/portfolio")
     ResponseEntity<ApiResponse> getMyPortfolio(
             @AuthenticationPrincipal GamUserDetails userDetails)
@@ -49,7 +52,8 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_PROTFOLIO_LIST.getMessage(), response));
     }
 
- 
+
+    @ApiOperation(value = "발견 - 유저 포토폴리오 상세보기 ")
     @GetMapping("/portfolio/{userId}")
     ResponseEntity<ApiResponse> getPortfolio(
             @AuthenticationPrincipal GamUserDetails userDetails,
@@ -59,6 +63,7 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_PROTFOLIO_LIST.getMessage(), response));
     }
 
+    @ApiOperation(value = "마이페이지 - 자기소개 글 수정")
     @PatchMapping("/introduce")
     ResponseEntity<ApiResponse> updateMyProfile(
             @AuthenticationPrincipal GamUserDetails userDetails,
@@ -68,6 +73,7 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage. SUCCESS_UPDATE_MY_PROFILE.getMessage(), response));
     }
 
+    @ApiOperation(value = "온보딩")
     @PostMapping("/onboard")
     ResponseEntity<ApiResponse> onboardUser(
             @AuthenticationPrincipal GamUserDetails userDetails,
@@ -77,18 +83,21 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_USER_ONBOARD.getMessage()));
     }
 
+    @ApiOperation(value = "온보딩 - 닉네임 중복")
     @GetMapping("/name/check")
     ResponseEntity<ApiResponse> checkUserNameDuplicated(@RequestParam String userName) {
         val response = userService.checkUserNameDuplicated(userName);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_USER_NAME_DUPLICATE_CHECK.getMessage(), response));
     }
 
+    @ApiOperation(value = "발견 - 유저 스크랩 뷰")
     @GetMapping("/scraps")
     ResponseEntity<ApiResponse> getUserScraps(@AuthenticationPrincipal GamUserDetails userDetails) {
         val response = userService.getUserScraps(userDetails.getId());
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_USER_SCRAPS.getMessage(), response));
     }
 
+    @ApiOperation(value = "발견 - 유저 프로필 보기")
     @GetMapping("/detail/profile")
     ResponseEntity<ApiResponse> getUserProfile(
             @AuthenticationPrincipal GamUserDetails userDetails,
@@ -98,13 +107,15 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_USER_PROFILE.getMessage(), response));
     }
 
+
+    @ApiOperation(value = "메인 홈 - 감잡은 디자이너", notes = "메인 홈의 스크랩순이 가장 많은 5개의 디자이너의 정보를 갖고 옵니다.")
     @GetMapping("/popular")
     ResponseEntity<ApiResponse> getPopularDesigners(@AuthenticationPrincipal GamUserDetails userDetails) {
         val response = userService.getPopularDesigners(userDetails.getId());
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_POPULAR_USER.getMessage(), response));
     }
 
-
+    @ApiOperation(value = "발견 - 유저")
     @GetMapping("")
     ResponseEntity<ApiResponse> getDiscoveryUsers(
             @AuthenticationPrincipal GamUserDetails userDetails,
@@ -114,6 +125,7 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_DISCOVERY_GET_USERS.getMessage(), response));
     }
 
+    @ApiOperation(value = "마이페이지 - 인스타그램 링크 추가")
     @PatchMapping("/link/instagram")
     ResponseEntity<ApiResponse> updateInstagramLink(
             @AuthenticationPrincipal GamUserDetails userDetails,
@@ -123,6 +135,7 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_INSTAGRAM_LINK.getMessage(),null));
     }
 
+    @ApiOperation(value = "마이페이지 - 비핸스 링크 추가")
     @PatchMapping("/link/behance")
     ResponseEntity<ApiResponse> updateBehanceLink(
             @AuthenticationPrincipal GamUserDetails userDetails,
@@ -132,6 +145,7 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_BEHANCE_LINK.getMessage(),null));
     }
 
+    @ApiOperation(value = "마이페이지 - 노션 링크 추가")
     @PatchMapping("/link/notion")
     ResponseEntity<ApiResponse> updateNotionLink(
             @AuthenticationPrincipal GamUserDetails userDetails,
@@ -142,6 +156,7 @@ public class UserController {
 
     }
 
+    @ApiOperation(value = "둘러보기 - 검색")
     @GetMapping("/search")
     public ResponseEntity<ApiResponse> searchUserAndWork(@AuthenticationPrincipal GamUserDetails userDetails, @RequestParam String keyword) {
         val userId = userDetails.getId();

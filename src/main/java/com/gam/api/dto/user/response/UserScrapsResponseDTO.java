@@ -2,7 +2,6 @@ package com.gam.api.dto.user.response;
 
 import com.gam.api.entity.User;
 import lombok.Builder;
-import lombok.Setter;
 
 @Builder
 public record UserScrapsResponseDTO (

@@ -113,6 +113,10 @@ public class WorkServiceImpl implements WorkService {
 
         val currentWork = findWork(request.workId());
 
+        if(!isOwner(currentWork, userId)) {
+            throw new WorkException(ExceptionMessage.NOT_WORK_OWNER.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
         if (currentWork.isFirst()) {
             throw new IllegalArgumentException(ExceptionMessage.ALREADY_FIRST_WORK.getMessage());
         }
@@ -127,7 +131,7 @@ public class WorkServiceImpl implements WorkService {
         val user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
 
-        user.setWorkThumbNail(currentWork.getPhotoUrl());
+        user.setWorkThumbNail(currentWork.getPhotoUrl()); // TODO - 코드리뷰 반영 - setFirstWork
         user.updateSelectedFirstAt();
         user.setFirstWorkId(workId);
     }
