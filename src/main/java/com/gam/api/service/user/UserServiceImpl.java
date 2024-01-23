@@ -267,6 +267,7 @@ public class UserServiceImpl implements UserService {
         val isScraped = scrapList.contains(user.getId());
 
         return WorkPortfolioGetResponseDTO.of(isScraped, works);
+
     }
 
     @Override
@@ -304,6 +305,7 @@ public class UserServiceImpl implements UserService {
         val user = findUser(userId);
 
         createUserDeleteAccountReasons(deleteAccountReason, directInput, user);
+        user.setUserStatus(UserStatus.WITHDRAWAL);
     }
 
     private List<Work> getMineFolio(Long userId) { //TODO - 메소드 네이밍..
@@ -396,12 +398,20 @@ public class UserServiceImpl implements UserService {
     private void createUserDeleteAccountReasons(int[] DeleteAccountReasons, String directInput, User user){
         val deleteAccountReasonList = deleteAccountRepository.findAll();
 
-        for (Integer deleteAccountReason : DeleteAccountReasons){
-            userDeleteAccountReasonRepository.save(UserDeleteAccountReason.builder()
-                            .user(user)
-                            .deleteAccountReason(deleteAccountReasonList.get(deleteAccountReason-1))
-                            .directInput(directInput)
-                            .build());
+        for (Integer deleteAccountReason : DeleteAccountReasons){ // 이 부분 reason이 5인 경우(직접 입력)인 경우만 입력하려고 하는데 refactoring 어떻게 해야 하나 고민 중.
+            if (deleteAccountReason == 5){
+                userDeleteAccountReasonRepository.save(UserDeleteAccountReason.builder()
+                        .user(user)
+                        .deleteAccountReason(deleteAccountReasonList.get(deleteAccountReason-1))
+                        .directInput(directInput)
+                        .build());
+            }
+            else {
+                userDeleteAccountReasonRepository.save(UserDeleteAccountReason.builder()
+                        .user(user)
+                        .deleteAccountReason(deleteAccountReasonList.get(deleteAccountReason - 1))
+                        .build());
+            }
         }
     }
 }

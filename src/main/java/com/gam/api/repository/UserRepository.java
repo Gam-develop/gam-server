@@ -1,6 +1,5 @@
 package com.gam.api.repository;
 
-import com.gam.api.entity.Magazine;
 import com.gam.api.entity.User;
 import com.gam.api.entity.UserStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
