@@ -26,15 +26,41 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u JOIN FETCH u.works WHERE u.userStatus = :userStatus")
     List<User> findAllByUserStatusWithWorks( @Param("userStatus") UserStatus userStatus);
 
-    @Query("select distinct new com.gam.api.repository.queryDto.user.UserScrapUserQueryDto(us, coalesce(scrap.status, false), us.selectedFirstAt) " +
+    @Query("select distinct new com.gam.api.repository.queryDto.user.UserScrapUserQueryDto(us, 0L, coalesce(userScrap.status, false) as scrapStatus, us.selectedFirstAt) " +
             "from User us " +
-            "left join fetch Work work on work.user.id = us.id " +
-            "left join fetch UserScrap scrap on scrap.targetId = us.id and scrap.user.id = :userId " +
-            "where us.userStatus = 'PERMITTED' and " +
-            "      us.id not in (select block.targetId from Block block where block.user.id = :userId and block.status = true) " +
-            "and us.id != :userId and us.role = 'USER' " +
+            "JOIN Work work " +
+            "    on work.user.id = us.id " +
+            "left join UserScrap userScrap" +
+            "    on userScrap.targetId = us.id and userScrap.user.id = :userId " +
+            "WHERE us.id not in (:userId) " +
+            "  and us.userStatus='PERMITTED' and us.role = 'USER' " +
+            "and us.id not in ( " +
+            "    select block.targetId " +
+            "    from Block block " +
+            "    where block.user.id = :userId and block.status = true) " +
+            "GROUP BY us.id, userScrap.status " +
             "order by us.selectedFirstAt desc")
-    List<UserScrapUserQueryDto>findAllPermittedWithNotBlocked(@Param("userId") long userId);
+    List<UserScrapUserQueryDto>findAllDiscoveryUser(@Param("userId") long userId);
+
+
+    @Query("select distinct new com.gam.api.repository.queryDto.user.UserScrapUserQueryDto(us, count(userTag.tag.id) as correctCount, coalesce(userScrap.status, false) as scrapStatus, us.selectedFirstAt) " +
+            "from User us " +
+            "JOIN Work work " +
+            "    on work.user.id = us.id " +
+            "JOIN UserTag userTag " +
+            "    ON userTag.user.id = us.id " +
+            "left join UserScrap userScrap" +
+            "    on userScrap.targetId = us.id and userScrap.user.id = :userId " +
+            "WHERE userTag.tag.id IN :tag " +
+            "  and us.id not in (:userId) " +
+            "  and us.userStatus='PERMITTED' and us.role = 'USER' " +
+            "and us.id not in ( " +
+            "    select block.targetId " +
+            "    from Block block " +
+            "    where block.user.id = :userId and block.status = true) " +
+            "GROUP BY us.id, userScrap.status " +
+            "order by correctCount desc, us.selectedFirstAt desc")
+    List<UserScrapUserQueryDto>findAllDiscoveryUserWithTag(@Param("userId") long userId, @Param("tag") int[] tag);
 
     List<User> findAll();
 
