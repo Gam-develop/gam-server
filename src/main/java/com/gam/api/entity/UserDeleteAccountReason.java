@@ -11,10 +11,9 @@ import javax.persistence.*;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "\"UserWithdrawalReason\"")
+@Table(name = "\"UserDeleteAccountReason\"")
 public class UserDeleteAccountReason extends TimeStamped {
 
     @Id

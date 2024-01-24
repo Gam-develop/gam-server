@@ -12,10 +12,9 @@ import java.util.List;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "\"WithdrawalReason\"")
+@Table(name = "\"DeleteAccountReason\"")
 public class DeleteAccountReason extends TimeStamped {
     @Id
     @GeneratedValue(strategy = IDENTITY)
