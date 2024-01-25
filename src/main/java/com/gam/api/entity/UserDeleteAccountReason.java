@@ -32,6 +32,10 @@ public class UserDeleteAccountReason extends TimeStamped {
     @Column(name = "withdrawal_direct_input")
     private String directInput;
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Builder
     public UserDeleteAccountReason(User user, DeleteAccountReason deleteAccountReason, String directInput){
         setUser(user);

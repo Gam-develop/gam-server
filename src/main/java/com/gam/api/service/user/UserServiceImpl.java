@@ -300,12 +300,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUserAccount(Long userId, UserDeleteAccountRequestDTO userDeleteAccountRequestDTO) {
         val directInput = userDeleteAccountRequestDTO.directInput();
-        val deleteAccountReason = userDeleteAccountRequestDTO.deleteAccountReasons();
+        List<Integer> deleteAccountReason = userDeleteAccountRequestDTO.deleteAccountReasons();
 
         val user = findUser(userId);
 
         createUserDeleteAccountReasons(deleteAccountReason, directInput, user);
-        user.setUserStatus(UserStatus.WITHDRAWAL);
     }
 
     private List<Work> getMineFolio(Long userId) { //TODO - 메소드 네이밍..
@@ -395,11 +394,15 @@ public class UserServiceImpl implements UserService {
         return targetUser.getUserStatus() == UserStatus.REPORTED;
     }
 
-    private void createUserDeleteAccountReasons(int[] DeleteAccountReasons, String directInput, User user){
+    @Transactional
+    private void createUserDeleteAccountReasons(List<Integer> DeleteAccountReasons, String directInput, User user){
         val deleteAccountReasonList = deleteAccountRepository.findAll();
 
-        for (Integer deleteAccountReason : DeleteAccountReasons){ // 이 부분 reason이 5인 경우(직접 입력)인 경우만 입력하려고 하는데 refactoring 어떻게 해야 하나 고민 중.
-            if (deleteAccountReason == 5){
+        for (Integer deleteAccountReason : DeleteAccountReasons){
+            if(deleteAccountReason<1 || deleteAccountReason>deleteAccountReasonList.size()){
+                throw new IllegalArgumentException(ExceptionMessage.INVALID_DELETE_REASON.getMessage());
+            }
+            if (deleteAccountReason == deleteAccountReasonList.size()){
                 userDeleteAccountReasonRepository.save(UserDeleteAccountReason.builder()
                         .user(user)
                         .deleteAccountReason(deleteAccountReasonList.get(deleteAccountReason-1))
@@ -413,5 +416,6 @@ public class UserServiceImpl implements UserService {
                         .build());
             }
         }
+        user.setUserStatus(UserStatus.WITHDRAWAL);
     }
 }
