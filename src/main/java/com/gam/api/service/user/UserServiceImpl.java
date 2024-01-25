@@ -1,7 +1,6 @@
 package com.gam.api.service.user;
 
 import com.gam.api.common.exception.ScrapException;
-import com.gam.api.common.exception.WorkException;
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.search.response.SearchUserWorkDTO;
 import com.gam.api.dto.user.request.*;
@@ -10,6 +9,7 @@ import com.gam.api.dto.work.response.WorkPortfolioGetResponseDTO;
 import com.gam.api.dto.work.response.WorkPortfolioListResponseDTO;
 import com.gam.api.entity.*;
 import com.gam.api.repository.*;
+import com.gam.api.repository.queryDto.user.UserScrapUserQueryDto;
 import com.gam.api.repository.queryDto.userScrap.UserScrapQueryDto;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
@@ -261,29 +261,41 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId, UserDiscoveryRequestDTO request) { //TODO - 쿼리 지연
-        val users = userRepository.findAllByIdNotAndUserStatusOrderBySelectedFirstAtDesc(userId, UserStatus.PERMITTED);
+    public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId, int[] tags){
+        List<UserScrapUserQueryDto> users;
 
-        val me = findUser(userId);
-        removeBlockUsers(users, me);
+        if (tags.length == 0) {
+            users = userRepository.findAllDiscoveryUser(userId); //TODO - user 관련 쿼리 잡기 , 동적 쿼리 필요,,
+        }
+        else {
+            users = userRepository.findAllDiscoveryUserWithTag(userId, tags);
+        }
 
-        return users.stream().map((user) -> {
-            val targetUserId = user.getId();
-            val firstWorkId = user.getFirstWorkId();
+        return users.stream().map((dto) -> {
+            val firstWorkId = dto.user().getFirstWorkId();
             Work firstWork;
 
-            if (firstWorkId == null && !user.getActiveWorks().isEmpty()) { // firstWork가 설정이 제대로 안된 경우
-                firstWork = workRepository.findFirstByUserIdAndIsActiveOrderByCreatedAtDesc(userId, true)
-                                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
-            } else {
-                firstWork = findWork(firstWorkId);
+            if (firstWorkId == null || !dto.user().getActiveWorks().isEmpty()) { // User 권한 에러
+                firstWork = workRepository.findFirstByUserIdAndIsActiveOrderByCreatedAtDesc(dto.user().getId(), true)
+                        .orElse(Work.builder()
+                                .user(dto.user())
+                                .photoUrl("해당하는 작업물을 찾을 수 없습니다.")
+                                .detail("해당하는 작업물을 찾을 수 없습니다.")
+                                .title("해당하는 작업물을 찾을 수 없습니다.")
+                                .build());
+                dto.user().setUserStatus(UserStatus.NOT_PERMITTED);
+            }
+            else {
+                firstWork = dto.user().getActiveWorks().stream()
+                        .filter(work -> dto.user().getFirstWorkId().equals(work.getId()))
+                        .findFirst().get();
             }
 
-            val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, targetUserId);
+            val userScrap = dto.scrapStatus();
             if (Objects.isNull(userScrap)) {
-                return UserDiscoveryResponseDTO.of(user, false, firstWork);
+                return UserDiscoveryResponseDTO.of(dto.user(), false, firstWork);
             }
-            return UserDiscoveryResponseDTO.of(user, userScrap.isStatus(), firstWork);
+            return UserDiscoveryResponseDTO.of(dto.user(), userScrap, firstWork);
         }).collect(Collectors.toList());
     }
 

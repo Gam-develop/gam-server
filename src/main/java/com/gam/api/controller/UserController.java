@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -118,10 +117,8 @@ public class UserController {
     @ApiOperation(value = "발견 - 유저")
     @GetMapping("")
     ResponseEntity<ApiResponse> getDiscoveryUsers(
-            @AuthenticationPrincipal GamUserDetails userDetails,
-            @RequestBody UserDiscoveryRequestDTO request
-    ) {
-        val response = userService.getDiscoveryUsers(userDetails.getId(), request);
+            @AuthenticationPrincipal GamUserDetails userDetails, @RequestParam(required = false, defaultValue = "") int[] tags) {
+        val response = userService.getDiscoveryUsers(userDetails.getId(), tags);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_DISCOVERY_GET_USERS.getMessage(), response));
     }
 
