@@ -149,7 +149,7 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_SEARCH_USE_WORKS.getMessage(),response));
     }
 
-    @PostMapping("/my/delete-account")
+    @DeleteMapping("/my/account")
     ResponseEntity<ApiResponse> deleteUserAccount(
             @AuthenticationPrincipal GamUserDetails userDetails,
             @Valid @RequestBody UserDeleteAccountRequestDTO request)
