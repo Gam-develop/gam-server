@@ -165,8 +165,6 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void deleteUserAccount(Long userId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
         List<Work> works = workRepository.findAllByUserId(userId);
         for(Work work : works){ // 유저가 작성한 작업물 삭제
             workRepository.deleteById(work.getId());

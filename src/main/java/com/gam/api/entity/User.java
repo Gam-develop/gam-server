@@ -109,6 +109,9 @@ public class User extends TimeStamped {
     @Column(name = "selected_first_at")
     private LocalDateTime selectedFirstAt;
 
+    @OneToMany(mappedBy = "user")
+    private List<UserDeleteAccountReason> userDeleteAccountReason;
+
     public void updateSelectedFirstAt() {
         this.selectedFirstAt = LocalDateTime.now();
     }

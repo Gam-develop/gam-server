@@ -18,7 +18,7 @@ public class UserDeleteAccountReason extends TimeStamped {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "user_withdrawal_reason_id")
+    @Column(name = "user_delete_reason_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -26,10 +26,10 @@ public class UserDeleteAccountReason extends TimeStamped {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "withdrawal_reason_id")
+    @JoinColumn(name = "delete_reason_id")
     private DeleteAccountReason deleteAccountReason;
 
-    @Column(name = "withdrawal_direct_input")
+    @Column(name = "delete_direct_input")
     private String directInput;
 
     public void setUser(User user) {

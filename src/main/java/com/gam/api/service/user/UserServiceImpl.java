@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
     private final UserTagRepository userTagRepository;
     private final WorkRepository workRepository;
     private final ReportRepository reportRepository;
-    private final DeleteAccountRepository deleteAccountRepository;
+    private final DeleteAccountReasonRepository deleteAccountReasonRepository;
     private final UserDeleteAccountReasonRepository userDeleteAccountReasonRepository;
 
     @Transactional
@@ -267,7 +267,6 @@ public class UserServiceImpl implements UserService {
         val isScraped = scrapList.contains(user.getId());
 
         return WorkPortfolioGetResponseDTO.of(isScraped, works);
-
     }
 
     @Override
@@ -396,25 +395,24 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     private void createUserDeleteAccountReasons(List<Integer> DeleteAccountReasons, String directInput, User user){
-        val deleteAccountReasonList = deleteAccountRepository.findAll();
+        val deleteAccountReasonList = deleteAccountReasonRepository.findAll();
 
         for (Integer deleteAccountReason : DeleteAccountReasons){
-            if(deleteAccountReason<1 || deleteAccountReason>deleteAccountReasonList.size()){
+            if (deleteAccountReason < 1 || deleteAccountReason > deleteAccountReasonList.size()) {
                 throw new IllegalArgumentException(ExceptionMessage.INVALID_DELETE_REASON.getMessage());
             }
-            if (deleteAccountReason == deleteAccountReasonList.size()){
+            if (deleteAccountReason == deleteAccountReasonList.size()) {
                 userDeleteAccountReasonRepository.save(UserDeleteAccountReason.builder()
                         .user(user)
                         .deleteAccountReason(deleteAccountReasonList.get(deleteAccountReason-1))
                         .directInput(directInput)
                         .build());
+                continue;
             }
-            else {
-                userDeleteAccountReasonRepository.save(UserDeleteAccountReason.builder()
-                        .user(user)
-                        .deleteAccountReason(deleteAccountReasonList.get(deleteAccountReason - 1))
-                        .build());
-            }
+            userDeleteAccountReasonRepository.save(UserDeleteAccountReason.builder()
+                    .user(user)
+                    .deleteAccountReason(deleteAccountReasonList.get(deleteAccountReason - 1))
+                    .build());
         }
         user.setUserStatus(UserStatus.WITHDRAWAL);
     }

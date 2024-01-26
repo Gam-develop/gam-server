@@ -18,10 +18,10 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class DeleteAccountReason extends TimeStamped {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "withdrawal_reason_id")
+    @Column(name = "delete_reason_id")
     private int id;
 
-    @Column(name = "withdrawal_reason_name")
+    @Column(name = "delete_reason_name")
     private String tagName;
 
     @OneToMany(mappedBy = "deleteAccountReason")
