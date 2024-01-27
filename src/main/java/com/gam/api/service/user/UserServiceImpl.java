@@ -303,6 +303,10 @@ public class UserServiceImpl implements UserService {
 
         val user = findUser(userId);
 
+        if (user.getRole() == Role.ADMIN) {
+            throw new IllegalArgumentException(ExceptionMessage.INVALID_DELETE_ADMIN_USER.getMessage());
+        }
+
         createUserDeleteAccountReasons(deleteAccountReason, directInput, user);
     }
 
