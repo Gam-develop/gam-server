@@ -33,7 +33,9 @@ public class UserDeleteAccountReason extends TimeStamped {
     private String directInput;
 
     public void setUser(User user) {
-        this.user = user;
+        if (this.user == null) {
+            this.user = user;
+        }
     }
 
     @Builder
