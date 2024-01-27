@@ -393,7 +393,6 @@ public class UserServiceImpl implements UserService {
         return targetUser.getUserStatus() == UserStatus.REPORTED;
     }
 
-    @Transactional
     private void createUserDeleteAccountReasons(List<Integer> DeleteAccountReasons, String directInput, User user){
         val deleteAccountReasonList = deleteAccountReasonRepository.findAll();
 
