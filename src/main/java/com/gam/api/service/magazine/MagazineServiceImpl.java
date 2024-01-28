@@ -123,6 +123,7 @@ public class MagazineServiceImpl implements MagazineService {
     public List<MagazineSearchResponseDTO> searchMagazine(String keyword) {
         val magazines = magazineRepository.finAllByKeyword(keyword, keyword);
         return magazines.stream()
+                .sorted(Comparator.comparingLong(Magazine::getViewCount).reversed())
                 .map((magazine) -> MagazineSearchResponseDTO.of(magazine, gamConfig.getMagaineBaseUrl()))
                 .collect(Collectors.toList());
     }

@@ -5,6 +5,7 @@ import com.gam.api.entity.superclass.TimeStamped;
 import io.hypersistence.utils.hibernate.type.array.IntArrayType;
 import java.util.stream.Collectors;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.Where;
 import org.hibernate.annotations.Type;
@@ -21,7 +22,6 @@ import java.util.List;
 
 
 import static javax.persistence.GenerationType.IDENTITY;
-
 
 @Getter
 @Setter
