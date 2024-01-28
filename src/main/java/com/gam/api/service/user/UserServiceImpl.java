@@ -300,7 +300,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private List<Work> getUserPortfolios(Long userId) {
-        val works = workRepository.findByUserIdAndIsFirstOrderByCreatedAtDesc(userId, false);
+        val works = workRepository.findByUserIdAndIsFirstAndIsActiveOrderByCreatedAtDesc(userId, false, true);
 
         val representativeWork = workRepository.getWorkByUserIdAndIsFirst(userId, true);
 
