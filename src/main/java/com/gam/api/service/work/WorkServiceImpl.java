@@ -88,6 +88,7 @@ public class WorkServiceImpl implements WorkService {
         work.setActive(false);
 
         if (workCount == 1) { // 작업물이 한개 였을 때
+            work.setIsFirst(false);
             user.setSelectedFirstAt(null);
             user.setWorkThumbNail(null);
             user.setFirstWorkId(null);
