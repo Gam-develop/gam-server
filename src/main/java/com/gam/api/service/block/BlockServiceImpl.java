@@ -1,24 +1,20 @@
 package com.gam.api.service.block;
 
-import com.gam.api.common.exception.BlockException;
 import com.gam.api.common.message.ExceptionMessage;
-import com.gam.api.common.message.ResponseMessage;
 import com.gam.api.dto.block.request.BlockRequestDTO;
 import com.gam.api.dto.block.response.BlockResponseDTO;
-import com.gam.api.dto.user.response.UserScrapResponseDTO;
+
 import com.gam.api.entity.Block;
 import com.gam.api.entity.User;
 import com.gam.api.repository.BlockRepository;
 import com.gam.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.Objects;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
