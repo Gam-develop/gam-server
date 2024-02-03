@@ -38,7 +38,7 @@ public class MagazineServiceImpl implements MagazineService {
         val magazineScrapList = getMagazineScrapList(user);
         val magazineList = magazineRepository.findMagazinesByOrderByViewCountDesc();
 
-        return MagazineResponseDTO.of(magazineList, magazineScrapList);
+        return MagazineResponseDTO.of(magazineList, magazineScrapList, gamConfig.getMagaineBaseUrl());
     }
 
     @Transactional
@@ -58,7 +58,7 @@ public class MagazineServiceImpl implements MagazineService {
         }
 
         magazine.setViewCount(magazine.getViewCount() + 1);
-        return MagazineDetailResponseDTO.of(magazine);
+        return MagazineDetailResponseDTO.of(magazine, gamConfig.getMagaineBaseUrl());
     }
 
     @Override
@@ -71,7 +71,7 @@ public class MagazineServiceImpl implements MagazineService {
                 .map(MagazineScrap::getMagazine)
                 .toList();
 
-        return MagazineScrapsResponseDTO.of(magazineList);
+        return MagazineScrapsResponseDTO.of(magazineList, gamConfig.getMagaineBaseUrl());
     }
 
     @Override
@@ -80,7 +80,7 @@ public class MagazineServiceImpl implements MagazineService {
         val magazineScrapList = getMagazineScrapList(user);
         val magazineList = magazineRepository.findTop3ByOrderByViewCountDesc();
 
-        return MagazineResponseDTO.of(magazineList, magazineScrapList);
+        return MagazineResponseDTO.of(magazineList, magazineScrapList, gamConfig.getMagaineBaseUrl());
     }
 
     @Transactional

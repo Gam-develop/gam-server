@@ -9,9 +9,9 @@ import java.util.List;
 public record MagazineScrapsResponseDTO(
        List<MagazineScrapsResponseVO> magazineScrapList
 ) {
-    public static MagazineScrapsResponseDTO of(List<Magazine> magazines) {
+    public static MagazineScrapsResponseDTO of(List<Magazine> magazines, String magazineBaseUrl) {
         return MagazineScrapsResponseDTO.builder()
-                .magazineScrapList(magazines.stream().map(MagazineScrapsResponseVO::of).toList())
+                .magazineScrapList(magazines.stream().map(magazine -> MagazineScrapsResponseVO.of(magazine, magazineBaseUrl)).toList())
                 .build();
     }
 }
@@ -22,15 +22,17 @@ record MagazineScrapsResponseVO(
         String thumbNail,
         String title,
         String interviewPerson,
+        String magazineUrl,
         Long view,
         boolean isScraped
 ) {
-    public static MagazineScrapsResponseVO of(Magazine magazine) {
+    public static MagazineScrapsResponseVO of(Magazine magazine, String magazineBaseUrl) {
         return MagazineScrapsResponseVO.builder()
                 .magazineId(magazine.getId())
                 .thumbNail(magazine.getThumbNail())
                 .title(magazine.getMagazineTitle())
                 .interviewPerson(magazine.getInterviewPerson())
+                .magazineUrl(magazineBaseUrl + magazine.getId())
                 .view(magazine.getViewCount())
                 .isScraped(true)
                 .build();

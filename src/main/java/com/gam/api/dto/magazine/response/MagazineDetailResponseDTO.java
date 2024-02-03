@@ -11,16 +11,19 @@ public record MagazineDetailResponseDTO(
         Long magazineId,
         List<String> magazinePhotos,
         String magazineIntro,
-        List<MagazineDetailResponseVO> questions
+        List<MagazineDetailResponseVO> questions,
+        String magazineUrl
 ) {
     public static MagazineDetailResponseDTO of(
-           Magazine magazine
+           Magazine magazine,
+           String magazineBaseUrl
     ) {
         return MagazineDetailResponseDTO.builder()
                 .magazineId(magazine.getId())
                 .magazinePhotos(List.of(magazine.getMagazine_photos()))
                 .magazineIntro(magazine.getIntroduction())
                 .questions(magazine.getQuestions().stream().map(MagazineDetailResponseVO::of).toList())
+                .magazineUrl(magazineBaseUrl + magazine.getId())
                 .build();
     }
 }
