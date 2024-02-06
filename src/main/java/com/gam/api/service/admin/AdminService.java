@@ -10,4 +10,5 @@ public interface AdminService {
     void deleteMagazine(Long magazineId);
     void createMagazine(MagazineRequestDTO request);
     void editMagazine(Long magazineId, MagazineRequestDTO request);
+    void deleteUserAccount(Long userId);
 }

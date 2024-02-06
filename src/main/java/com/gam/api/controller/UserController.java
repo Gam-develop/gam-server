@@ -160,4 +160,13 @@ public class UserController {
         val response = userService.searchUserAndWork(userId, keyword);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_SEARCH_USE_WORKS.getMessage(),response));
     }
+
+    @DeleteMapping("/my/account")
+    ResponseEntity<ApiResponse> deleteUserAccount(
+            @AuthenticationPrincipal GamUserDetails userDetails,
+            @Valid @RequestBody UserDeleteAccountRequestDTO request)
+    {
+        userService.deleteUserAccount(userDetails.getId(), request);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_DELETE_ACCOUNT.getMessage()));
+    }
 }

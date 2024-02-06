@@ -32,6 +32,9 @@ public class UserServiceImpl implements UserService {
     private final TagRepository tagRepository;
     private final UserTagRepository userTagRepository;
     private final WorkRepository workRepository;
+    private final ReportRepository reportRepository;
+    private final DeleteAccountReasonRepository deleteAccountReasonRepository;
+    private final UserDeleteAccountReasonRepository userDeleteAccountReasonRepository;
     private static final int MAIN_GET_DESIGNER_COUNT = 5;
 
     @Transactional
@@ -299,6 +302,23 @@ public class UserServiceImpl implements UserService {
         }).collect(Collectors.toList());
     }
 
+
+    @Transactional
+    @Override
+    public void deleteUserAccount(Long userId, UserDeleteAccountRequestDTO userDeleteAccountRequestDTO) {
+        val directInput = userDeleteAccountRequestDTO.directInput();
+        List<Integer> deleteAccountReason = userDeleteAccountRequestDTO.deleteAccountReasons();
+
+        val user = findUser(userId);
+
+        if (user.getRole() == Role.ADMIN) {
+            throw new IllegalArgumentException(ExceptionMessage.INVALID_DELETE_ADMIN_USER.getMessage());
+        }
+
+        createUserDeleteAccountReasons(deleteAccountReason, directInput, user);
+    }
+
+
     private List<Work> getUserPortfolios(Long userId) {
         val works = workRepository.findByUserIdAndIsFirstAndIsActiveOrderByCreatedAtDesc(userId, false, true);
 
@@ -365,5 +385,28 @@ public class UserServiceImpl implements UserService {
 
     private boolean checkReportedUser(User targetUser) {
         return targetUser.getUserStatus() == UserStatus.REPORTED;
+    }
+
+    private void createUserDeleteAccountReasons(List<Integer> DeleteAccountReasons, String directInput, User user){
+        val deleteAccountReasonList = deleteAccountReasonRepository.findAll();
+
+        for (Integer deleteAccountReason : DeleteAccountReasons){
+            if (deleteAccountReason < 1 || deleteAccountReason > deleteAccountReasonList.size()) {
+                throw new IllegalArgumentException(ExceptionMessage.INVALID_DELETE_REASON.getMessage());
+            }
+            if (deleteAccountReason == deleteAccountReasonList.size()) {
+                userDeleteAccountReasonRepository.save(UserDeleteAccountReason.builder()
+                        .user(user)
+                        .deleteAccountReason(deleteAccountReasonList.get(deleteAccountReason-1))
+                        .directInput(directInput)
+                        .build());
+                continue;
+            }
+            userDeleteAccountReasonRepository.save(UserDeleteAccountReason.builder()
+                    .user(user)
+                    .deleteAccountReason(deleteAccountReasonList.get(deleteAccountReason - 1))
+                    .build());
+        }
+        user.setUserStatus(UserStatus.WITHDRAWAL);
     }
 }

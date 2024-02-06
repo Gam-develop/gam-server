@@ -7,8 +7,11 @@ import com.gam.api.dto.admin.magazine.response.MagazineListResponseDTO;
 
 import com.gam.api.entity.Magazine;
 import com.gam.api.entity.Question;;
+import com.gam.api.entity.Work;
 import com.gam.api.repository.MagazineRepository;
 import com.gam.api.repository.QuestionRepository;
+import com.gam.api.repository.UserRepository;
+import com.gam.api.repository.WorkRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,8 @@ public class AdminServiceImpl implements AdminService {
 
     private final MagazineRepository magazineRepository;
     private final QuestionRepository questionRepository;
+    private final UserRepository userRepository;
+    private final WorkRepository workRepository;
 
     @Override
     public List<MagazineListResponseDTO> getMagazines() {
@@ -156,5 +161,15 @@ public class AdminServiceImpl implements AdminService {
             currentEntity.setImageCaption(requestEntity.getImageCaption());
         }
         return currentEntity;
+    }
+
+    @Override
+    public void deleteUserAccount(Long userId) {
+        List<Work> works = workRepository.findAllByUserId(userId);
+        for(Work work : works){ // 유저가 작성한 작업물 삭제
+            workRepository.deleteById(work.getId());
+        }
+
+        userRepository.deleteById(userId);
     }
 }
