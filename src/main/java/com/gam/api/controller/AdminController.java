@@ -3,11 +3,13 @@ package com.gam.api.controller;
 import com.gam.api.common.ApiResponse;
 import com.gam.api.common.message.ResponseMessage;
 import com.gam.api.dto.admin.magazine.request.MagazineRequestDTO;
+import com.gam.api.entity.GamUserDetails;
 import com.gam.api.service.admin.AdminService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,6 +39,14 @@ public class AdminController {
         adminService.createMagazine(request);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_CREATE_MAGAZINE.getMessage()));
     }
+
+    @ApiOperation(value = "관리자 매거진 - 세부")
+    @GetMapping("/magazine/detail")
+    public ResponseEntity<ApiResponse> getMagazineDetail(@RequestParam Long magazineId, @AuthenticationPrincipal GamUserDetails userDetails) {
+        val response = adminService.getMagazineDetail(magazineId, userDetails.getId());
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_MAGAZINE_DETAIL.getMessage(), response));
+    }
+
 
     @ApiOperation(value = "매거진 - 수정")
     @PatchMapping("/magazine/{magazineId}")
