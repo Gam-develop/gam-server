@@ -41,8 +41,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void deleteMagazine(Long magazineId) {
-        magazineRepository.findById(magazineId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_MAGAZINE.getMessage()));
+        findMagazine(magazineId);
 
         magazineRepository.deleteById(magazineId);
     }
@@ -177,9 +176,13 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public MagazineDetailResponseDTO getMagazineDetail(Long magazineId, Long userId) {
-        val magazine = magazineRepository.findById(magazineId)
-                .orElseThrow(()-> new EntityNotFoundException());
+        val magazine = findMagazine(magazineId);
 
         return MagazineDetailResponseDTO.of(magazine);
+    }
+
+    private Magazine findMagazine(Long magazineId) {
+        return magazineRepository.findById(magazineId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_MAGAZINE.getMessage()));
     }
 }
