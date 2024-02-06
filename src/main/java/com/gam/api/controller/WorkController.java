@@ -7,6 +7,8 @@ import com.gam.api.dto.work.request.WorkDeleteRequestDTO;
 import com.gam.api.dto.work.request.WorkFirstAssignRequestDto;
 import com.gam.api.entity.GamUserDetails;
 import com.gam.api.service.work.WorkService;
+import io.swagger.annotations.ApiOperation;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,7 @@ import com.gam.api.common.ApiResponse;
 public class WorkController {
     private final WorkService workService;
 
+    @ApiOperation(value = "마이페이지 - 작업물 추가")
     @PostMapping("")
     public ResponseEntity<ApiResponse> createWork(
             @AuthenticationPrincipal GamUserDetails userDetails,
@@ -30,6 +33,7 @@ public class WorkController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_CREATE_WORK.getMessage(), response));
     }
 
+    @ApiOperation(value = "마이페이지 - 작업물 삭제")
     @DeleteMapping("")
     public ResponseEntity<ApiResponse> deleteWork(
             @AuthenticationPrincipal GamUserDetails userDetails,
@@ -39,6 +43,7 @@ public class WorkController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_DELETE_WORK.getMessage(), response));
     }
 
+    @ApiOperation(value = "대표 작업물로 설정")
     @PatchMapping("/main")
     public ResponseEntity<ApiResponse> updateFirstWork(
             @AuthenticationPrincipal GamUserDetails userDetails,
@@ -48,10 +53,11 @@ public class WorkController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_UPDATE_FIRST_WORK.getMessage()));
     }
 
+    @ApiOperation(value = "마이페이지 - 작업물 수정")
     @PatchMapping("/edit")
     public ResponseEntity<ApiResponse> updateWork(
             @AuthenticationPrincipal GamUserDetails userDetails,
-            @RequestBody WorkEditRequestDTO request)
+            @Valid @RequestBody WorkEditRequestDTO request)
     {
         val response = workService.updateWork(userDetails.getId(), request);
 

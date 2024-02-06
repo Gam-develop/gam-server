@@ -32,6 +32,7 @@ public enum ExceptionMessage {
 
     /** scarp **/
     NOT_MATCH_DB_SCRAP_STATUS("DB의 userScrap 상태와, 보낸 userScrap 상태가 같지 않습니다."),
+    INVALID_SCRAP_ID("자신을 스크랩 할 수 없습니다."),
 
     /** Work **/
     WORK_COUNT_EXCEED("올릴 수 있는 작업물 개수를 초과했습니다."),
@@ -40,6 +41,7 @@ public enum ExceptionMessage {
     NOT_FOUND_FIRST_WORK("대표 작업을 찾을 수 없습니다."),
     NOT_WORK_OWNER("작업물의 주인이 아닙니다."),
     WORK_NO_THUMBNAIL("작업물의 썸네일이 없습니다."),
+    ALREADY_NOT_ACTIVE_WORK("이미 비활성화 된 작업물 입니다."),
 
     /** Magazine **/
     NOT_FOUND_MAGAZINE("해당하는 매거진을 찾을 수 없습니다."),

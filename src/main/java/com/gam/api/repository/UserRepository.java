@@ -2,6 +2,7 @@ package com.gam.api.repository;
 
 import com.gam.api.entity.User;
 import com.gam.api.entity.UserStatus;
+import com.gam.api.repository.queryDto.user.UserScrapUserQueryDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,10 +15,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> getUserById(Long userId);
     boolean existsByUserName(String userName);
 
-    List<User> findTop20ByUserStatusOrderByScrapCountDesc(UserStatus userStatus); // TODO - 기획
+    List<User> findByUserStatusOrderByScrapCountDesc(UserStatus userStatus); // TODO - 기획
 
-    List<User> findAllByIdNotOrderBySelectedFirstAtDesc(Long id);
-  
     @Query(value = "SELECT u FROM User u WHERE LOWER(u.userName) LIKE %:keyword% ORDER BY u.createdAt DESC")
     List<User> findByUserName(@Param("keyword") String keyword);
   
@@ -27,10 +26,49 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u JOIN FETCH u.works WHERE u.userStatus = :userStatus")
     List<User> findAllByUserStatusWithWorks( @Param("userStatus") UserStatus userStatus);
 
-    List<User> findTop5ByUserStatusOrderByScrapCountDesc(UserStatus userStatus);
-  
-    List<User>findAllByIdNotAndUserStatusOrderBySelectedFirstAtDesc(Long userId, UserStatus userStatus);
+    @Query("select distinct new com.gam.api.repository.queryDto.user.UserScrapUserQueryDto(us, 0L, coalesce(userScrap.status, false) as scrapStatus, us.selectedFirstAt) " +
+            "from User us " +
+            "JOIN Work work " +
+            "    on work.user.id = us.id " +
+            "left join UserScrap userScrap" +
+            "    on userScrap.targetId = us.id and userScrap.user.id = :userId " +
+            "WHERE us.id not in (:userId) " +
+            "  and us.userStatus='PERMITTED' and us.role = 'USER' " +
+            "and us.id not in ( " +
+            "    select block.targetId " +
+            "    from Block block " +
+            "    where block.user.id = :userId and block.status = true) " +
+            "GROUP BY us.id, userScrap.status " +
+            "order by us.selectedFirstAt desc")
+    List<UserScrapUserQueryDto>findAllDiscoveryUser(@Param("userId") long userId);
+
+
+    @Query("select distinct new com.gam.api.repository.queryDto.user.UserScrapUserQueryDto(us, count(userTag.tag.id) as correctCount, coalesce(userScrap.status, false) as scrapStatus, us.selectedFirstAt) " +
+            "from User us " +
+            "JOIN Work work " +
+            "    on work.user.id = us.id " +
+            "JOIN UserTag userTag " +
+            "    ON userTag.user.id = us.id " +
+            "left join UserScrap userScrap" +
+            "    on userScrap.targetId = us.id and userScrap.user.id = :userId " +
+            "WHERE userTag.tag.id IN :tag " +
+            "  and us.id not in (:userId) " +
+            "  and us.userStatus='PERMITTED' and us.role = 'USER' " +
+            "and us.id not in ( " +
+            "    select block.targetId " +
+            "    from Block block " +
+            "    where block.user.id = :userId and block.status = true) " +
+            "GROUP BY us.id, userScrap.status " +
+            "order by correctCount desc, us.selectedFirstAt desc")
+    List<UserScrapUserQueryDto>findAllDiscoveryUserWithTag(@Param("userId") long userId, @Param("tag") int[] tag);
+
+    List<User> findAll();
 
     @Query(value = "SELECT u FROM User u WHERE LOWER(u.userName) LIKE LOWER(CONCAT('%', :keyword, '%')) and u.userStatus!='REPORTED' and u.id!=:userId ORDER BY u.createdAt DESC")
     List<User> findByKeyWord(@Param("userId")Long userId, @Param("keyword") String keyword);
+
+    @Query("select u "+
+            " from User u "+
+            " where u.id in :userId")
+    List<User> getByUserIdList(@Param("userId") List<Long> userId);
 }

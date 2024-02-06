@@ -4,7 +4,6 @@ import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.report.request.ReportCreateRequestDTO;
 import com.gam.api.entity.Report;
 import com.gam.api.entity.User;
-import com.gam.api.entity.UserStatus;
 import com.gam.api.entity.Work;
 import com.gam.api.repository.ReportRepository;
 import com.gam.api.repository.UserRepository;
