@@ -14,6 +14,7 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
     Optional<Work> getWorkByUserIdAndIsFirst(Long userId, Boolean status);
     List<Work> findByUserIdAndIsFirstOrderByCreatedAtDesc(Long userId, boolean isFirst);
     List<Work> findByUserIdAndIsFirstAndIsActiveOrderByCreatedAtDesc(Long userId, boolean isFirst, boolean isActive);
+    @Query("SELECT w FROM Work w JOIN FETCH w.user")
     List<Work> findAllByUserId(Long userId);
     @Query(value = "SELECT w FROM Work w WHERE LOWER(w.title) LIKE LOWER(CONCAT('%', :keyword, '%')) ORDER BY w.createdAt DESC")
     List<Work> findByKeyword(String keyword);
