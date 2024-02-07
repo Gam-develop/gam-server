@@ -5,8 +5,10 @@ import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.dto.admin.magazine.request.MagazineRequestDTO;
 import com.gam.api.dto.admin.magazine.response.MagazineListResponseDTO;
 
+import com.gam.api.dto.admin.magazine.response.MagazineDetailResponseDTO;
 import com.gam.api.entity.Magazine;
-import com.gam.api.entity.Question;;
+import com.gam.api.entity.Question;
+import com.gam.api.entity.UserStatus;
 import com.gam.api.entity.Work;
 import com.gam.api.repository.MagazineRepository;
 import com.gam.api.repository.QuestionRepository;
@@ -39,8 +41,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void deleteMagazine(Long magazineId) {
-        magazineRepository.findById(magazineId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_MAGAZINE.getMessage()));
+        findMagazine(magazineId);
 
         magazineRepository.deleteById(magazineId);
     }
@@ -171,5 +172,17 @@ public class AdminServiceImpl implements AdminService {
         }
 
         userRepository.deleteById(userId);
+    }
+
+    @Override
+    public MagazineDetailResponseDTO getMagazineDetail(Long magazineId, Long userId) {
+        val magazine = findMagazine(magazineId);
+
+        return MagazineDetailResponseDTO.of(magazine);
+    }
+
+    private Magazine findMagazine(Long magazineId) {
+        return magazineRepository.findById(magazineId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_MAGAZINE.getMessage()));
     }
 }
