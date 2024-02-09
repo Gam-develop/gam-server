@@ -169,4 +169,11 @@ public class UserController {
         userService.deleteUserAccount(userDetails.getId(), request);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_DELETE_ACCOUNT.getMessage()));
     }
+
+    @ApiOperation(value = "유저 매거진 조회 권한 확인")
+    @GetMapping("/status")
+    public ResponseEntity<ApiResponse> getUserStatus(@AuthenticationPrincipal GamUserDetails userDetails) {
+        val response = userService.getUserStatus(userDetails.getId());
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_USER_STATUS.getMessage(), response));
+    }
 }

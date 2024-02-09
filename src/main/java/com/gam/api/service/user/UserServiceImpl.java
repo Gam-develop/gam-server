@@ -318,6 +318,12 @@ public class UserServiceImpl implements UserService {
         createUserDeleteAccountReasons(deleteAccountReason, directInput, user);
     }
 
+    @Override
+    public UserStatusResponseDTO getUserStatus(Long userId) {
+        val user = findUser(userId);
+        return UserStatusResponseDTO.of(user);
+    }
+
 
     private List<Work> getUserPortfolios(Long userId) {
         val works = workRepository.findByUserIdAndIsFirstAndIsActiveOrderByCreatedAtDesc(userId, false, true);
