@@ -391,20 +391,12 @@ public class UserServiceImpl implements UserService {
         val deleteAccountReasonList = deleteAccountReasonRepository.findAll();
 
         for (Integer deleteAccountReason : DeleteAccountReasons){
-            if (deleteAccountReason < 1 || deleteAccountReason > deleteAccountReasonList.size()) {
+            if (deleteAccountReason < 0 || deleteAccountReason >= deleteAccountReasonList.size()) {
                 throw new IllegalArgumentException(ExceptionMessage.INVALID_DELETE_REASON.getMessage());
-            }
-            if (deleteAccountReason == deleteAccountReasonList.size()) {
-                userDeleteAccountReasonRepository.save(UserDeleteAccountReason.builder()
-                        .user(user)
-                        .deleteAccountReason(deleteAccountReasonList.get(deleteAccountReason-1))
-                        .directInput(directInput)
-                        .build());
-                continue;
             }
             userDeleteAccountReasonRepository.save(UserDeleteAccountReason.builder()
                     .user(user)
-                    .deleteAccountReason(deleteAccountReasonList.get(deleteAccountReason - 1))
+                    .deleteAccountReason(deleteAccountReasonList.get(deleteAccountReason))
                     .build());
         }
         user.setUserStatus(UserStatus.WITHDRAWAL);
