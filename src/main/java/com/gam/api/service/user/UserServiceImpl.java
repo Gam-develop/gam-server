@@ -187,13 +187,13 @@ public class UserServiceImpl implements UserService {
     public List<UserScrapsResponseDTO> getUserScraps(Long userId) {
         findUser(userId);
 
-        val userScraps = userScrapRepository.findUserScrapsExceptBlockUser(userId);
+        val userScraps = userScrapRepository.findUserScrapsExceptBlockUser(userId); // 차단 유저 제외
         val sortedScraps = userScraps.stream()
                 .sorted(Comparator.comparing(UserScrapQueryDto::modifiedAt).reversed())
                 .collect(Collectors.toList());
 
         val targetUserId = sortedScraps.stream().map((scrap) -> (scrap.targetId())).toList();
-        val users = userRepository.getByUserIdList(targetUserId);
+        val users = userRepository.getByUserIdList(targetUserId); // 신고, 탈퇴 유저 제외
 
         val resultList = new ArrayList<UserScrapsResponseDTO>();
         Map<Long, User> userMap = users.stream().collect(Collectors.toMap(User::getId, Function.identity()));
