@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .and()
                     .authorizeHttpRequests()
                     .antMatchers("/v3/api-docs/**", "/swagger-ui.html", "/webjars/swagger-ui/**", "/swagger-ui/**",
-                            "/api/v1/social/**","/api/v1/s3/**").permitAll()
+                            "/api/v1/social/**","/api/v1/s3/**", "/api/v1/user/name/check", "/api/v1/user/onboard").permitAll()
                 .and()
                 .authorizeHttpRequests()
                 .antMatchers("/api/v1/magazine/detail").hasAuthority("PERMITTED")
