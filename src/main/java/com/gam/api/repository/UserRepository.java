@@ -72,4 +72,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             " where u.id in :userId and u.userStatus!='REPORTED' and u.userStatus!='WITHDRAWAL'")
     List<User> getByUserIdList(@Param("userId") List<Long> userId);
 
+    void deleteById(Long userId);
+
 }

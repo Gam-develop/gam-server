@@ -318,6 +318,13 @@ public class UserServiceImpl implements UserService {
         createUserDeleteAccountReasons(deleteAccountReason, directInput, user);
     }
 
+    @Override
+    public void deleteUser(Long userId) {
+        findUser(userId);
+
+        userRepository.deleteById(userId);
+    }
+
 
     private List<Work> getUserPortfolios(Long userId) {
         val works = workRepository.findByUserIdAndIsFirstAndIsActiveOrderByCreatedAtDesc(userId, false, true);

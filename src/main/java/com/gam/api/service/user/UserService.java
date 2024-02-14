@@ -25,4 +25,5 @@ public interface UserService {
     void updateNotionLink(Long userId, UserUpdateLinkRequestDTO request);
     List<SearchUserWorkDTO> searchUserAndWork(Long userId, String keyword);
     void deleteUserAccount(Long userId, UserDeleteAccountRequestDTO userDeleteAccountRequestDTO);
+    void deleteUser(Long userId);
     }
