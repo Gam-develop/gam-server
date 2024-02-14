@@ -35,6 +35,7 @@ public class UserServiceImpl implements UserService {
     private final ReportRepository reportRepository;
     private final DeleteAccountReasonRepository deleteAccountReasonRepository;
     private final UserDeleteAccountReasonRepository userDeleteAccountReasonRepository;
+    private final AuthProviderRepository authProviderRepository;
     private static final int MAIN_GET_DESIGNER_COUNT = 5;
 
     @Transactional
@@ -318,11 +319,18 @@ public class UserServiceImpl implements UserService {
         createUserDeleteAccountReasons(deleteAccountReason, directInput, user);
     }
 
+    @Transactional
     @Override
     public void deleteUser(Long userId) {
         findUser(userId);
-
+        authProviderRepository.deleteAllByUserId(userId);
         userRepository.deleteById(userId);
+        // 유저 스크랩 - targetId
+        userScrapRepository.deleteAllByTargetId(userId);
+        // 유저 스크랩 - false인 것들
+        userScrapRepository.deleteAllByUserId(userId);
+        // 신고 - targetId
+        reportRepository.deleteAllByTargetUserId(userId);
     }
 
 

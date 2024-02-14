@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface AuthProviderRepository extends JpaRepository<AuthProvider, String> {
     AuthProvider searchAuthProviderById(String id);
     Optional<AuthProvider> searchAuthProviderByUser(User user);
+    void deleteAllByUserId(Long userId);
 }
