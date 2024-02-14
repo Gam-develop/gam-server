@@ -324,11 +324,11 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long userId) {
         findUser(userId);
         authProviderRepository.deleteAllByUserId(userId);
+        // 유저 스크랩 - false인 것들
+        userScrapRepository.deleteAllByUserId(userId);
         userRepository.deleteById(userId);
         // 유저 스크랩 - targetId
         userScrapRepository.deleteAllByTargetId(userId);
-        // 유저 스크랩 - false인 것들
-        userScrapRepository.deleteAllByUserId(userId);
         // 신고 - targetId
         reportRepository.deleteAllByTargetUserId(userId);
     }
