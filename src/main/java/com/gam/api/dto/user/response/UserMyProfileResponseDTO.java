@@ -20,7 +20,7 @@ public record UserMyProfileResponseDTO(
                 .info(user.getInfo())
                 .detail(user.getDetail())
                 .email(user.getEmail())
-                .userTag(user.getTags())
+                .userTag(user.getTags() == null ? new int[0] : user.getTags())
                 .build();
     }
 }

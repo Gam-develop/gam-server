@@ -217,6 +217,7 @@ public class UserServiceImpl implements UserService {
         if(Objects.nonNull(userScrap)){
             return UserProfileResponseDTO.of(userScrap.isStatus(), user);
         }
+        System.out.println(user.getTags());
         return UserProfileResponseDTO.of(false, user);
     }
 
