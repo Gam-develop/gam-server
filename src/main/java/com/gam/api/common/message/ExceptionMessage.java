@@ -8,6 +8,7 @@ import lombok.Getter;
 public enum ExceptionMessage {
     /** auth **/
     SECURITY_FILTER_EXCPETION("시큐리티 예외"),
+    TOKEN_USER_EXCEPTION("토큰 에러 - 토큰에 해당하는 유저를 찾을 수 없습니다."),
     WITHDRAWAL_USER("탈퇴한 사용자입니다."),
     EMPTY_TOKEN("빈 토큰입니다."),
     INVALID_TOKEN("유효하지 않은 토큰입니다."),

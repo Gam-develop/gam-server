@@ -1,6 +1,7 @@
 package com.gam.api.dto.user.response;
 
 import com.gam.api.entity.User;
+import java.util.ArrayList;
 import lombok.Builder;
 
 @Builder
@@ -32,7 +33,7 @@ record UserProfileResponseVO(
                 .info(user.getInfo())
                 .detail(user.getDetail())
                 .email(user.getEmail())
-                .userTag(user.getTags())
+                .userTag(user.getTags() == null ? new int[0] : user.getTags())
                 .build();
     }
 }

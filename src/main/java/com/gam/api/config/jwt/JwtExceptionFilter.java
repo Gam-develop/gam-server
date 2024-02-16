@@ -2,6 +2,7 @@ package com.gam.api.config.jwt;
 
 import com.gam.api.common.ApiResponse;
 import com.gam.api.common.exception.AuthException;
+import javax.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -26,11 +27,15 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         try {
             filterChain.doFilter(httpServletRequest, httpServletResponse);
-        } catch(AuthException e) {
+        } catch(AuthException | EntityNotFoundException e) {
             val objectMapper = new ObjectMapper();
-            val jsonResponse = objectMapper.writeValueAsString(ApiResponse.fail(e.getMessage()));
+            String jsonResponse = objectMapper.writeValueAsString(ApiResponse.fail(e.getMessage()));
 
-            httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+            if(e instanceof AuthException) {
+                httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+            } else if(e instanceof EntityNotFoundException) {
+                httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
+            }
             httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
             httpServletResponse.setCharacterEncoding("UTF-8");
             httpServletResponse.getWriter().write(jsonResponse);

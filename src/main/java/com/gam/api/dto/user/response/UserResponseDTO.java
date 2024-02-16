@@ -20,7 +20,7 @@ public record UserResponseDTO(
                 .userName(user.getUserName())
                 .userWorkThumbNail(Objects.isNull(user.getWorkThumbNail()) ? "" : user.getWorkThumbNail())
                 .viewCount(user.getViewCount())
-                .userTag(user.getTags())
+                .userTag(user.getTags() == null ? new int[0] : user.getTags())
                 .designerScrap(designerScrap)
                 .build();
     }
