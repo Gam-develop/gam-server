@@ -161,12 +161,21 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_SEARCH_USE_WORKS.getMessage(),response));
     }
 
+    @ApiOperation(value = "유저 탈퇴 - 비활성화 ")
     @DeleteMapping("/my/account")
     ResponseEntity<ApiResponse> deleteUserAccount(
             @AuthenticationPrincipal GamUserDetails userDetails,
             @Valid @RequestBody UserDeleteAccountRequestDTO request)
     {
         userService.deleteUserAccount(userDetails.getId(), request);
+        return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_DELETE_ACCOUNT.getMessage()));
+    }
+
+    @ApiOperation(value = "클라이언트 API - 유저 삭제")
+    @DeleteMapping("/client/{userId}")
+    ResponseEntity<ApiResponse> deleteUserClientApi(@AuthenticationPrincipal GamUserDetails userDetails, @PathVariable Long userId)
+    {
+        userService.deleteUser(userId);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_DELETE_ACCOUNT.getMessage()));
     }
 }

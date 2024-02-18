@@ -22,4 +22,7 @@ public interface UserScrapRepository extends JpaRepository<UserScrap, Long> {
             "  AND us.targetId NOT IN (SELECT rr.targetUser.id FROM Report rr WHERE rr.status = 'END') ")
     List<UserScrapQueryDto> findUserScrapsExceptBlockUser(@Param("userId") long userId);
 
+    void deleteAllByTargetId(Long targetId);
+    void deleteAllByUserId(Long userId);
+
 }

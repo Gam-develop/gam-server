@@ -83,24 +83,24 @@ public class User extends TimeStamped {
     @Column(name = "magazine_view_count")
     private int magazineViewCount;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Block> blocks;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserTag> userTag;
 
     @Where(clause = "status = true")
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     List<UserScrap> userScraps = new ArrayList<>();
 
     @Where(clause = "status = true")
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     List<MagazineScrap> magazineScraps = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     List<Work> works = new ArrayList<>();
 
-    @OneToMany(mappedBy = "targetUser")
+    @OneToMany(mappedBy = "targetUser", cascade = CascadeType.ALL)
     private List<Report> reported;
 
     @Type(type = "int-array")
@@ -112,7 +112,7 @@ public class User extends TimeStamped {
     @Column(name = "selected_first_at")
     private LocalDateTime selectedFirstAt;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserDeleteAccountReason> userDeleteAccountReason;
 
     public void updateSelectedFirstAt() {

@@ -35,6 +35,7 @@ public class UserServiceImpl implements UserService {
     private final ReportRepository reportRepository;
     private final DeleteAccountReasonRepository deleteAccountReasonRepository;
     private final UserDeleteAccountReasonRepository userDeleteAccountReasonRepository;
+    private final AuthProviderRepository authProviderRepository;
     private static final int MAIN_GET_DESIGNER_COUNT = 5;
 
     @Transactional
@@ -187,13 +188,13 @@ public class UserServiceImpl implements UserService {
     public List<UserScrapsResponseDTO> getUserScraps(Long userId) {
         findUser(userId);
 
-        val userScraps = userScrapRepository.findUserScrapsExceptBlockUser(userId);
+        val userScraps = userScrapRepository.findUserScrapsExceptBlockUser(userId); // 차단 유저 제외
         val sortedScraps = userScraps.stream()
                 .sorted(Comparator.comparing(UserScrapQueryDto::modifiedAt).reversed())
                 .collect(Collectors.toList());
 
         val targetUserId = sortedScraps.stream().map((scrap) -> (scrap.targetId())).toList();
-        val users = userRepository.getByUserIdList(targetUserId);
+        val users = userRepository.getByUserIdList(targetUserId); // 신고, 탈퇴 유저 제외
 
         val resultList = new ArrayList<UserScrapsResponseDTO>();
         Map<Long, User> userMap = users.stream().collect(Collectors.toMap(User::getId, Function.identity()));
@@ -317,6 +318,20 @@ public class UserServiceImpl implements UserService {
         }
 
         createUserDeleteAccountReasons(deleteAccountReason, directInput, user);
+    }
+
+    @Transactional
+    @Override
+    public void deleteUser(Long userId) {
+        findUser(userId);
+        authProviderRepository.deleteAllByUserId(userId);
+        // 유저 스크랩 - false인 것들
+        userScrapRepository.deleteAllByUserId(userId);
+        userRepository.deleteById(userId);
+        // 유저 스크랩 - targetId
+        userScrapRepository.deleteAllByTargetId(userId);
+        // 신고 - targetId
+        reportRepository.deleteAllByTargetUserId(userId);
     }
 
 
