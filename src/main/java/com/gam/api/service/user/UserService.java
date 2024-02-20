@@ -26,4 +26,5 @@ public interface UserService {
     List<SearchUserWorkDTO> searchUserAndWork(Long userId, String keyword);
     void deleteUserAccount(Long userId, UserDeleteAccountRequestDTO userDeleteAccountRequestDTO);
     UserStatusResponseDTO getUserStatus(Long userId);
+    void deleteUser(Long userId);
     }

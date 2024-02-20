@@ -26,13 +26,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String userId) {
         List<GrantedAuthority> authorities = new ArrayList<>();
         val user = userRepository.findById(Long.parseLong(userId))
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.TOKEN_USER_EXCEPTION.getMessage()));
 
         val userRole = user.getRole();
         val userStatus = user.getUserStatus();
 
         val authUser = authProviderRepository.searchAuthProviderByUser(user)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.TOKEN_USER_EXCEPTION.getMessage()));
 
         val authUserId = String.valueOf(authUser.getId());
 

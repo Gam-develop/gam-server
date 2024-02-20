@@ -30,7 +30,7 @@ record UserInfoVO(
 	public static UserInfoVO of(User user, boolean designerScrap){
 		return UserInfoVO.builder()
 				.userId(user.getId())
-				.userTag(user.getTags())
+				.userTag(user.getTags() == null ? new int[0] : user.getTags())
 				.userName(user.getUserName())
 				.viewCount(user.getViewCount())
 				.userDetail(user.getDetail())

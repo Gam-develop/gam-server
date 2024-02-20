@@ -21,6 +21,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException accessDeniedException) throws IOException {
         val objectMapper = new ObjectMapper();
+
         val exceptionMessage = determineExceptionMessage(httpServletRequest.getRequestURI());
         val jsonResponse = objectMapper.writeValueAsString(
                     ApiResponse.fail(exceptionMessage)
@@ -35,8 +36,11 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     private String determineExceptionMessage(String requestUri) {
         if (requestUri.contains("admin")) {
             return ExceptionMessage.NOT_ADMIN_USER.getMessage();
-        } else {
+        } else if(requestUri.contains("/magazine/detail")) {
             return ExceptionMessage.PORTFOLIO_UNCOMPLETED_USER.getMessage();
+        } else if(requestUri.contains("work") || requestUri.contains("user") || requestUri.contains("magazine")) {
+            return ExceptionMessage.WITHDRAWAL_USER.getMessage();
         }
+        return ExceptionMessage.SECURITY_FILTER_EXCPETION.getMessage();
     }
 }
