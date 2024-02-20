@@ -34,6 +34,7 @@ public enum ResponseMessage {
     SUCCESS_DISCOVERY_GET_USERS("둘러보기-발견에서 유저들의 정보를 갖고왔습니다."),
     SUCCESS_GET_USER_SCRAPS("스크랩한 유저들의 정보를 갖고 왔습니다."),
     SUCCESS_DELETE_ACCOUNT("회원 탈퇴 성공"),
+    SUCCESS_GET_USER_STATUS("유저 권한 조회 성공"),
 
     /** work **/
     SUCCESS_CREATE_WORK("작업물 생성 성공"),

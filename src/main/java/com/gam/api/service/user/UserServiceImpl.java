@@ -208,8 +208,6 @@ public class UserServiceImpl implements UserService {
         return resultList;
     }
 
-
-
     @Override
     public UserProfileResponseDTO getUserProfile(Long myId, Long userId) {
         val user = findUser(userId);
@@ -319,6 +317,12 @@ public class UserServiceImpl implements UserService {
 
         createUserDeleteAccountReasons(deleteAccountReason, directInput, user);
     }
+
+    @Override
+    public UserStatusResponseDTO getUserStatus(Long userId) {
+        val user = findUser(userId);
+        return UserStatusResponseDTO.of(user);
+  }
 
     @Transactional
     @Override
