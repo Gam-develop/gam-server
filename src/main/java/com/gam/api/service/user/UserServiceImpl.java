@@ -207,8 +207,6 @@ public class UserServiceImpl implements UserService {
         return resultList;
     }
 
-
-
     @Override
     public UserProfileResponseDTO getUserProfile(Long myId, Long userId) {
         val user = findUser(userId);

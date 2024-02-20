@@ -6,11 +6,13 @@ import lombok.Builder;
 
 @Builder
 public record UserStatusResponseDTO(
-        UserStatus userStatus
+        UserStatus userStatus,
+        int magazineCount
 ){
     public static UserStatusResponseDTO of (User user) {
         return UserStatusResponseDTO.builder()
                 .userStatus(user.getUserStatus())
+                .magazineCount(user.getMagazineViewCount())
                 .build();
     }
 }
