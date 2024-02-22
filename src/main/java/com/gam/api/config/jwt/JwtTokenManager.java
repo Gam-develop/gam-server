@@ -4,7 +4,7 @@ import com.gam.api.common.exception.AuthException;
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.common.util.RedisUtil;
 import com.gam.api.config.AuthConfig;
-import com.gam.api.service.user.UserDetailsServiceImpl;
+import com.gam.api.domain.user.service.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
