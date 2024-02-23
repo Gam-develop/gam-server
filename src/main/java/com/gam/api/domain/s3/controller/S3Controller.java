@@ -1,8 +1,8 @@
-package com.gam.api.external.s3.controller;
+package com.gam.api.domain.s3.controller;
 
 import com.gam.api.common.message.ResponseMessage;
-import com.gam.api.external.s3.dto.request.PresignedRequestDTO;
-import com.gam.api.external.s3.service.S3ServiceImpl;
+import com.gam.api.domain.s3.dto.request.PresignedRequestDTO;
+import com.gam.api.domain.s3.service.S3ServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.val;

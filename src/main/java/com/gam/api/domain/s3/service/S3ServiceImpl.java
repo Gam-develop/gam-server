@@ -1,10 +1,10 @@
-package com.gam.api.external.s3.service;
+package com.gam.api.domain.s3.service;
 
 import com.gam.api.common.exception.AwsException;
 import com.gam.api.common.message.*;
 import com.gam.api.config.S3Config;
-import com.gam.api.external.s3.dto.request.PresignedRequestDTO;
-import com.gam.api.external.s3.dto.response.PresignedResponseDTO;
+import com.gam.api.domain.s3.dto.request.PresignedRequestDTO;
+import com.gam.api.domain.s3.dto.response.PresignedResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.HttpStatus;

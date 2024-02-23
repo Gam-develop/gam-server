@@ -13,7 +13,7 @@ import com.gam.api.domain.user.entity.UserStatus;
 import com.gam.api.domain.work.entity.Work;
 import com.gam.api.domain.user.repository.UserRepository;
 import com.gam.api.domain.work.repository.WorkRepository;
-import com.gam.api.external.s3.service.S3ServiceImpl;
+import com.gam.api.domain.s3.service.S3ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
