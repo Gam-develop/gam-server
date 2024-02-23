@@ -33,7 +33,7 @@ public class ErrorHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception){
-        ApiResponse response = ApiResponse.fail(EMPTY_METHOD_ARGUMENT.getMessage());
+        ApiResponse response = ApiResponse.fail(exception.getBindingResult().getAllErrors().get(0).getDefaultMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
