@@ -6,6 +6,7 @@ import com.gam.api.domain.admin.dto.magazine.request.MagazineRequestDTO;
 import com.gam.api.domain.user.entity.GamUserDetails;
 import com.gam.api.domain.admin.service.AdminService;
 import io.swagger.annotations.ApiOperation;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +51,7 @@ public class AdminController {
 
     @ApiOperation(value = "매거진 - 수정")
     @PatchMapping("/magazine/{magazineId}")
-    public ResponseEntity<ApiResponse> editMagazine(@PathVariable Long magazineId, @RequestBody MagazineRequestDTO request) {
+    public ResponseEntity<ApiResponse> editMagazine(@PathVariable Long magazineId, @Valid @RequestBody MagazineRequestDTO request) {
         adminService.editMagazine(magazineId, request);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_EDIT_MAGAZINE.getMessage()));
     }
