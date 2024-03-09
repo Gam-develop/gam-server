@@ -11,7 +11,6 @@ public record MagazineRequestDTO(
         @NotBlank(message = "magazine title은 빈스트링 일 수 없습니다.")
         String title,
         @NotNull(message = "magazine photo는 null일 수 없습니다.")
-        @NotBlank(message = "magazine title은 빈스트링 일 수 없습니다.")
         List<String> magazinePhotos,
         @NotNull(message = "magazine intro는 null일 수 없습니다.")
         @NotBlank(message = "magazine intro는 빈스트링 일 수 없습니다.")
@@ -20,7 +19,6 @@ public record MagazineRequestDTO(
         @NotBlank(message = "magazine interviewPerson은 빈스트링 일 수 없습니다.")
         String interviewPerson,
         @NotNull(message = "magazine questions는 null일 수 없습니다.")
-        @NotBlank(message = "magazine questions는 빈스트링 일 수 없습니다.")
         List<QuestionVO> questions
 ) {
     @Builder

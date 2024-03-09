@@ -3,6 +3,7 @@ package com.gam.api.domain.admin.service;
 
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.domain.admin.dto.magazine.request.MagazineRequestDTO;
+import com.gam.api.domain.admin.dto.magazine.request.MagazineRequestDTO.QuestionVO;
 import com.gam.api.domain.admin.dto.magazine.response.MagazineListResponseDTO;
 
 import com.gam.api.domain.admin.dto.magazine.response.MagazineDetailResponseDTO;
@@ -13,6 +14,10 @@ import com.gam.api.domain.magazine.repository.MagazineRepository;
 import com.gam.api.domain.magazine.repository.QuestionRepository;
 import com.gam.api.domain.user.repository.UserRepository;
 import com.gam.api.domain.work.repository.WorkRepository;
+import java.util.ArrayList;
+import java.util.Collections;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.stereotype.Service;
@@ -27,9 +32,9 @@ import java.util.stream.Collectors;
 public class AdminServiceImpl implements AdminService {
 
     private final MagazineRepository magazineRepository;
-    private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
     private final WorkRepository workRepository;
+    private final int MAX_MAGAZINE_PHOTO_COUNT = 4;
 
     @Override
     public List<MagazineListResponseDTO> getMagazines() {
@@ -49,7 +54,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void createMagazine(MagazineRequestDTO request) {
         val mainPhotoCount = request.magazinePhotos().size();
-        if (mainPhotoCount > 4) {
+        if (mainPhotoCount > MAX_MAGAZINE_PHOTO_COUNT) {
             throw new IllegalArgumentException(ExceptionMessage.INVALID_MAIN_PHOTOS_COUNT.getMessage());
         }
 
@@ -64,47 +69,53 @@ public class AdminServiceImpl implements AdminService {
         val magazinePhotos = request.magazinePhotos().toArray(new String[request.magazinePhotos().size()]);
         magazine.setMagazine_photos(magazinePhotos);
 
-        request.questions().stream()
-                .map((questionVO) -> {
-                            Question question = Question.builder()
-                                    .questionOrder(questionVO.questionOrder())
-                                    .question(questionVO.question())
-                                    .answer(questionVO.answer())
-                                    .build();
-
-                            if (questionVO.answerImage() == "") {
-                                question.setAnswerImage(null);
-                                question.setImageCaption(null);
-                            } else {
-                                question.setAnswerImage(questionVO.answerImage());
-                                question.setImageCaption(questionVO.imageCaption());
-                            }
-                            question.setMagazine(magazine);
-                            return question;
-                }).collect(Collectors.toList());
+        toQuestionEntity(magazine, request.questions());
     }
 
     @Override
+    @Transactional
     public void editMagazine(Long magazineId, MagazineRequestDTO request) {
         val magazine = magazineRepository.findById(magazineId)
-                .orElseThrow(()-> new EntityNotFoundException());
+                .orElseThrow(() -> new EntityNotFoundException());
 
-        if (magazine.getMagazineTitle() != request.title()) {
-            magazine.setMagazineTitle(request.title());
-        }
-        if (magazine.getIntroduction() != request.magazineIntro()) {
-            magazine.setIntroduction(request.magazineIntro());
-        }
-        if (magazine.getInterviewPerson() != request.interviewPerson()) {
-            magazine.setInterviewPerson(request.interviewPerson());
-        }
+        magazine.setMagazineTitle(request.title());
+        magazine.setIntroduction(request.magazineIntro());
+        magazine.setInterviewPerson(request.interviewPerson());
 
         val magazinePhotos = request.magazinePhotos().toArray(new String[request.magazinePhotos().size()]);
         magazine.setMagazine_photos(magazinePhotos);
         magazineRepository.save(magazine);
 
-        val currentQuestions = magazine.getQuestions();
-        val requestQuestions = request.questions().stream()
+        List<Question> currentQuestions = new ArrayList<>(magazine.getQuestions());
+        Collections.sort(request.questions(), (q1, q2) -> Integer.compare(q1.questionOrder(), q2.questionOrder()));
+
+        int requestQuestionSize = request.questions().size();
+
+        if(requestQuestionSize <= currentQuestions.size()) { // 질문이 삭제 됐을 경우
+            for (int i = 0; i < requestQuestionSize; i++) {
+                updateQuestionDetails(currentQuestions.get(i), request.questions().get(i));
+            }
+            magazine.getQuestions().removeAll(currentQuestions.subList(request.questions().size(), currentQuestions.size()));
+            return;
+        }
+
+        for (int i = 0; i < currentQuestions.size(); i++) { // 질문이 추가 될 경우
+            updateQuestionDetails(currentQuestions.get(i), request.questions().get(i));
+        }
+        List<QuestionVO> createQuestion = request.questions().subList(currentQuestions.size(), request.questions().size());
+        toQuestionEntity(magazine, createQuestion);
+    }
+
+    private void updateQuestionDetails(Question oldQuestion, QuestionVO newQuestion) {
+        oldQuestion.setQuestionOrder(newQuestion.questionOrder());
+        oldQuestion.setQuestion(newQuestion.question());
+        oldQuestion.setAnswer(newQuestion.answer());
+        oldQuestion.setAnswerImage(newQuestion.answerImage());
+        oldQuestion.setImageCaption(newQuestion.imageCaption());
+    }
+
+    private List<Question> toQuestionEntity(Magazine magazine, List<QuestionVO> request) {
+        return request.stream()
                 .map((questionVO) -> {
                     Question question = Question.builder()
                             .questionOrder(questionVO.questionOrder())
@@ -112,56 +123,18 @@ public class AdminServiceImpl implements AdminService {
                             .answer(questionVO.answer())
                             .build();
 
-                    if (questionVO.answerImage() == "") {
+                    if (questionVO.answerImage().isBlank()) {
                         question.setAnswerImage(null);
                         question.setImageCaption(null);
                     } else {
                         question.setAnswerImage(questionVO.answerImage());
                         question.setImageCaption(questionVO.imageCaption());
                     }
+                    question.setMagazine(magazine);
                     return question;
                 }).collect(Collectors.toList());
-
-        checkEntityDiff(currentQuestions, requestQuestions);
-
-        if (currentQuestions.size() < requestQuestions.size()) {
-            val createCount = requestQuestions.size() - currentQuestions.size();
-            val currentQuestionSize = currentQuestions.size();
-            for (int i = 0 ; i<createCount; i++) {
-                val createQuestion = questionRepository.save(requestQuestions.get(currentQuestionSize+i));
-                createQuestion.setMagazine(magazine);
-            }
-        }
-        questionRepository.saveAll(currentQuestions);
-    }
-    private List<Question> checkEntityDiff(List<Question> currentQuestions, List<Question> requestQuestions) {
-        val changeSize = currentQuestions.size();
-        for (int i = 0; i<changeSize; i++) {
-            if (!currentQuestions.get(i).equals(requestQuestions.get(i))) {
-                editChangeQuestion(currentQuestions.get(i), requestQuestions.get(i));
-            }
-        }
-        return currentQuestions;
     }
 
-    private Question editChangeQuestion(Question currentEntity, Question requestEntity) {
-        if (currentEntity.getQuestionOrder() != requestEntity.getQuestionOrder()) {
-            currentEntity.setQuestionOrder(requestEntity.getQuestionOrder());
-        }
-        if (currentEntity.getQuestion() != requestEntity.getQuestion()) {
-            currentEntity.setQuestion(requestEntity.getQuestion());
-        }
-        if (currentEntity.getAnswer() != requestEntity.getAnswer()) {
-            currentEntity.setAnswer(requestEntity.getAnswer());
-        }
-        if (currentEntity.getAnswerImage() != requestEntity.getAnswerImage()) {
-            currentEntity.setAnswerImage(requestEntity.getAnswerImage());
-        }
-        if (currentEntity.getImageCaption() != requestEntity.getImageCaption()) {
-            currentEntity.setImageCaption(requestEntity.getImageCaption());
-        }
-        return currentEntity;
-    }
 
     @Override
     public void deleteUserAccount(Long userId) {
