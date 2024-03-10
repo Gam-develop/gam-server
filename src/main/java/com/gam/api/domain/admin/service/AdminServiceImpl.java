@@ -116,9 +116,10 @@ public class AdminServiceImpl implements AdminService {
         oldQuestion.setImageCaption(newQuestion.imageCaption());
     }
 
-    private List<Question> toQuestionEntity(Magazine magazine, List<QuestionVO> request) {
-        return request.stream()
-                .map((questionVO) -> {
+    @Transactional
+    public void toQuestionEntity(Magazine magazine, List<QuestionVO> request) {
+        request.stream()
+                .forEach((questionVO) -> {
                     Question question = Question.builder()
                             .questionOrder(questionVO.questionOrder())
                             .question(questionVO.question())
@@ -133,8 +134,7 @@ public class AdminServiceImpl implements AdminService {
                         question.setImageCaption(questionVO.imageCaption());
                     }
                     question.setMagazine(magazine);
-                    return question;
-                }).collect(Collectors.toList());
+                });
     }
 
 
