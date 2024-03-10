@@ -7,20 +7,18 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public record MagazineRequestDTO(
-        @NotNull
-        @NotBlank
+        @NotNull(message = "magazine title은 null일 수 없습니다.")
+        @NotBlank(message = "magazine title은 빈스트링 일 수 없습니다.")
         String title,
-        @NotNull
-        @NotBlank
+        @NotNull(message = "magazine photo는 null일 수 없습니다.")
         List<String> magazinePhotos,
-        @NotNull
-        @NotBlank
+        @NotNull(message = "magazine intro는 null일 수 없습니다.")
+        @NotBlank(message = "magazine intro는 빈스트링 일 수 없습니다.")
         String magazineIntro,
-        @NotNull
-        @NotBlank
+        @NotNull(message = "magazine interviewPerson은 null일 수 없습니다.")
+        @NotBlank(message = "magazine interviewPerson은 빈스트링 일 수 없습니다.")
         String interviewPerson,
-        @NotNull
-        @NotBlank
+        @NotNull(message = "magazine questions는 null일 수 없습니다.")
         List<QuestionVO> questions
 ) {
     @Builder

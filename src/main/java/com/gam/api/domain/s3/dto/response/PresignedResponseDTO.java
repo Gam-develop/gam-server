@@ -1,4 +1,4 @@
-package com.gam.api.external.s3.dto.response;
+package com.gam.api.domain.s3.dto.response;
 
 import lombok.Builder;
 

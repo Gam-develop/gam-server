@@ -70,4 +70,17 @@ public class Question extends TimeStamped {
     public int hashCode() {
         return Objects.hash(getQuestionOrder(), getQuestion(), getAnswer(), getAnswerImage(), getImageCaption());
     }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "id=" + id +
+                ", magazine=" + magazine +
+                ", questionOrder=" + questionOrder +
+                ", question='" + question + '\'' +
+                ", answer='" + answer + '\'' +
+                ", answerImage='" + answerImage + '\'' +
+                ", imageCaption='" + imageCaption + '\'' +
+                '}';
+    }
 }

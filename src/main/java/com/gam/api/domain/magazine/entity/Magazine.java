@@ -60,8 +60,6 @@ public class Magazine extends TimeStamped {
 
     public void scrapCountDown(){ this.scrapCount -= 1; }
 
-    public void setQuestions(List<Question> questions) { this.questions = questions; }
-
     @Builder
     public Magazine(String thumbNail, String magazineTitle, String introduction, String interviewPerson) {
         this.thumbNail = thumbNail;
