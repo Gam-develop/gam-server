@@ -27,7 +27,7 @@ public class WorkController {
     @PostMapping("")
     public ResponseEntity<ApiResponse> createWork(
             @AuthenticationPrincipal GamUserDetails userDetails,
-            @RequestBody WorkCreateRequestDTO request)
+            @Valid @RequestBody WorkCreateRequestDTO request)
     {
         val response = workService.createWork(userDetails.getId(), request);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_CREATE_WORK.getMessage(), response));
