@@ -95,7 +95,9 @@ public class AdminServiceImpl implements AdminService {
             for (int i = 0; i < requestQuestionSize; i++) {
                 updateQuestionDetails(currentQuestions.get(i), request.questions().get(i));
             }
-            magazine.getQuestions().removeAll(currentQuestions.subList(request.questions().size(), currentQuestions.size()));
+            if(requestQuestionSize < currentQuestions.size()) {
+                magazine.getQuestions().removeAll(currentQuestions.subList(request.questions().size(), currentQuestions.size()));
+            }
             return;
         }
 
