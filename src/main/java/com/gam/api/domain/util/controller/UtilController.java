@@ -34,7 +34,4 @@ public class UtilController {
             log.info("exception", e);
         }
     }
-
-
-
 }
