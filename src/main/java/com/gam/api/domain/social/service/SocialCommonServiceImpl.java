@@ -43,6 +43,7 @@ public class SocialCommonServiceImpl implements SocialCommonService {
         user.updateDeviceToken(deviceToken);
     }
 
+    @Transactional
     private SocialLoginResponseDTO reLogin(User user, String deviceToken) {
         val userId = user.getId();
         val accessToken = jwtTokenManager.createAccessToken(userId);
@@ -51,6 +52,10 @@ public class SocialCommonServiceImpl implements SocialCommonService {
         RedisUtil.saveRefreshToken(redisTemplate, refreshToken, userId);
 
         saveDeviceToken(user, deviceToken);
+
+        if (user.getUserStatus() == UserStatus.WITHDRAWAL) {
+            user.setUserStatus(UserStatus.PERMITTED);
+        }
 
         val isProfileCompleted = chkProfileCompleted(user);
         return SocialLoginResponseDTO.of(isProfileCompleted, userId, accessToken, refreshToken, gamConfig.getAppVersion());
