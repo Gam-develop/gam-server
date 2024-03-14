@@ -32,15 +32,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "    on work.user.id = us.id " +
             "left join UserScrap userScrap" +
             "    on userScrap.targetId = us.id and userScrap.user.id = :userId " +
-            "WHERE us.id not in (:userId) " +
-            "  and us.userStatus='PERMITTED' and us.role = 'USER' " +
+            "WHERE us.userStatus = 'PERMITTED' and us.role = 'USER' " +
             "and us.id not in ( " +
             "    select block.targetId " +
             "    from Block block " +
             "    where block.user.id = :userId and block.status = true) " +
             "GROUP BY us.id, userScrap.status " +
             "order by us.selectedFirstAt desc")
-    List<UserScrapUserQueryDto>findAllDiscoveryUser(@Param("userId") long userId);
+    List<UserScrapUserQueryDto> findAllDiscoveryUser(@Param("userId") long userId);
 
 
     @Query("select distinct new com.gam.api.domain.user.dto.query.UserScrapUserQueryDto(us, count(userTag.tag.id) as correctCount, coalesce(userScrap.status, false) as scrapStatus, us.selectedFirstAt) " +
@@ -52,7 +51,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "left join UserScrap userScrap" +
             "    on userScrap.targetId = us.id and userScrap.user.id = :userId " +
             "WHERE userTag.tag.id IN :tag " +
-            "  and us.id not in (:userId) " +
             "  and us.userStatus='PERMITTED' and us.role = 'USER' " +
             "and us.id not in ( " +
             "    select block.targetId " +
