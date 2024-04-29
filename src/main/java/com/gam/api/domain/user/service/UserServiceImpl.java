@@ -71,10 +71,6 @@ public class UserServiceImpl implements UserService {
         val targetUser = findUser(request.targetUserId());
         val user = findUser(userId);
 
-        if (targetUser.getId() == userId) {
-            throw new ScrapException(ExceptionMessage.INVALID_SCRAP_ID.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-
         val userScrap = userScrapRepository.findByUser_idAndTargetId(userId, targetUser.getId());
 
         if (Objects.isNull(userScrap)) {
