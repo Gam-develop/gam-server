@@ -24,6 +24,7 @@ record UserInfoVO(
 		int[] userTag,
 		String userName,
 		int viewCount,
+		String userDetail,
 		boolean designerScrap
 ){
 	public static UserInfoVO of(User user, boolean designerScrap){
@@ -32,6 +33,7 @@ record UserInfoVO(
 				.userTag(user.getTags() == null ? new int[0] : user.getTags())
 				.userName(user.getUserName())
 				.viewCount(user.getViewCount())
+				.userDetail(user.getDetail())
 				.designerScrap(designerScrap)
 				.build();
 	}
@@ -41,14 +43,12 @@ record UserInfoVO(
 record WorkInfoVO(
 		Long workId,
 		String workTitle,
-		String workDetail,
 		String photoUrl
 ){
 	public static WorkInfoVO of (Work work){
 		return WorkInfoVO.builder()
 				.workId(work.getId())
 				.workTitle(work.getTitle())
-				.workDetail(work.getDetail())
 				.photoUrl(work.getPhotoUrl())
 				.build();
 	}
