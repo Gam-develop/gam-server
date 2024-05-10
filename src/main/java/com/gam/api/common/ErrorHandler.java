@@ -4,6 +4,7 @@ package com.gam.api.common;
 import com.gam.api.common.exception.AuthException;
 import com.gam.api.common.exception.AwsException;
 import com.gam.api.common.exception.BlockException;
+import com.gam.api.common.exception.ReportException;
 import com.gam.api.common.exception.ScrapException;
 import com.gam.api.common.exception.WorkException;
 import org.springframework.http.HttpStatus;
@@ -63,6 +64,12 @@ public class ErrorHandler {
 
     @ExceptionHandler(ScrapException.class)
     public ResponseEntity<ApiResponse> ScrapException(ScrapException exception) {
+        ApiResponse response = ApiResponse.fail(exception.getMessage());
+        return new ResponseEntity<>(response, exception.getStatusCode());
+    }
+
+    @ExceptionHandler(ReportException.class)
+    public ResponseEntity<ApiResponse> ReportException(ReportException exception){
         ApiResponse response = ApiResponse.fail(exception.getMessage());
         return new ResponseEntity<>(response, exception.getStatusCode());
     }
