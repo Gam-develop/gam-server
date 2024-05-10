@@ -35,14 +35,14 @@ public class SecurityConfig {
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                     .authorizeHttpRequests()
-                    .antMatchers("/v3/api-docs/**", "/swagger-ui.html", "/webjars/swagger-ui/**", "/swagger-ui/**", "/api/v1/social/**",
-                            "/api/v1/work","/api/v1/user/name/check").permitAll()
+                    .antMatchers("/v3/api-docs/**", "/swagger-ui.html", "/webjars/swagger-ui/**", "/swagger-ui/**",
+                            "/api/v1/social/**","/api/v1/s3/**", "/api/v1/user/name/check", "/api/v1/user/onboard").permitAll()
                 .and()
-                .authorizeHttpRequests() // TODO - code review 해봐야할 예정 관련 이슈 -#111
-                .antMatchers("/api/v1/user/onboard").hasRole("USER")
+                .authorizeHttpRequests()
+                .antMatchers("/api/v1/magazine/detail").hasAuthority("PERMITTED")
                 .and()
-                    .authorizeHttpRequests()
-                    .antMatchers("/api/v1/s3/**", "/api/v1/work/**", "/api/v1/user/**", "/api/v1/magazine/**").hasAuthority("PERMITTED")
+                .authorizeHttpRequests()
+                .antMatchers("/api/v1/work/**", "/api/v1/user/**", "/api/v1/magazine/**", "/api/v1/magazine/scraps", "/api/v1/report/**").hasAnyAuthority("PERMITTED", "NOT_PERMITTED", "REPORTED")
                 .and()
                     .authorizeHttpRequests()
                     .antMatchers("/api/v1/admin/**").hasRole("ADMIN")

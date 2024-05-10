@@ -21,4 +21,7 @@ public class GamConfig {
 
     @Value("${gam.url.makers}")
     private String makersUrl;
+
+    @Value("${gam.url.magazineBase}")
+    private String magaineBaseUrl;
 }

@@ -4,6 +4,7 @@ package com.gam.api.common;
 import com.gam.api.common.exception.AuthException;
 import com.gam.api.common.exception.AwsException;
 import com.gam.api.common.exception.BlockException;
+import com.gam.api.common.exception.ScrapException;
 import com.gam.api.common.exception.WorkException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class ErrorHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception){
-        ApiResponse response = ApiResponse.fail(EMPTY_METHOD_ARGUMENT.getMessage());
+        ApiResponse response = ApiResponse.fail(exception.getBindingResult().getAllErrors().get(0).getDefaultMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
@@ -56,6 +57,12 @@ public class ErrorHandler {
 
     @ExceptionHandler(BlockException.class)
     public ResponseEntity<ApiResponse> BlockException(BlockException exception){
+        ApiResponse response = ApiResponse.fail(exception.getMessage());
+        return new ResponseEntity<>(response, exception.getStatusCode());
+    }
+
+    @ExceptionHandler(ScrapException.class)
+    public ResponseEntity<ApiResponse> ScrapException(ScrapException exception) {
         ApiResponse response = ApiResponse.fail(exception.getMessage());
         return new ResponseEntity<>(response, exception.getStatusCode());
     }

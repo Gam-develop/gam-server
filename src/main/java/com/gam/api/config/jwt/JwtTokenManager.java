@@ -4,7 +4,7 @@ import com.gam.api.common.exception.AuthException;
 import com.gam.api.common.message.ExceptionMessage;
 import com.gam.api.common.util.RedisUtil;
 import com.gam.api.config.AuthConfig;
-import com.gam.api.service.user.UserDetailsServiceImpl;
+import com.gam.api.domain.user.service.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -74,7 +74,7 @@ public class JwtTokenManager {
 
             return claims.getSubject();
         } catch (SignatureException | ExpiredJwtException e) {
-            throw new AuthException(ExceptionMessage.INVALID_SIGNATURE.getMessage(),HttpStatus.BAD_REQUEST);
+            throw new AuthException(ExceptionMessage.INVALID_TOKEN.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -82,7 +82,7 @@ public class JwtTokenManager {
         val userId = getUserIdFromAuthToken(token);
 
         if (RedisUtil.checkBlackListExist(redisTemplate, Long.parseLong(userId), token)) {
-            throw new AuthException(ExceptionMessage.INVALID_TOKEN.getMessage(),HttpStatus.BAD_REQUEST);
+            throw new AuthException(ExceptionMessage.INVALID_TOKEN.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
         val userDetails = userDetailsService.loadUserByUsername(userId);
