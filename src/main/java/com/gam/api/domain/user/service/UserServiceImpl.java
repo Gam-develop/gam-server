@@ -301,7 +301,7 @@ public class UserServiceImpl implements UserService {
             val firstWorkId = dto.user().getFirstWorkId();
             Work firstWork;
 
-            if (firstWorkId == null || !dto.user().getActiveWorks().isEmpty()) { // User 권한 에러
+            if (firstWorkId == null && !dto.user().getActiveWorks().isEmpty()) { // User 권한 에러
                 firstWork = workRepository.findFirstByUserIdAndIsActiveOrderByCreatedAtDesc(dto.user().getId(), true)
                         .orElse(Work.builder()
                                 .user(dto.user())
