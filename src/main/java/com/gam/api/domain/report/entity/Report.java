@@ -35,22 +35,35 @@ public class Report extends TimeStamped {
     @JoinColumn(name = "target_user_id")
     private User targetUser;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User reportUser;
+
     @Column(name = "work_Id")
     private Long workId;
 
     @Builder
-    public Report(User targetUser, String content, Long workId){
+    public Report(User reportUser, User targetUser, String content, Long workId){
         this.status = ReportStatus.PROCEEDING;
-        setUser(targetUser);
+        setTargetUser(targetUser);
+        setReportUser(reportUser);
         this.content = content;
         this.workId = workId;
     }
 
-    private void setUser(User targetUser) {
+    private void setTargetUser(User targetUser) {
         if (Objects.nonNull(this.targetUser)) {
             this.targetUser.getReported().remove(this);
         }
         this.targetUser = targetUser;
         targetUser.getReported().add(this);
+    }
+
+    private void setReportUser(User reportUser) {
+        if (Objects.nonNull(this.reportUser)) {
+            this.reportUser.getReports().remove(this);
+        }
+        this.reportUser = reportUser;
+        reportUser.getReports().add(this);
     }
 }
