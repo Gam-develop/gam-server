@@ -39,7 +39,7 @@ public class ReportServiceImpl implements ReportService{
                                     .collect(Collectors.toList());
 
         if(!reports.isEmpty()) {
-            throw new ReportException(ExceptionMessage.ALREADY_REPORT_USER.getMessage(), HttpStatus.BAD_REQUEST);
+            throw new ReportException(ExceptionMessage.ALREADY_REPORTED_USER.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
         val report = Report.builder()
