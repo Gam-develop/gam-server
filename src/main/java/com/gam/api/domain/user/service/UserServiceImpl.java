@@ -276,6 +276,7 @@ public class UserServiceImpl implements UserService {
         val user = findUser(userId);
         user.setViewCount(user.getViewCount() + 1);
         val works = getUserPortfolios(userId);
+        works.forEach(w -> w.viewCountUp());
 
         val scrapList = requestUser.getUserScraps().stream()
                 .map(UserScrap::getTargetId)

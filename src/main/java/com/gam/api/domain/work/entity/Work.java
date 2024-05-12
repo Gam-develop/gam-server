@@ -78,4 +78,8 @@ public class Work extends TimeStamped {
     public void setIsFirst(boolean status){
         this.isFirst = status;
     }
+
+    public void viewCountUp() {
+        this.viewCount += 1;
+    }
 }
