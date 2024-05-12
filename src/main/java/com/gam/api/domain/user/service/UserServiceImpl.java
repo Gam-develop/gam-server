@@ -239,7 +239,6 @@ public class UserServiceImpl implements UserService {
         if(Objects.nonNull(userScrap)){
             return UserProfileResponseDTO.of(userScrap.isStatus(), user);
         }
-        System.out.println(user.getTags());
         return UserProfileResponseDTO.of(false, user);
     }
 
@@ -249,6 +248,7 @@ public class UserServiceImpl implements UserService {
 
         val me = findUser(userId);
         removeBlockUsers(users, me);
+        removeAdminUsers(users);
 
         int count = MAIN_GET_DESIGNER_COUNT; // Top 5만 갖고옴
         val first5Users = users.subList(0, Math.min(count, users.size()));
@@ -377,10 +377,6 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
     }
 
-    private Work findWork(Long workId) {
-        return workRepository.findById(workId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
-    }
 
     private void createUserScrap(User user, Long targetId, User targetUser){
         userScrapRepository.save(UserScrap.builder()
@@ -414,6 +410,10 @@ public class UserServiceImpl implements UserService {
     private void removeBlockUsers(List<User> users, User me) {
         val myBlockUserList = getBlockUsers(me);
         users.removeAll(myBlockUserList);
+    }
+
+    private void removeAdminUsers(List<User> users) {
+        users.removeIf(u -> u.getRole() != Role.USER);
     }
 
     private List<User> getBlockUsers(User user) { // TODO[성능] - 성능 저하 가능성 있음
