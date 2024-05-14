@@ -17,6 +17,3 @@ hooks:
     - location: deploy.sh
       timeout: 60
       runas: ubuntu
-    - location: switch.sh
-      timeout: 180
-      runas: ubuntu
