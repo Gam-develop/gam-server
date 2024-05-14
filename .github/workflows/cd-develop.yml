@@ -69,7 +69,7 @@ jobs:
       run: cp ./scripts/*.sh ./deploy
       
     - name: Make zip file
-      run: zip -r ./gam-dev-server.zip ./deploy
+      run: zip -r ./$GITHUB_SHA.zip ./deploy
       shell: bash
       
     - name: Configure AWS credentials
