@@ -161,27 +161,19 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserProfileUpdateResponseDTO updateMyProfile(Long userId, UserProfileUpdateRequestDTO request){
+    public UserProfileUpdateResponseDTO updateMyProfile(Long userId, UserProfileUpdateRequestDTO request) {
         val user = findUser(userId);
-
-        if (request.userInfo() != null) {
-            user.setInfo(request.userInfo());
-        }
-
-        if (request.userDetail() != null) {
-            user.setDetail(request.userDetail());
-        }
-
-        if (request.email() != null) {
-            user.setEmail(request.email());
-        }
-
-        if (request.tags() != null) {
-            val newTags = request.tags();
-            createUserTags(newTags, user);
-        }
+        updateUserFields(user, request);
 
         return UserProfileUpdateResponseDTO.of(user);
+    }
+
+    private void updateUserFields(User user, UserProfileUpdateRequestDTO request) {
+        Optional.ofNullable(request.userName()).ifPresent(user::setUserName);
+        Optional.ofNullable(request.userInfo()).ifPresent(user::setInfo);
+        Optional.ofNullable(request.userDetail()).ifPresent(user::setDetail);
+        Optional.ofNullable(request.email()).ifPresent(user::setEmail);
+        Optional.ofNullable(request.tags()).ifPresent(newTags -> createUserTags(newTags, user));
     }
 
     @Transactional
