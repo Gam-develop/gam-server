@@ -1,6 +1,7 @@
 <configuration scan="true" scanPeriod="60 seconds">
     <property name="LOG_PATH" value="log"/>
-    <property name="LOG_FILE_NAME" value="errorLog"/>
+    <property name="ERROR_LOG_FILE_NAME" value="errorLog"/>
+    <property name="WARN_LOG_FILE_NAME" value="warnLog"/>
     <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [traceId=%X{traceId}] [%thread] [%logger{40}] - %msg%n"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
@@ -17,7 +18,7 @@
             <onMismatch>DENY</onMismatch>
         </filter>
 
-        <file>${LOG_PATH}/${LOG_FILE_NAME}.log</file>
+        <file>${LOG_PATH}/${ERROR_LOG_FILE_NAME}.log</file>
 
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>${LOG_PATTERN}</pattern>
@@ -25,7 +26,7 @@
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/%d{yyyy-MM, aux}/${LOG_FILE_NAME}.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <totalSizeCap>20GB</totalSizeCap>
+            <totalSizeCap>2GB</totalSizeCap>
         </rollingPolicy>
 
     </appender>
@@ -38,7 +39,7 @@
             <onMismatch>DENY</onMismatch>
         </filter>
 
-        <file>log/warnLog.log</file>
+        <file>${LOG_PATH}/${WARN_LOG_FILE_NAME}.log</file>
 
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>${LOG_PATTERN}</pattern>
@@ -46,7 +47,7 @@
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/%d{yyyy-MM, aux}/warnLog.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <totalSizeCap>20GB</totalSizeCap>
+            <totalSizeCap>2GB</totalSizeCap>
         </rollingPolicy>
 
     </appender>
