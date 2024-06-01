@@ -29,24 +29,22 @@ public class S3ServiceImpl implements S3Service {
     private final S3Config s3Config;
     private final S3Presigner s3Presigner;
     private final S3Client s3Client;
-    private final String workBucketPath = "work/";
     private final ArrayList<String> imageFileExtension =
             new ArrayList<>(List.of("jpg", "jpeg", "png", "JPG", "JPEG", "PNG"));
 
     @Override
-    public PresignedResponseDTO getPresignedUrl(String fileName) {
-        return createPresignedUrl(fileName);
+    public PresignedResponseDTO getPresignedUrl(String fileName, String type) {
+        return createPresignedUrl(fileName, type);
     }
 
     @Override
     public List<PresignedResponseDTO> getPresignedUrls(PresignedRequestDTO presignedRequestDTO) {
         val fileNames = presignedRequestDTO.fileNames();
+        val type = presignedRequestDTO.type();
 
-        val preSignedUrls = fileNames.stream()
-                .map(fileName -> createPresignedUrl(fileName))
+        return fileNames.stream()
+                .map(fileName -> createPresignedUrl(fileName, type))
                 .collect(Collectors.toList());
-
-        return preSignedUrls;
     }
 
     @Override
@@ -64,8 +62,8 @@ public class S3ServiceImpl implements S3Service {
         s3Client.deleteObject(deleteObjectRequest);
     }
 
-    private PresignedResponseDTO createPresignedUrl(String fileName) {
-        val keyName = workBucketPath + UUID.randomUUID() + fileName;
+    private PresignedResponseDTO createPresignedUrl(String fileName, String type) {
+        val keyName = type + "/" + UUID.randomUUID();
         val splitFileName = fileName.split("\\.");
         val extension = splitFileName[splitFileName.length-1];
         val contentType = "image/" + extension;
@@ -80,13 +78,13 @@ public class S3ServiceImpl implements S3Service {
                 .contentType(contentType)
                 .build();
 
-        val presignRequest = PutObjectPresignRequest.builder()
+        val request = PutObjectPresignRequest.builder()
                 .signatureDuration(Duration.ofMinutes(10))
                 .putObjectRequest(objectRequest)
                 .build();
 
-        val presignedRequest = s3Presigner.presignPutObject(presignRequest);
-        val signedUrl = presignedRequest.url().toString();
+        val result = s3Presigner.presignPutObject(request);
+        val signedUrl = result.url().toString();
 
         return PresignedResponseDTO.of(signedUrl, keyName);
     }
