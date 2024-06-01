@@ -290,32 +290,36 @@ public class UserServiceImpl implements UserService {
             users = userRepository.findAllDiscoveryUserWithTag(userId, tags);
         }
 
-        return users.stream().map((dto) -> {
-            val firstWorkId = dto.user().getFirstWorkId();
-            Work firstWork;
+        Map<User, Boolean> scrapMap = new HashMap<User,Boolean>();
+        for (UserScrapUserQueryDto user:users) {
+            scrapMap.put(user.user(), user.scrapStatus());
+        }
 
-            if (firstWorkId == null && !dto.user().getActiveWorks().isEmpty()) { // User 권한 에러
-                firstWork = workRepository.findFirstByUserIdAndIsActiveOrderByCreatedAtDesc(dto.user().getId(), true)
-                        .orElse(Work.builder()
-                                .user(dto.user())
-                                .photoUrl("해당하는 작업물을 찾을 수 없습니다.")
-                                .detail("해당하는 작업물을 찾을 수 없습니다.")
-                                .title("해당하는 작업물을 찾을 수 없습니다.")
-                                .build());
-                dto.user().setUserStatus(UserStatus.NOT_PERMITTED);
-            }
-            else {
-                firstWork = dto.user().getActiveWorks().stream()
-                        .filter(work -> dto.user().getFirstWorkId().equals(work.getId()))
-                        .findFirst().get();
-            }
+        List<Work> workAll = new LinkedList<Work>();
 
-            val userScrap = dto.scrapStatus();
-            if (Objects.isNull(userScrap)) {
-                return UserDiscoveryResponseDTO.of(dto.user(), false, firstWork);
-            }
-            return UserDiscoveryResponseDTO.of(dto.user(), userScrap, firstWork);
-        }).collect(Collectors.toList());
+        for (UserScrapUserQueryDto user:users) {
+            workAll.addAll(workRepository.findAllByUserId(user.user().getId()));
+        }
+        workAll.stream().sorted();
+
+//        List<UserDiscoveryResponseDTO> userDiscoveryResponseDTOS = users.stream().map((dto) -> {
+//            val targetUserId = dto.user().getId();
+//            List<Work> works = workRepository.findAllByUserId(targetUserId);
+//
+//            val userScrap = dto.scrapStatus();
+//            List<UserDiscoveryResponseDTO> responseDTOs = new ArrayList<>();
+//
+//            for (Work work : works) {
+//                if (Objects.isNull(userScrap)) {
+//                    responseDTOs.add(UserDiscoveryResponseDTO.of(dto.user(), false, work));
+//                } else {
+//                    responseDTOs.add(UserDiscoveryResponseDTO.of(dto.user(), userScrap, work));
+//                }
+//            }
+//            return responseDTOs;
+//        }).flatMap(Collection::stream).collect(Collectors.toList());
+//
+//        return userDiscoveryResponseDTOS;
     }
 
 

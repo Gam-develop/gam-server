@@ -5,6 +5,8 @@ import com.gam.api.domain.user.entity.User;
 import com.gam.api.domain.work.entity.Work;
 import lombok.Builder;
 
+import java.time.LocalDateTime;
+
 @Builder
 public record UserDiscoveryResponseDTO(
 		UserInfoVO UserInfo,
