@@ -297,9 +297,10 @@ public class UserServiceImpl implements UserService {
 
         List<Work> workAll = new LinkedList<Work>();
 
-        for (UserScrapUserQueryDto user:users) { // 모든 work 가져오는 로직 -> 이 부분 어떻게 수정해야 할 지 고민을 해봐야 할 것 같아요
-            workAll.addAll(workRepository.findAllByUserId(user.user().getId()));
+        for (UserScrapUserQueryDto dto:users) { // 모든 work 가져오는 로직 -> 이 부분 어떻게 수정해야 할 지 고민을 해봐야 할 것 같아요
+            workAll.addAll(dto.user().getWorks());
         }
+
 
         workAll = workAll.stream() // 최근 수정된 날짜 기준 정리
                 .sorted(Comparator.comparing(Work::getModifiedAt).reversed())
