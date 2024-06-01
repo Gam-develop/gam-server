@@ -283,43 +283,35 @@ public class UserServiceImpl implements UserService {
     public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId, int[] tags){
         List<UserScrapUserQueryDto> users;
 
-        if (tags.length == 0) {
+        if (tags.length == 0) { // user 정보 조회 태그가 걸린 경우와 아닌 경우
             users = userRepository.findAllDiscoveryUser(userId); //TODO - user 관련 쿼리 잡기 , 동적 쿼리 필요,,
         }
         else {
             users = userRepository.findAllDiscoveryUserWithTag(userId, tags);
         }
 
-        Map<User, Boolean> scrapMap = new HashMap<User,Boolean>();
+        Map<User, Boolean> scrapMap = new HashMap<User,Boolean>(); // user 별 스크랩 한 경우와 아닌 경우 식별을 위한 map
         for (UserScrapUserQueryDto user:users) {
             scrapMap.put(user.user(), user.scrapStatus());
         }
 
         List<Work> workAll = new LinkedList<Work>();
 
-        for (UserScrapUserQueryDto user:users) {
+        for (UserScrapUserQueryDto user:users) { // 모든 work 가져오는 로직 -> 이 부분 어떻게 수정해야 할 지 고민을 해봐야 할 것 같아요
             workAll.addAll(workRepository.findAllByUserId(user.user().getId()));
         }
-        workAll.stream().sorted();
 
-//        List<UserDiscoveryResponseDTO> userDiscoveryResponseDTOS = users.stream().map((dto) -> {
-//            val targetUserId = dto.user().getId();
-//            List<Work> works = workRepository.findAllByUserId(targetUserId);
-//
-//            val userScrap = dto.scrapStatus();
-//            List<UserDiscoveryResponseDTO> responseDTOs = new ArrayList<>();
-//
-//            for (Work work : works) {
-//                if (Objects.isNull(userScrap)) {
-//                    responseDTOs.add(UserDiscoveryResponseDTO.of(dto.user(), false, work));
-//                } else {
-//                    responseDTOs.add(UserDiscoveryResponseDTO.of(dto.user(), userScrap, work));
-//                }
-//            }
-//            return responseDTOs;
-//        }).flatMap(Collection::stream).collect(Collectors.toList());
-//
-//        return userDiscoveryResponseDTOS;
+        workAll = workAll.stream() // 최근 수정된 날짜 기준 정리
+                .sorted(Comparator.comparing(Work::getModifiedAt).reversed())
+                .collect(Collectors.toList());
+
+        return workAll.stream().map((work) -> {
+            val userScrap = scrapMap.get(work.getUser());
+            if (Objects.isNull(userScrap)) {
+                return UserDiscoveryResponseDTO.of(work.getUser(), false, work);
+            }
+            return UserDiscoveryResponseDTO.of(work.getUser(), userScrap, work);
+        }).collect(Collectors.toList());
     }
 
 
