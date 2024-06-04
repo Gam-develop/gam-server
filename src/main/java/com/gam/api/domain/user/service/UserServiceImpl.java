@@ -290,24 +290,16 @@ public class UserServiceImpl implements UserService {
             users = userRepository.findAllDiscoveryUserWithTag(userId, tags);
         }
 
-        Map<User, Boolean> scrapMap = new HashMap<User,Boolean>(); // user 별 스크랩 한 경우와 아닌 경우 식별을 위한 map
-        for (UserScrapUserQueryDto user:users) {
-            scrapMap.put(user.user(), user.scrapStatus());
-        }
-
-        List<Work> workAll = new LinkedList<Work>();
-
-        for (UserScrapUserQueryDto dto:users) { // 모든 work 가져오는 로직 -> 이 부분 어떻게 수정해야 할 지 고민을 해봐야 할 것 같아요
-            workAll.addAll(dto.user().getWorks());
-        }
-
-
-        workAll = workAll.stream() // 최근 수정된 날짜 기준 정리
+        Map<User, Boolean> scrapMap = users.stream()
+                .collect(Collectors.toMap(UserScrapUserQueryDto::user, UserScrapUserQueryDto::scrapStatus));
+        // 모든 work를 가져와 최근 수정된 날짜 기준으로 정리
+        List<Work> workAll = users.stream()
+                .flatMap(dto -> dto.user().getWorks().stream())
                 .sorted(Comparator.comparing(Work::getModifiedAt).reversed())
-                .collect(Collectors.toList());
+                .toList();
 
         return workAll.stream().map((work) -> {
-            val userScrap = scrapMap.get(work.getUser());
+            val userScrap = scrapMap.get(work.getUser().getId());
             if (Objects.isNull(userScrap)) {
                 return UserDiscoveryResponseDTO.of(work.getUser(), false, work);
             }
