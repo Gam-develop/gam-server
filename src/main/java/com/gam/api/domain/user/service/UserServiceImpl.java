@@ -283,38 +283,27 @@ public class UserServiceImpl implements UserService {
     public List<UserDiscoveryResponseDTO> getDiscoveryUsers(Long userId, int[] tags){
         List<UserScrapUserQueryDto> users;
 
-        if (tags.length == 0) {
+        if (tags.length == 0) { // user 정보 조회 태그가 걸린 경우와 아닌 경우
             users = userRepository.findAllDiscoveryUser(userId); //TODO - user 관련 쿼리 잡기 , 동적 쿼리 필요,,
         }
         else {
             users = userRepository.findAllDiscoveryUserWithTag(userId, tags);
         }
 
-        return users.stream().map((dto) -> {
-            val firstWorkId = dto.user().getFirstWorkId();
-            Work firstWork;
+        Map<User, Boolean> scrapMap = users.stream()
+                .collect(Collectors.toMap(UserScrapUserQueryDto::user, UserScrapUserQueryDto::scrapStatus));
+        // 모든 work를 가져와 최근 수정된 날짜 기준으로 정리
+        List<Work> workAll = users.stream()
+                .flatMap(dto -> dto.user().getWorks().stream())
+                .sorted(Comparator.comparing(Work::getModifiedAt).reversed())
+                .toList();
 
-            if (firstWorkId == null && !dto.user().getActiveWorks().isEmpty()) { // User 권한 에러
-                firstWork = workRepository.findFirstByUserIdAndIsActiveOrderByCreatedAtDesc(dto.user().getId(), true)
-                        .orElse(Work.builder()
-                                .user(dto.user())
-                                .photoUrl("해당하는 작업물을 찾을 수 없습니다.")
-                                .detail("해당하는 작업물을 찾을 수 없습니다.")
-                                .title("해당하는 작업물을 찾을 수 없습니다.")
-                                .build());
-                dto.user().setUserStatus(UserStatus.NOT_PERMITTED);
-            }
-            else {
-                firstWork = dto.user().getActiveWorks().stream()
-                        .filter(work -> dto.user().getFirstWorkId().equals(work.getId()))
-                        .findFirst().get();
-            }
-
-            val userScrap = dto.scrapStatus();
+        return workAll.stream().map((work) -> {
+            val userScrap = scrapMap.get(work.getUser().getId());
             if (Objects.isNull(userScrap)) {
-                return UserDiscoveryResponseDTO.of(dto.user(), false, firstWork);
+                return UserDiscoveryResponseDTO.of(work.getUser(), false, work);
             }
-            return UserDiscoveryResponseDTO.of(dto.user(), userScrap, firstWork);
+            return UserDiscoveryResponseDTO.of(work.getUser(), userScrap, work);
         }).collect(Collectors.toList());
     }
 
