@@ -191,6 +191,7 @@ public class UserServiceImpl implements UserService {
 
         createUserTags(tags, user);
         user.onboardUser(userName, info, tags);
+        user.setUserStatus(UserStatus.PERMITTED);
     }
 
     @Override
