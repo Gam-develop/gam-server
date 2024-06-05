@@ -412,18 +412,27 @@ public class UserServiceImpl implements UserService {
         return targetUser.getUserStatus() == UserStatus.REPORTED;
     }
 
-    private void createUserDeleteAccountReasons(List<Integer> DeleteAccountReasons, String directInput, User user){
+    private void createUserDeleteAccountReasons(List<Integer> deleteAccountReasons, String directInput, User user){
         val deleteAccountReasonList = deleteAccountReasonRepository.findAll();
+        Integer directInputNum = 5;
 
-        for (Integer deleteAccountReason : DeleteAccountReasons){
-            if (deleteAccountReason < 0 || deleteAccountReason >= deleteAccountReasonList.size()) {
-                throw new IllegalArgumentException(ExceptionMessage.INVALID_DELETE_REASON.getMessage());
+        deleteAccountReasons.stream().forEach( (reason) -> {
+            isValidDeleteAccountReason(reason, deleteAccountReasonList.size());
+            if (reason.equals(directInputNum)) {
+                userDeleteAccountReasonRepository.save(UserDeleteAccountReason.builder()
+                                .user(user)
+                                .deleteAccountReason(deleteAccountReasonList.get(reason))
+                                .directInput(directInput)
+                                .build());
             }
-            userDeleteAccountReasonRepository.save(UserDeleteAccountReason.builder()
-                    .user(user)
-                    .deleteAccountReason(deleteAccountReasonList.get(deleteAccountReason))
-                    .build());
-        }
+        });
         user.setUserStatus(UserStatus.WITHDRAWAL);
+    }
+
+    private boolean isValidDeleteAccountReason(int deleteAccountReason, int deleteReasonSize) {
+        if (deleteAccountReason < 0 || deleteAccountReason > deleteReasonSize) {
+            throw new IllegalArgumentException(ExceptionMessage.INVALID_DELETE_REASON.getMessage());
+        }
+        return true;
     }
 }
