@@ -5,6 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record UserProfileUpdateResponseDTO(
+        String userName,
         String userInfo,
         String userDetail,
         String email,
@@ -12,6 +13,7 @@ public record UserProfileUpdateResponseDTO(
 ) {
     public static UserProfileUpdateResponseDTO of(User user ){
         return UserProfileUpdateResponseDTO.builder()
+                .userName(user.getUserName())
                 .userInfo(user.getInfo())
                 .userDetail(user.getDetail())
                 .email(user.getEmail())

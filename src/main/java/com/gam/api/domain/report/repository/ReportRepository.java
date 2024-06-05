@@ -9,4 +9,5 @@ import java.util.List;
 public interface ReportRepository extends JpaRepository<Report, Long> {
     List<Report> findAllByStatus(ReportStatus status);
     void deleteAllByTargetUserId(Long userId);
+
 }

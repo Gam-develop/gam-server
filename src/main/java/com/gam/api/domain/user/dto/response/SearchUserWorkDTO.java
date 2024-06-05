@@ -19,7 +19,7 @@ public record SearchUserWorkDTO(
                 .title(work.getTitle())
                 .userName(user.getUserName())
                 .userId(user.getId())
-                .viewCount(work.getViewCount())
+                .viewCount(user.getViewCount())
                 .build();
     }
 }

@@ -5,7 +5,7 @@ import com.gam.api.domain.s3.dto.response.PresignedResponseDTO;
 import java.util.List;
 
 public interface S3Service {
-    PresignedResponseDTO getPresignedUrl(String fileName);
+    PresignedResponseDTO getPresignedUrl(String fileName, String type);
     List<PresignedResponseDTO> getPresignedUrls(PresignedRequestDTO presignedRequestDTO);
     void deleteS3Image(String fileName);
 }
