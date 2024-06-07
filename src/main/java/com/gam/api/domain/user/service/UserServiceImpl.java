@@ -414,7 +414,7 @@ public class UserServiceImpl implements UserService {
 
     private void createUserDeleteAccountReasons(List<Integer> deleteAccountReasons, String directInput, User user){
         val deleteAccountReasonList = deleteAccountReasonRepository.findAll();
-        Integer directInputNum = 5;
+        Integer directInputNum = 4;
 
         deleteAccountReasons.stream().forEach( (reason) -> {
             isValidDeleteAccountReason(reason, deleteAccountReasonList.size());
@@ -424,6 +424,12 @@ public class UserServiceImpl implements UserService {
                                 .deleteAccountReason(deleteAccountReasonList.get(reason))
                                 .directInput(directInput)
                                 .build());
+            }
+            if (!reason.equals(directInputNum)) {
+                userDeleteAccountReasonRepository.save(UserDeleteAccountReason.builder()
+                        .user(user)
+                        .deleteAccountReason(deleteAccountReasonList.get(reason))
+                        .build());
             }
         });
         user.setUserStatus(UserStatus.WITHDRAWAL);

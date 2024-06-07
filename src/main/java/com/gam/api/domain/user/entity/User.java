@@ -118,7 +118,7 @@ public class User extends TimeStamped {
     @Column(name = "selected_first_at")
     private LocalDateTime selectedFirstAt;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user")
     private List<UserDeleteAccountReason> userDeleteAccountReason;
 
     public void updateSelectedFirstAt() {
