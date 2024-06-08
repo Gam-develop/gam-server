@@ -191,6 +191,7 @@ public class UserServiceImpl implements UserService {
 
         createUserTags(tags, user);
         user.onboardUser(userName, info, tags);
+        user.setUserStatus(UserStatus.PERMITTED);
     }
 
     @Override
@@ -251,7 +252,7 @@ public class UserServiceImpl implements UserService {
                 return UserResponseDTO.of(user, userScrap.isStatus());
             }
             return UserResponseDTO.of(user, false);
-         }).collect(Collectors.toList());
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -290,6 +291,7 @@ public class UserServiceImpl implements UserService {
             users = userRepository.findAllDiscoveryUserWithTag(userId, tags);
         }
 
+
         return users.stream().map((dto) -> {
             val firstWorkId = dto.user().getFirstWorkId();
             Work firstWork;
@@ -309,7 +311,6 @@ public class UserServiceImpl implements UserService {
                         .filter(work -> dto.user().getFirstWorkId().equals(work.getId()))
                         .findFirst().get();
             }
-
             val userScrap = dto.scrapStatus();
             if (Objects.isNull(userScrap)) {
                 return UserDiscoveryResponseDTO.of(dto.user(), false, firstWork);
@@ -338,7 +339,7 @@ public class UserServiceImpl implements UserService {
     public UserStatusResponseDTO getUserStatus(Long userId) {
         val user = findUser(userId);
         return UserStatusResponseDTO.of(user);
-  }
+    }
 
     @Transactional
     @Override

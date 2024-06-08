@@ -99,6 +99,7 @@ public class User extends TimeStamped {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     List<MagazineScrap> magazineScraps = new ArrayList<>();
 
+    @Where(clause = "is_active = true")
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     List<Work> works = new ArrayList<>();
 
