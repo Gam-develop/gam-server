@@ -24,4 +24,7 @@ public class GamConfig {
 
     @Value("${gam.url.magazineBase}")
     private String magaineBaseUrl;
+
+    @Value("${gam.url.openSourceUrl}")
+    private String openSourceUrl;
 }
