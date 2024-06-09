@@ -237,7 +237,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserResponseDTO> getPopularDesigners(Long userId) { //TODO - 쿼리 지연
-        val users = userRepository.findByUserStatusOrderByScrapCountDesc(UserStatus.PERMITTED);
+        val users = userRepository.findByUserStatusAndFirstWorkIdIsNotNullOrderByScrapCountDesc(UserStatus.PERMITTED);
 
         val me = findUser(userId);
         removeBlockUsers(users, me);
