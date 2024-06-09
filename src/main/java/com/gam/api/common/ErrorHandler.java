@@ -35,14 +35,17 @@ public class ErrorHandler {
         val errorDTO = requestToDTO(exception, request);
         sendSlackAlarm(errorDTO.toString());
 
-        return new ResponseEntity<>(errorDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        ApiResponse response = ApiResponse.serverError(errorDTO);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Object> handleRuntimeException(RuntimeException exception, HttpServletRequest request) {
         val errorDTO = requestToDTO(exception, request);
         sendSlackAlarm(errorDTO.toString());
-        return new ResponseEntity<>(errorDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        ApiResponse response = ApiResponse.serverError(errorDTO);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 
