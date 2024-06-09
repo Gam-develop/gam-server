@@ -1,8 +1,12 @@
 package com.gam.api.common;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Enumeration;
+import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,12 +17,14 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class InternalServerErrorDTO {
-    private String header;
-    private String httpMethod;
-    private String URL;
-    private String message;
-    private String errorClass;
-    private String dateTime;
+    private String header = null;
+    private String httpMethod = null;
+    private String URL = null ;
+    private String message = null;
+
+    private String errorClass = null;
+
+    private String dateTime = "";
 
     @Builder
     private InternalServerErrorDTO(String header, String httpMethod, String URL, String message,
@@ -33,6 +39,9 @@ public class InternalServerErrorDTO {
 
     public static InternalServerErrorDTO of(String header, String httpMethod, String URL, String message,
                                             String errorClass, LocalDateTime nowDateTime) {
+        if(Objects.isNull(nowDateTime)) {
+            nowDateTime = LocalDateTime.now();
+        }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String now = nowDateTime.format(formatter);
 
@@ -52,8 +61,22 @@ public class InternalServerErrorDTO {
         while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement();
             String headerValue = request.getHeader(headerName);
-            headers.append(headerName).append(": ").append(headerValue).append("    ");
+            headers.append(headerName).append(": ").append(headerValue);
         }
         return headers.toString();
     }
+
+    @Override
+    public String toString() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectWriter writer = objectMapper.writerWithDefaultPrettyPrinter();
+        String jsonString = null;
+        try {
+            jsonString = writer.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e); //todo Log
+        }
+        return jsonString;
+    }
+
 }
