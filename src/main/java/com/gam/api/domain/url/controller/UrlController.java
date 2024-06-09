@@ -23,7 +23,8 @@ public class UrlController {
                 gamConfig.getIntroUrl(),
                 gamConfig.getPolicyUrl(),
                 gamConfig.getAgreementUrl(),
-                gamConfig.getMakersUrl()
+                gamConfig.getMakersUrl(),
+                gamConfig.getOpenSourceUrl()
         );
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_URL.getMessage(), introductionUrl));
     }
