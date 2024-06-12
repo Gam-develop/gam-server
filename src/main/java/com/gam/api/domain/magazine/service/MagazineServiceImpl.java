@@ -40,7 +40,7 @@ public class MagazineServiceImpl implements MagazineService {
     public MagazineResponseDTO getMagazines(Long userId) {
         val user = findUser(userId);
         val magazineScrapList = getMagazineScrapList(user);
-        val magazineList = magazineRepository.findMagazinesByOrderByViewCountDesc();
+        val magazineList = magazineRepository.findMagazinesByOrderByCreatedAtDesc();
 
         return MagazineResponseDTO.of(magazineList, magazineScrapList, gamConfig.getMagaineBaseUrl());
     }

@@ -18,8 +18,8 @@ public class S3Controller {
 
     @ApiOperation(value = "이미지 단일 업로드")
     @GetMapping("/image")
-    public ResponseEntity<ApiResponse> getPresignedUrl(@RequestParam String fileName) {
-        val response = s3Service.getPresignedUrl(fileName);
+    public ResponseEntity<ApiResponse> getPresignedUrl(@RequestParam String fileName, @RequestParam String type) {
+        val response = s3Service.getPresignedUrl(fileName, type);
         return ResponseEntity.ok(ApiResponse.success(ResponseMessage.SUCCESS_GET_PRESIGNED_URL.getMessage(), response));
     }
 

@@ -53,6 +53,7 @@ public enum ExceptionMessage {
     INVALID_MAIN_PHOTOS_COUNT("메거진의 메인 사진의 개수는 최대 4장입니다."),
 
     /** Report **/
+    ALREADY_REPORTED_USER("이미 신고 한 유저입니다. 신고 처리 진행중"),
     NOT_MATCH_DB_BLOCK_STATUS("DB의 userScrap 상태와, 보낸 userScrap 상태가 같지 않습니다.");
 
     private final String message;

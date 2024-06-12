@@ -68,7 +68,7 @@ public class SocialCommonServiceImpl implements SocialCommonService {
     ) {
         val user = userRepository.save(User.builder()
                 .role(Role.USER)
-                .userStatus(UserStatus.PERMITTED)
+                .userStatus(UserStatus.NOT_PERMITTED)
                 .build());
 
         val userId = user.getId();

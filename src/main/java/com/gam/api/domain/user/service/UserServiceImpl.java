@@ -161,27 +161,19 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserProfileUpdateResponseDTO updateMyProfile(Long userId, UserProfileUpdateRequestDTO request){
+    public UserProfileUpdateResponseDTO updateMyProfile(Long userId, UserProfileUpdateRequestDTO request) {
         val user = findUser(userId);
-
-        if (request.userInfo() != null) {
-            user.setInfo(request.userInfo());
-        }
-
-        if (request.userDetail() != null) {
-            user.setDetail(request.userDetail());
-        }
-
-        if (request.email() != null) {
-            user.setEmail(request.email());
-        }
-
-        if (request.tags() != null) {
-            val newTags = request.tags();
-            createUserTags(newTags, user);
-        }
+        updateUserFields(user, request);
 
         return UserProfileUpdateResponseDTO.of(user);
+    }
+
+    private void updateUserFields(User user, UserProfileUpdateRequestDTO request) {
+        Optional.ofNullable(request.userName()).ifPresent(user::setUserName);
+        Optional.ofNullable(request.userInfo()).ifPresent(user::setInfo);
+        Optional.ofNullable(request.userDetail()).ifPresent(user::setDetail);
+        Optional.ofNullable(request.email()).ifPresent(user::setEmail);
+        Optional.ofNullable(request.tags()).ifPresent(newTags -> createUserTags(newTags, user));
     }
 
     @Transactional
@@ -199,6 +191,7 @@ public class UserServiceImpl implements UserService {
 
         createUserTags(tags, user);
         user.onboardUser(userName, info, tags);
+        user.setUserStatus(UserStatus.PERMITTED);
     }
 
     @Override
@@ -239,16 +232,16 @@ public class UserServiceImpl implements UserService {
         if(Objects.nonNull(userScrap)){
             return UserProfileResponseDTO.of(userScrap.isStatus(), user);
         }
-        System.out.println(user.getTags());
         return UserProfileResponseDTO.of(false, user);
     }
 
     @Override
     public List<UserResponseDTO> getPopularDesigners(Long userId) { //TODO - 쿼리 지연
-        val users = userRepository.findByUserStatusOrderByScrapCountDesc(UserStatus.PERMITTED);
+        val users = userRepository.findByUserStatusAndFirstWorkIdIsNotNullOrderByScrapCountDesc(UserStatus.PERMITTED);
 
         val me = findUser(userId);
         removeBlockUsers(users, me);
+        removeAdminUsers(users);
 
         int count = MAIN_GET_DESIGNER_COUNT; // Top 5만 갖고옴
         val first5Users = users.subList(0, Math.min(count, users.size()));
@@ -259,7 +252,7 @@ public class UserServiceImpl implements UserService {
                 return UserResponseDTO.of(user, userScrap.isStatus());
             }
             return UserResponseDTO.of(user, false);
-         }).collect(Collectors.toList());
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -276,6 +269,7 @@ public class UserServiceImpl implements UserService {
         val user = findUser(userId);
         user.setViewCount(user.getViewCount() + 1);
         val works = getUserPortfolios(userId);
+        works.forEach(w -> w.viewCountUp());
 
         val scrapList = requestUser.getUserScraps().stream()
                 .map(UserScrap::getTargetId)
@@ -297,11 +291,12 @@ public class UserServiceImpl implements UserService {
             users = userRepository.findAllDiscoveryUserWithTag(userId, tags);
         }
 
+
         return users.stream().map((dto) -> {
             val firstWorkId = dto.user().getFirstWorkId();
             Work firstWork;
 
-            if (firstWorkId == null || !dto.user().getActiveWorks().isEmpty()) { // User 권한 에러
+            if (firstWorkId == null && !dto.user().getActiveWorks().isEmpty()) { // User 권한 에러
                 firstWork = workRepository.findFirstByUserIdAndIsActiveOrderByCreatedAtDesc(dto.user().getId(), true)
                         .orElse(Work.builder()
                                 .user(dto.user())
@@ -316,7 +311,6 @@ public class UserServiceImpl implements UserService {
                         .filter(work -> dto.user().getFirstWorkId().equals(work.getId()))
                         .findFirst().get();
             }
-
             val userScrap = dto.scrapStatus();
             if (Objects.isNull(userScrap)) {
                 return UserDiscoveryResponseDTO.of(dto.user(), false, firstWork);
@@ -345,7 +339,7 @@ public class UserServiceImpl implements UserService {
     public UserStatusResponseDTO getUserStatus(Long userId) {
         val user = findUser(userId);
         return UserStatusResponseDTO.of(user);
-  }
+    }
 
     @Transactional
     @Override
@@ -376,10 +370,6 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
     }
 
-    private Work findWork(Long workId) {
-        return workRepository.findById(workId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_WORK.getMessage()));
-    }
 
     private void createUserScrap(User user, Long targetId, User targetUser){
         userScrapRepository.save(UserScrap.builder()
@@ -413,6 +403,10 @@ public class UserServiceImpl implements UserService {
     private void removeBlockUsers(List<User> users, User me) {
         val myBlockUserList = getBlockUsers(me);
         users.removeAll(myBlockUserList);
+    }
+
+    private void removeAdminUsers(List<User> users) {
+        users.removeIf(u -> u.getRole() != Role.USER);
     }
 
     private List<User> getBlockUsers(User user) { // TODO[성능] - 성능 저하 가능성 있음

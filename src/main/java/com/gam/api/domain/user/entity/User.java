@@ -99,11 +99,15 @@ public class User extends TimeStamped {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     List<MagazineScrap> magazineScraps = new ArrayList<>();
 
+    @Where(clause = "is_active = true")
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     List<Work> works = new ArrayList<>();
 
-    @OneToMany(mappedBy = "targetUser", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "targetUser", cascade = CascadeType.ALL) // 내가 신고 당한 'Report' 리스트
     private List<Report> reported;
+
+    @OneToMany(mappedBy = "reportUser") // 내가 신고한 'Report' 리스트
+    private List<Report> reports;
 
     @Type(type = "int-array")
     @Column(name = "tag",

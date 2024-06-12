@@ -69,28 +69,28 @@ jobs:
       run: cp ./scripts/*.sh ./deploy
       
     - name: Make zip file
-      run: zip -r ./gam-dev-server.zip ./deploy
+      run: zip -r ./$GITHUB_SHA.zip ./deploy
       shell: bash
       
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+        aws-access-key-id: ${{ secrets.AWS_CONFIG_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.AWS_CONFIG_SECRET_KEY }}
         aws-region: ap-northeast-2
         
     - name: Upload to S3
-      run: aws s3 cp --region ap-northeast-2 ./gam-dev-server.zip s3://$S3_BUCKET_NAME/
+      run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://${{ secrets.AWS_S3_BUCKET_NAME }}/dev/$GITHUB_SHA.zip
       
     # Deploy
     - name: Deploy
       env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_CONFIG_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_CONFIG_SECRET_KEY }}
       run:
         aws deploy create-deployment 
-        --application-name gam-dev-codedeploy
-        --deployment-group-name gam-dev-server-codedeploy-group
-        --file-exists-behavior OVERWRITE 
-        --s3-location bucket=gam-dev-deploy,bundleType=zip,key=gam-dev-server.zip
+        --application-name gam-codeDeploy
+        --deployment-group-name dev
+        --file-exists-behavior OVERWRITE
+        --s3-location bucket=${{ secrets.AWS_S3_BUCKET_NAME }},bundleType=zip,key=dev/$GITHUB_SHA.zip
         --region ap-northeast-2

@@ -37,7 +37,7 @@ public class JwtTokenManager {
         val signatureAlgorithm = SignatureAlgorithm.HS256;
         val secretKeyBytes = DatatypeConverter.parseBase64Binary(authConfig.getJwtSecretKey());
         val signingKey = new SecretKeySpec(secretKeyBytes, signatureAlgorithm.getJcaName());
-        val exp = ZonedDateTime.now(KST).toLocalDateTime().plusHours(6).atZone(KST).toInstant();
+        val exp = ZonedDateTime.now(KST).toLocalDateTime().plusHours(3).atZone(KST).toInstant();
 
         return Jwts.builder()
                 .setSubject(Long.toString(userId))
