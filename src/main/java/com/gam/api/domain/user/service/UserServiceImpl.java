@@ -265,12 +265,20 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public WorkPortfolioGetResponseDTO getPortfolio(Long requestUserId, Long userId) {
+        // TODO: spring security에서 주입
         val requestUser = findUser(requestUserId);
-        val user = findUser(userId);
-        user.setViewCount(user.getViewCount() + 1);
-        val works = getUserPortfolios(userId);
-        works.forEach(w -> w.viewCountUp());
 
+        val user = findUserWithWorks(userId);
+        user.setViewCount(user.getViewCount() + 1);
+        val works = refineWorkList(user.getWorks());
+
+        val workIds = works.stream()
+                        .map(Work::getId)
+                        .toList();
+
+        workRepository.updateWorksViewCount(workIds);
+
+        // TODO: spring security에서 주입
         val scrapList = requestUser.getUserScraps().stream()
                 .map(UserScrap::getTargetId)
                 .toList();
@@ -365,8 +373,22 @@ public class UserServiceImpl implements UserService {
         return works;
     }
 
+    private List<Work> refineWorkList(List<Work> works) {
+        return works
+                .stream()
+                .filter(Work::isActive)
+                .sorted(Comparator.comparing(Work::isFirst, Comparator.reverseOrder())
+                        .thenComparing(Comparator.comparing(Work::getCreatedAt).reversed()))
+                .collect(Collectors.toList());
+    }
+
     private User findUser(Long userId) {
         return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
+    }
+
+    private User findUserWithWorks(Long userId) {
+        return userRepository.getUserByIdWithWorks(userId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.NOT_FOUND_USER.getMessage()));
     }
 
