@@ -264,10 +264,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public WorkPortfolioGetResponseDTO getPortfolio(Long requestUserId, Long userId) {
-        // TODO: spring security에서 주입
-        val requestUser = findUser(requestUserId);
-
+    public WorkPortfolioGetResponseDTO getPortfolio(User requestUser, Long userId) {
         val user = findUserWithWorks(userId);
         user.setViewCount(user.getViewCount() + 1);
         val works = refineWorkList(user.getWorks());
@@ -278,12 +275,8 @@ public class UserServiceImpl implements UserService {
 
         workRepository.updateWorksViewCount(workIds);
 
-        // TODO: spring security에서 주입
-        val scrapList = requestUser.getUserScraps().stream()
-                .map(UserScrap::getTargetId)
-                .toList();
-
-        val isScraped = scrapList.contains(user.getId());
+        val userScrap = userScrapRepository.findByUserAndTargetId(requestUser, user.getId());
+        val isScraped = Objects.isNull(userScrap);
 
         return WorkPortfolioGetResponseDTO.of(isScraped, user, works);
     }
