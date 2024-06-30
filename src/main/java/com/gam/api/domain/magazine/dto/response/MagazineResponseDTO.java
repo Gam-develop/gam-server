@@ -1,8 +1,7 @@
 package com.gam.api.domain.magazine.dto.response;
 
-import com.gam.api.domain.magazine.entity.Magazine;
+import com.gam.api.domain.magazine.dto.query.MagazineWithScrapQueryDTO;
 import lombok.Builder;
-import lombok.val;
 
 import java.util.List;
 
@@ -10,15 +9,22 @@ import java.util.List;
 public record MagazineResponseDTO(
         List<MagazineResponseVO> magazineList
 ) {
-    public static MagazineResponseDTO of(List<Magazine> magazineList, List<Long> userMagazineScraps, String magazineBaseUrl) {
+    public static MagazineResponseDTO of(List<MagazineWithScrapQueryDTO> magazineList, String magazineBaseUrl) {
         return MagazineResponseDTO.builder()
-                .magazineList(magazineList.stream().map(magazine -> {
-                    val isScraped = userMagazineScraps.contains(magazine.getId()) ? true : false;
-                    return MagazineResponseVO.of(magazine, isScraped, magazineBaseUrl);
-                }).toList())
+                .magazineList(magazineList.stream().map(magazineWithScrap -> MagazineResponseVO.of(
+                                magazineWithScrap.magazineId(),
+                                magazineWithScrap.thumbnail(),
+                                magazineWithScrap.magazineTitle(),
+                                magazineWithScrap.interviewPerson(),
+                                magazineWithScrap.viewCount(),
+                                magazineWithScrap.isScraped(),
+                                magazineBaseUrl
+                        )).toList()
+                )
                 .build();
     }
 }
+
 
 @Builder
 record MagazineResponseVO(
@@ -30,14 +36,22 @@ record MagazineResponseVO(
         Long view,
         boolean isScraped
 ) {
-    public static MagazineResponseVO of(Magazine magazine, boolean isScraped, String magazineBaseUrl) {
+    public static MagazineResponseVO of(
+            Long magazineId,
+            String thumbnail,
+            String magazineTitle,
+            String interviewPerson,
+            Long viewCount,
+            boolean isScraped,
+            String magazineBaseUrl
+    ) {
         return MagazineResponseVO.builder()
-                .magazineId(magazine.getId())
-                .thumbNail(magazine.getThumbNail())
-                .title(magazine.getMagazineTitle())
-                .interviewPerson(magazine.getInterviewPerson())
-                .magazineUrl(magazineBaseUrl + magazine.getId())
-                .view(magazine.getViewCount())
+                .magazineId(magazineId)
+                .thumbNail(thumbnail)
+                .title(magazineTitle)
+                .interviewPerson(interviewPerson)
+                .magazineUrl(magazineBaseUrl + magazineId)
+                .view(viewCount)
                 .isScraped(isScraped)
                 .build();
     }
