@@ -18,6 +18,7 @@ import com.gam.api.domain.user.repository.MagazineScrapRepository;
 import com.gam.api.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,11 +39,9 @@ public class MagazineServiceImpl implements MagazineService {
 
     @Override
     public MagazineResponseDTO getMagazines(Long userId) {
-        val user = findUser(userId);
-        val magazineScrapList = getMagazineScrapList(user);
-        val magazineList = magazineRepository.findMagazinesByOrderByCreatedAtDesc();
+        val magazineList = magazineRepository.findMagazinesByOrderByCreatedAtDesc(userId);
 
-        return MagazineResponseDTO.of(magazineList, magazineScrapList, gamConfig.getMagaineBaseUrl());
+        return MagazineResponseDTO.of(magazineList, gamConfig.getMagaineBaseUrl());
     }
 
     @Transactional
@@ -79,12 +78,11 @@ public class MagazineServiceImpl implements MagazineService {
     }
 
     @Override
+    @Transactional
     public MagazineResponseDTO getPopularMagazines(Long userId) {
-        val user = findUser(userId);
-        val magazineScrapList = getMagazineScrapList(user);
-        val magazineList = magazineRepository.findTop3ByOrderByViewCountDesc();
+        val magazineList = magazineRepository.findTopMagazinesWithScrapStatus(userId, PageRequest.of(0, 3));
 
-        return MagazineResponseDTO.of(magazineList, magazineScrapList, gamConfig.getMagaineBaseUrl());
+        return MagazineResponseDTO.of(magazineList, gamConfig.getMagaineBaseUrl());
     }
 
     @Transactional
@@ -130,12 +128,6 @@ public class MagazineServiceImpl implements MagazineService {
                 .sorted(Comparator.comparingLong(Magazine::getViewCount).reversed())
                 .map((magazine) -> MagazineSearchResponseDTO.of(magazine, gamConfig.getMagaineBaseUrl()))
                 .collect(Collectors.toList());
-    }
-
-    private List<Long> getMagazineScrapList(User user) {
-        return user.getMagazineScraps().stream()
-                .map(MagazineScrap::getMagazineId)
-                .toList();
     }
 
     private User findUser(Long userId) {

@@ -30,18 +30,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         val userRole = user.getRole();
         val userStatus = user.getUserStatus();
 
-        val authUser = authProviderRepository.searchAuthProviderByUser(user)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.TOKEN_USER_EXCEPTION.getMessage()));
-
-        val authUserId = String.valueOf(authUser.getId());
-
         authorities.add(new SimpleGrantedAuthority("ROLE_"+userRole.toString()));
         authorities.add(new SimpleGrantedAuthority(userStatus.toString()));
 
         return GamUserDetails.builder()
                 .id(user.getId())
                 .user(user)
-                .authUserId(authUserId)
                 .username(user.getUserName())
                 .authorities(authorities)
                 .build();
