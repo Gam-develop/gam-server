@@ -84,6 +84,7 @@ public class AdminServiceImpl implements AdminService {
 
         val magazinePhotos = request.magazinePhotos().toArray(new String[request.magazinePhotos().size()]);
         magazine.setMagazine_photos(magazinePhotos);
+        magazine.setThumbNail(request.magazinePhotos().get(0));
         magazineRepository.save(magazine);
 
         List<Question> currentQuestions = new ArrayList<>(magazine.getQuestions());
