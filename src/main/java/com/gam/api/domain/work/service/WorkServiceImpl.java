@@ -150,15 +150,15 @@ public class WorkServiceImpl implements WorkService {
 
         val image = request.image();
 
-        if (work.isFirst()) {
-            val user = findUser(userId);
-            user.setWorkThumbNail(image);
-        }
-
         if (!work.getPhotoUrl().equals(image)) {
             val deletePhotoUrl = work.getPhotoUrl();
             s3Service.deleteS3Image(deletePhotoUrl);
             work.setPhotoUrl(image);
+
+            if (work.isFirst()) {
+                val user = findUser(userId);
+                user.setWorkThumbNail(image);
+            }
         }
 
         return WorkEditResponseDTO.of(workId);
