@@ -59,7 +59,6 @@ public class S3ServiceImpl implements S3Service {
         } catch (SdkClientException | SdkServiceException e) {
             throw new AwsException(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        s3Client.deleteObject(deleteObjectRequest);
     }
 
     private PresignedResponseDTO createPresignedUrl(String fileName, String type) {
